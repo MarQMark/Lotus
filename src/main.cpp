@@ -2,8 +2,8 @@
 #include "Kikan/renderer/stdRenderer/Camera.h"
 #include "Kikan/ecs/systems/SpriteRenderSystem.h"
 #include "Kikan/ecs/components/LineQuadSprite.h"
-#include "PlayerComponent.h"
-#include "PlayerMovementSystem.h"
+#include "components/PlayerComponent.h"
+#include "systems/PlayerMovementSystem.h"
 
 int WinMain() {
     Kikan::Engine::init();
@@ -22,10 +22,8 @@ int WinMain() {
 
     auto* entity = new Kikan::Entity();
     auto* sprite = new Kikan::LineQuadSprite();
-    sprite->points[0] = glm::vec2(-50, 50);
-    sprite->points[1] = glm::vec2(50, 50);
-    sprite->points[2] = glm::vec2(50, -50);
-    sprite->points[3] = glm::vec2(-50, -50);
+    sprite->position = glm::vec2(-50, 50);
+    sprite->dimensions = glm::vec2(100, 100);
     sprite->color = glm::vec4(.4, .5, .8, 1);
     sprite->thickness = 6;
     auto* player = new PlayerComponent();
