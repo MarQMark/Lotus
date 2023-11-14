@@ -2,7 +2,11 @@ project("Lotus")
 
 add_executable(Lotus
         main.cpp
-        PlayerMovementSystem.cpp)
+
+        systems/PlayerMovementSystem.cpp
+        systems/NetworkingClientSystem.cpp
+        systems/NetworkingServerSystem.cpp
+)
 
 target_include_directories(Lotus
         PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../include

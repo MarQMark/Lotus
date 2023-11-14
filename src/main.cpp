@@ -4,6 +4,8 @@
 #include "Kikan/ecs/components/LineQuadSprite.h"
 #include "components/PlayerComponent.h"
 #include "systems/PlayerMovementSystem.h"
+#include "systems/NetworkingServerSystem.h"
+#include "systems/NetworkingClientSystem.h"
 
 int WinMain() {
     Kikan::Engine::init();
@@ -15,10 +17,14 @@ int WinMain() {
     ((Kikan::Renderer::StdRenderer*)engine->getRenderer())->mvp = camera.matrix();
 
     auto* spriteSystem = new Kikan::SpriteRenderSystem();
-    engine->getECS()->getScene()->addSystem(spriteSystem);
-
     auto* movSystem = new PlayerMovementSystem();
+    auto* serverSystem = new NetworkingServerSystem();
+    auto* clientSystem = new NetworkingClientSystem();
+    engine->getECS()->getScene()->addSystem(spriteSystem);
     engine->getECS()->getScene()->addSystem(movSystem);
+    engine->getECS()->getScene()->addSystem(serverSystem);
+    engine->getECS()->getScene()->addSystem(clientSystem);
+
 
     auto* entity = new Kikan::Entity();
     auto* sprite = new Kikan::LineQuadSprite();
