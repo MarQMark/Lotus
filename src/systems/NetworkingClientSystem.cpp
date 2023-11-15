@@ -119,7 +119,7 @@ void NetworkingClientSystem::update(double dt) {
         msg.body.c2s_pos.y = playerSprite->position.y;
 
         send(_sock_fd, &msg, MESSAGE_SIZE(msg), MSG_NOSIGNAL);
-y
+
 
         int ret = recv(_sock_fd, &msg, sizeof(Header), MSG_DONTWAIT);
         if(ret == -1)
