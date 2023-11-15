@@ -8,10 +8,18 @@ public:
     NetworkingClientSystem();
 
     void update(double dt) override;
+
+    void addEntity(Kikan::Entity *entity) override;
+
 private:
     bool _enabled = false;
-    int _sockfd = -1;
+    int _sock_fd = -1;
+    bool _auth = false;
 
+    Kikan::Entity* _player{};
+    std::map<uint16_t, Kikan::Entity*> _enemies;
+
+    void addEnemy(uint16_t id);
 };
 
 
