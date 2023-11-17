@@ -24,11 +24,11 @@ void NetworkingClientSystem::addEntity(Kikan::Entity *entity) {
 
 void NetworkingClientSystem::addEnemy(uint16_t id){
     auto* enemy = new Kikan::Entity();
+    enemy->getComponent<Kikan::Transform>()->position = glm::vec3(80, 80, 0);
     auto* enemyComponent = new EnemyComponent();
     enemyComponent->enemyID = id;
     enemy->addComponent(enemyComponent);
     auto* sprite = new Kikan::LineQuadSprite();
-    sprite->position = glm::vec2(80, 80);
     sprite->dimensions = glm::vec2(100, 100);
     sprite->color = glm::vec4(.8, .5, .4, 1);
     sprite->thickness = 6;
@@ -108,15 +108,13 @@ void NetworkingClientSystem::update(double dt) {
     }
 
     //for (Kikan::Entity *e: _entities) {
-        auto *playerSprite = _player->getComponent<Kikan::LineQuadSprite>();
-        if(!playerSprite)
-            return;
+        auto *transform = _player->getComponent<Kikan::Transform>();
 
         Message msg{};
         msg.hdr.id = 1;
         msg.hdr.len = sizeof(C2S_Pos);
-        msg.body.c2s_pos.x = playerSprite->position.x;
-        msg.body.c2s_pos.y = playerSprite->position.y;
+        msg.body.c2s_pos.x = transform->position.x;
+        msg.body.c2s_pos.y = transform->position.y;
 
         send(_sock_fd, &msg, MESSAGE_SIZE(msg), MSG_NOSIGNAL);
 
@@ -156,9 +154,9 @@ void NetworkingClientSystem::update(double dt) {
                 if(!_enemies[data.id])
                     continue;
 
-                auto sprite = _enemies[data.id]->getComponent<Kikan::LineQuadSprite>();
-                sprite->position.x = data.x;
-                sprite->position.y = data.y;
+                auto transform2 = _enemies[data.id]->getComponent<Kikan::Transform>();
+                transform2->position.x = data.x;
+                transform2->position.y = data.y;
             }
         }
     //}
