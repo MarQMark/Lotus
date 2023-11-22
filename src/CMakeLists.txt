@@ -7,6 +7,8 @@ add_executable(Lotus
         systems/NetworkingClientSystem.cpp
         systems/NetworkingServerSystem.cpp
         systems/EnemySystem.cpp
+        systems/CollisionSystem.cpp
+        systems/PhysicsSystem.cpp
 )
 
 target_include_directories(Lotus
