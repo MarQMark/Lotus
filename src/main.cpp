@@ -6,8 +6,11 @@
 #include "systems/PlayerMovementSystem.h"
 #include "systems/NetworkingServerSystem.h"
 #include "systems/NetworkingClientSystem.h"
-#include "Kikan/ecs/systems/PhysicsSystem.h"
+#include "systems/PhysicsSystem.h"
 #include "Kikan/ecs/components/Physics.h"
+#include "components/SColliderComponent.h"
+#include "components/DColliderComponent.h"
+#include "systems/CollisionSystem.h"
 
 int WinMain() {
     Kikan::Engine::init();
@@ -19,32 +22,65 @@ int WinMain() {
     ((Kikan::Renderer::StdRenderer*)engine->getRenderer())->mvp = camera.matrix();
 
     auto* spriteSystem = new Kikan::SpriteRenderSystem();
-    //auto* physicsSystem = new Kikan::PhysicsSystem();
 
+    engine->getECS()->getScene()->addSystem(spriteSystem);
+
+    auto* physicsSystem = new PhysicsSystem();
+    physicsSystem->gravity = -.0007f;
     auto* movSystem = new PlayerMovementSystem();
     auto* serverSystem = new NetworkingServerSystem();
     auto* clientSystem = new NetworkingClientSystem();
+    auto* collisionSystem = new CollisionSystem();
 
-    engine->getECS()->getScene()->addSystem(spriteSystem);
-    //engine->getECS()->getScene()->addSystem(physicsSystem);
-
+    engine->getECS()->getScene()->addSystem(physicsSystem);
     engine->getECS()->getScene()->addSystem(movSystem);
     engine->getECS()->getScene()->addSystem(serverSystem);
     engine->getECS()->getScene()->addSystem(clientSystem);
+    engine->getECS()->getScene()->addSystem(collisionSystem);
 
 
-    auto* entity = new Kikan::Entity();
-    entity->getComponent<Kikan::Transform>()->position = glm::vec3(50, 20, 0);
-    auto* physics = new Kikan::Physics();
-    auto* sprite = new Kikan::LineQuadSprite();
-    sprite->dimensions = glm::vec2(100, 100);
-    sprite->color = glm::vec4(.4, .5, .8, 1);
-    sprite->thickness = 6;
-    auto* player = new PlayerComponent();
-    entity->addComponent(player);
-    entity->addComponent(sprite);
-    entity->addComponent(physics);
-    engine->getECS()->getScene()->addEntity(entity);
+    // Player
+    {
+        auto* entity = new Kikan::Entity();
+        entity->getComponent<Kikan::Transform>()->position = glm::vec3(500, 200, 0);
+
+        auto* physics = new Kikan::Physics();
+        entity->addComponent(physics);
+
+        auto* sprite = new Kikan::LineQuadSprite();
+        sprite->dimensions = glm::vec2(50, 80);
+        sprite->color = glm::vec4(.4, .5, .8, 1);
+        sprite->thickness = 3;
+        entity->addComponent(sprite);
+
+        auto* collider = new DColliderComponent();
+        collider->dimensions = glm::vec2(50, 80);
+        entity->addComponent(collider);
+
+        auto* player = new PlayerComponent();
+        entity->addComponent(player);
+
+        engine->getECS()->getScene()->addEntity(entity);
+    }
+
+    // Ground
+    {
+        auto* entity = new Kikan::Entity();
+        entity->getComponent<Kikan::Transform>()->position = glm::vec3(200, 100, 0);
+
+        auto* sprite = new Kikan::LineQuadSprite();
+        sprite->dimensions = glm::vec2(880, 50);
+        sprite->color = glm::vec4(.4, .4, .4, 1);
+        sprite->thickness = 10;
+        entity->addComponent(sprite);
+
+        auto* collider = new SColliderComponent();
+        collider->dimensions = glm::vec2(880, 50);
+        entity->addComponent(collider);
+
+        engine->getECS()->getScene()->addEntity(entity);
+    }
+
 
     while (engine->shouldRun()) {
         engine->update();
