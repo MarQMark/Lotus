@@ -12,24 +12,22 @@ static bool collidedAABB(glm::vec2 pos1, glm::vec2 dim1, glm::vec2 pos2, glm::ve
         pos1.y + dim1.y > pos2.y;
 }
 
-static void CheckEdgeCases(glm::vec2 v, float& mulitplierTop, float& mulitplierBottom, float& mulitplierRight, float& mulitplierLeft)
+static void CheckEdgeCases(glm::vec2 v, float& mTop, float& mBottom, float& mRight, float& mLeft)
 {
     // if vector goes backwards it's automatically not the right direction
-    if (mulitplierTop < 0 && std::isfinite(mulitplierTop)) mulitplierTop = std::numeric_limits<float>::infinity();
-    if (mulitplierBottom < 0 && std::isfinite(mulitplierBottom)) mulitplierBottom = std::numeric_limits<float>::infinity();
-    if (mulitplierRight < 0 && std::isfinite(mulitplierRight)) mulitplierRight = std::numeric_limits<float>::infinity();
-    if (mulitplierLeft < 0 && std::isfinite(mulitplierLeft)) mulitplierLeft = std::numeric_limits<float>::infinity();
+    if (mTop < 0 && std::isfinite(mTop)) mTop = std::numeric_limits<float>::infinity();
+    if (mBottom < 0 && std::isfinite(mBottom)) mBottom = std::numeric_limits<float>::infinity();
+    if (mRight < 0 && std::isfinite(mRight)) mRight = std::numeric_limits<float>::infinity();
+    if (mLeft < 0 && std::isfinite(mLeft)) mLeft = std::numeric_limits<float>::infinity();
 
-    if (v.x == 0)
-    {
-        mulitplierRight = std::numeric_limits<float>::infinity();
-        mulitplierLeft = std::numeric_limits<float>::infinity();
+    if (v.x == 0){
+        mRight = std::numeric_limits<float>::infinity();
+        mLeft = std::numeric_limits<float>::infinity();
     }
 
-    if (v.y == 0)
-    {
-        mulitplierTop = std::numeric_limits<float>::infinity();
-        mulitplierBottom = std::numeric_limits<float>::infinity();
+    if (v.y == 0){
+        mTop = std::numeric_limits<float>::infinity();
+        mBottom = std::numeric_limits<float>::infinity();
     }
 }
 
@@ -49,16 +47,24 @@ void CollisionSystem::addEntity(Kikan::Entity *entity) {
         _s_entities.push_back(entity);
 }
 
+// TODO: Override removeEntity to also remove from _d_entities and _s_entities
+
 void CollisionSystem::updateColliderPosition(){
     for(auto* entity : _d_entities){
         auto* transform = entity->getComponent<Kikan::Transform>();
         auto* collider = entity->getComponent<DColliderComponent>();
-        collider->position = transform->position;
+        collider->position = transform->position + glm::vec3(collider->offset, 0) - glm::vec3(0, collider->dimensions.y, 0);
 
         collider->hasCollidedT = false;
         collider->hasCollidedB = false;
         collider->hasCollidedL = false;
         collider->hasCollidedR = false;
+    }
+
+    for(auto* entity : _s_entities) {
+        auto *transform = entity->getComponent<Kikan::Transform>();
+        auto *collider = entity->getComponent<SColliderComponent>();
+        collider->position = transform->position + glm::vec3(collider->offset, 0) - glm::vec3(0, collider->dimensions.y, 0);;
     }
 }
 
@@ -67,36 +73,28 @@ void CollisionSystem::updateTransformPosition() {
     for(auto* entity : _d_entities){
         auto* transform = entity->getComponent<Kikan::Transform>();
         auto* collider = entity->getComponent<DColliderComponent>();
-        transform->position = glm::vec3(collider->position, transform->position.z);
+        transform->position = glm::vec3(collider->position - collider->offset, transform->position.z) + glm::vec3(0, collider->dimensions.y, 0);;
         collider->lastPosition = collider->position;
     }
 }
 
 CollisionSystem::Direction CollisionSystem::collidesDirectionAABB(Kikan::Entity* dEntity, Kikan::Entity* sEntity)
 {
-    auto* da = dEntity->getComponent<DColliderComponent>();
-    auto* tb = sEntity->getComponent<Kikan::Transform>();
-    auto* sb = sEntity->getComponent<SColliderComponent>();
+    auto* dCollider = dEntity->getComponent<DColliderComponent>();
+    auto* sCollider = sEntity->getComponent<SColliderComponent>();
 
-    auto v = glm::vec2(da->position.x - da->lastPosition.x, da->position.y - da->lastPosition.y);
-    auto lastCenter = glm::vec2();
+    auto v = dCollider->position - dCollider->lastPosition;
+    auto lastCenter = dCollider->lastPosition + glm::vec2(dCollider->dimensions.x, dCollider->dimensions.y) / 2.f;
 
-    // test for top side
-    float mulitplierTop = (tb->position.y + sb->dimensions.y + (da->dimensions.y / 2) - lastCenter.y) / v.y;
+    float mTop =    (sCollider->position.y + sCollider->dimensions.y + (dCollider->dimensions.y / 2) - lastCenter.y) / v.y;
+    float mBottom = (sCollider->position.y - (dCollider->dimensions.y / 2) - lastCenter.y) / v.y;
+    float mRight =  (sCollider->position.x + sCollider->dimensions.x + (dCollider->dimensions.x / 2) - lastCenter.x) / v.x;
+    float mLeft =   (sCollider->position.x - (dCollider->dimensions.x / 2) - lastCenter.x) / v.x;
 
-    // test for bottom side
-    float mulitplierBottom = (tb->position.y - (da->dimensions.y / 2) - lastCenter.y) / v.y;
-
-    // test for right side
-    float mulitplierRight = (tb->position.x + sb->dimensions.x + (da->dimensions.x / 2) - lastCenter.x) / v.x;
-
-    // test for left side
-    float mulitplierLeft = (tb->position.x - (da->dimensions.x / 2) - lastCenter.x) / v.x;
-
-    int zeros = (int(mulitplierTop == 0) * 4) +
-                (int(mulitplierLeft == 0) * 4) +
-                (int(mulitplierRight == 0) * 3) +
-                (int(mulitplierBottom == 0) * 2);
+    int zeros = (int(mTop == 0) * 4) +
+                (int(mLeft == 0) * 4) +
+                (int(mRight == 0) * 3) +
+                (int(mBottom == 0) * 2);
     if (zeros > 6)
         return Direction::UP;
     else if (zeros > 5)
@@ -104,14 +102,14 @@ CollisionSystem::Direction CollisionSystem::collidesDirectionAABB(Kikan::Entity*
     else if (zeros > 4)
         return Direction::RIGHT;
 
-    CheckEdgeCases(v, mulitplierTop, mulitplierBottom, mulitplierRight, mulitplierLeft);
+    CheckEdgeCases(v, mTop, mBottom, mRight, mLeft);
 
-    if (mulitplierLeft < mulitplierBottom && mulitplierLeft < mulitplierRight && mulitplierLeft < mulitplierTop)
+    if (mLeft < mBottom && mLeft < mRight && mLeft < mTop)
         return Direction::LEFT;
-    if (mulitplierRight < mulitplierBottom && mulitplierRight < mulitplierTop && mulitplierRight < mulitplierLeft)
+    if (mRight < mBottom && mRight < mTop && mRight < mLeft)
         return Direction::RIGHT;
 
-    if (mulitplierTop < mulitplierBottom && mulitplierTop < mulitplierRight && mulitplierTop < mulitplierLeft)
+    if (mTop < mBottom && mTop < mRight && mTop < mLeft)
         return Direction::UP;
 
     return Direction::DOWN;
@@ -121,25 +119,26 @@ void CollisionSystem::handleCleanCollision(Direction direction, Kikan::Entity* d
 {
     auto* dCollider = dEntity->getComponent<DColliderComponent>();
     auto* sCollider = sEntity->getComponent<SColliderComponent>();
-    auto* sTransform = sEntity->getComponent<Kikan::Transform>();
 
     switch (direction)
     {
         case Direction::DOWN:
             dCollider->hasCollidedT = true;
-            dCollider->position = glm::vec2(dCollider->position.x, sTransform->position.y - dCollider->dimensions.y);
+            dCollider->position.y = sCollider->position.y - dCollider->dimensions.y;
             break;
         case Direction::UP:
             dCollider->hasCollidedB = true;
-            dCollider->position = glm::vec2(dCollider->position.x, sTransform->position.y + sCollider->dimensions.y);
+            dCollider->position.y = sCollider->position.y + sCollider->dimensions.y;
             break;
         case Direction::LEFT:
             dCollider->hasCollidedR = true;
-            dCollider->position = glm::vec2(sTransform->position.x - dCollider->dimensions.x, dCollider->position.y);
+            dCollider->position.x = sCollider->position.x - dCollider->dimensions.x;
             break;
         case Direction::RIGHT:
             dCollider->hasCollidedL = true;
-            dCollider->position = glm::vec2(sTransform->position.x + sCollider->dimensions.x, dCollider->position.y);
+            dCollider->position.x = sCollider->position.x + sCollider->dimensions.x;
+            break;
+        case Direction::NONE:
             break;
     }
 }
@@ -148,14 +147,12 @@ void CollisionSystem::update(double dt) {
     updateColliderPosition();
 
     for(auto* dEntity : _d_entities){
-        auto* dTransform = dEntity->getComponent<Kikan::Transform>();
         auto* dCollider = dEntity->getComponent<DColliderComponent>();
 
         for(auto* sEntity : _s_entities){
-            auto* sTransform = sEntity->getComponent<Kikan::Transform>();
             auto* sCollider = sEntity->getComponent<SColliderComponent>();
 
-            if(collidedAABB(dCollider->position, dCollider->dimensions, sTransform->position, sCollider->dimensions)){
+            if(collidedAABB(dCollider->position, dCollider->dimensions, sCollider->position, sCollider->dimensions)){
                 Direction dir = collidesDirectionAABB(dEntity, sEntity);
                 handleCleanCollision(dir, dEntity, sEntity);
             }
