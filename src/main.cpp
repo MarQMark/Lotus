@@ -28,16 +28,17 @@ int WinMain() {
     auto* physicsSystem = new PhysicsSystem();
     physicsSystem->gravity = -.0007f;
     auto* movSystem = new PlayerMovementSystem();
-    auto* serverSystem = new NetworkingServerSystem();
     auto* clientSystem = new NetworkingClientSystem();
     auto* collisionSystem = new CollisionSystem();
 
     engine->getECS()->getScene()->addSystem(physicsSystem);
     engine->getECS()->getScene()->addSystem(movSystem);
-    engine->getECS()->getScene()->addSystem(serverSystem);
     engine->getECS()->getScene()->addSystem(clientSystem);
     engine->getECS()->getScene()->addSystem(collisionSystem);
 
+    auto* serverSystem = new NetworkingServerSystem();
+    engine->getECS()->createThread(10, 100);
+    engine->getECS()->addThreadedSystem(serverSystem, 0);
 
     // Player
     {
@@ -81,6 +82,8 @@ int WinMain() {
         engine->getECS()->getScene()->addEntity(entity);
     }
 
+    std::string title = "Lotus\n";
+    engine->setTitle(title);
 
     while (engine->shouldRun()) {
         engine->update();

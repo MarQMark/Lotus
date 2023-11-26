@@ -61,7 +61,6 @@ void NetworkingServerSystem::update(double dt) {
         return;
     }
 
-
     // Check for new Client
     int sock = accept(_passive_sock, NULL, NULL);
     if(sock != -1){
@@ -70,7 +69,7 @@ void NetworkingServerSystem::update(double dt) {
         auto* clientComp = new ClientComponent();
         clientComp->sock_fd = sock;
         client->addComponent(clientComp);
-        Kikan::Engine::Kikan()->getECS()->getScene()->addEntity(client);
+        addEntity(client);
     }
 
     std::vector<PlayerData> dataMsgs;
