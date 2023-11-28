@@ -33,8 +33,8 @@ static void CheckEdgeCases(glm::vec2 v, float& mTop, float& mBottom, float& mRig
 
 
 CollisionSystem::CollisionSystem() {
-    singleInclude(DColliderComponent);
-    singleInclude(SColliderComponent);
+    includeSingle(DColliderComponent);
+    includeSingle(SColliderComponent);
 }
 
 void CollisionSystem::addEntity(Kikan::Entity *entity) {

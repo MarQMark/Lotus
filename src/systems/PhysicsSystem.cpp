@@ -3,7 +3,7 @@
 #include "components/DColliderComponent.h"
 
 PhysicsSystem::PhysicsSystem() {
-    singleInclude(Kikan::Physics);
+    includeSingle(Kikan::Physics);
 }
 
 void PhysicsSystem::update(double dt) {

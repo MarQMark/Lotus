@@ -15,7 +15,7 @@
 
 
 NetworkingServerSystem::NetworkingServerSystem() {
-    singleInclude(ClientComponent);
+    includeSingle(ClientComponent);
 }
 
 static int createPassiveSocket(in_port_t port)

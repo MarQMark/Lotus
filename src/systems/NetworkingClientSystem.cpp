@@ -13,7 +13,7 @@
 #include <netinet/in.h>
 
 NetworkingClientSystem::NetworkingClientSystem() {
-    singleInclude(PlayerComponent);
+    includeSingle(PlayerComponent);
 }
 
 void NetworkingClientSystem::addEntity(Kikan::Entity *entity) {

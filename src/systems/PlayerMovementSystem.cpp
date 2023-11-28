@@ -8,7 +8,7 @@
 #include "Constants.h"
 
 PlayerMovementSystem::PlayerMovementSystem() {
-    singleInclude(PlayerComponent);
+    includeSingle(PlayerComponent);
 }
 
 void PlayerMovementSystem::update(double dt) {

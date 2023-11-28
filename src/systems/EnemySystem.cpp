@@ -2,7 +2,7 @@
 #include "components/EnemyComponent.h"
 
 EnemySystem::EnemySystem() {
-    singleInclude(EnemyComponent);
+    includeSingle(EnemyComponent);
 }
 
 void EnemySystem::update(double dt) {
