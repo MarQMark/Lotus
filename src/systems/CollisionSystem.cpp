@@ -47,7 +47,27 @@ void CollisionSystem::addEntity(Kikan::Entity *entity) {
         _s_entities.push_back(entity);
 }
 
-// TODO: Override removeEntity to also remove from _d_entities and _s_entities
+void CollisionSystem::removeEntity(Kikan::Entity *entity) {
+    ISystem::removeEntity(entity);
+
+    if(entity->getComponent<SColliderComponent>()){
+        for (int i = 0; i < (int)_s_entities.size(); ++i) {
+            if(_s_entities.at(i) == entity){
+                _s_entities.erase(_s_entities.begin() + i);
+                return;
+            }
+        }
+    }
+
+    if(entity->getComponent<DColliderComponent>()){
+        for (int i = 0; i < (int)_d_entities.size(); ++i) {
+            if(_d_entities.at(i) == entity){
+                _d_entities.erase(_d_entities.begin() + i);
+                return;
+            }
+        }
+    }
+}
 
 void CollisionSystem::updateColliderPosition(){
     for(auto* entity : _d_entities){
@@ -161,5 +181,6 @@ void CollisionSystem::update(double dt) {
 
     updateTransformPosition();
 }
+
 
 

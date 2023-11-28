@@ -8,6 +8,7 @@ public:
     CollisionSystem();
 
     void addEntity(Kikan::Entity *entity) override;
+    void removeEntity(Kikan::Entity *entity) override;
 
     void update(double dt) override;
 private:
