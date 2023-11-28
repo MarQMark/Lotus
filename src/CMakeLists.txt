@@ -9,6 +9,8 @@ add_executable(Lotus
         systems/EnemySystem.cpp
         systems/CollisionSystem.cpp
         systems/PhysicsSystem.cpp
+
+        util/Spawner.cpp
 )
 
 target_include_directories(Lotus

@@ -12,6 +12,7 @@
 #include "components/DColliderComponent.h"
 #include "systems/CollisionSystem.h"
 #include "Constants.h"
+#include "util/Spawner.h"
 
 int WinMain() {
     Kikan::Engine::init();
@@ -43,26 +44,8 @@ int WinMain() {
 
     // Player
     {
-        auto* entity = new Kikan::Entity();
+        auto* entity = Spawner::spawnPlayer();
         entity->getComponent<Kikan::Transform>()->position = glm::vec3(500, 200, 0);
-
-        auto* physics = new Kikan::Physics();
-        physics->friction.x = PLAYER_FRICTION;
-        entity->addComponent(physics);
-
-        auto* sprite = new Kikan::LineQuadSprite();
-        sprite->dimensions = glm::vec2(50, 80);
-        sprite->color = glm::vec4(.4, .5, .8, 1);
-        sprite->thickness = 3;
-        entity->addComponent(sprite);
-
-        auto* collider = new DColliderComponent();
-        collider->dimensions = glm::vec2(50, 80);
-        entity->addComponent(collider);
-
-        auto* player = new PlayerComponent();
-        entity->addComponent(player);
-
         engine->getECS()->getScene()->addEntity(entity);
     }
 

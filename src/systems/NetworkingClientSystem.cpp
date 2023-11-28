@@ -7,6 +7,7 @@
 #include "Kikan/ecs/components/LineQuadSprite.h"
 #include "networking/Messages.h"
 #include "components/EnemyComponent.h"
+#include "util/Spawner.h"
 
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -23,16 +24,10 @@ void NetworkingClientSystem::addEntity(Kikan::Entity *entity) {
 }
 
 void NetworkingClientSystem::addEnemy(uint16_t id){
-    auto* enemy = new Kikan::Entity();
+    auto* enemy = Spawner::spawnEnemy();
+
     enemy->getComponent<Kikan::Transform>()->position = glm::vec3(80, 80, 0);
-    auto* enemyComponent = new EnemyComponent();
-    enemyComponent->enemyID = id;
-    enemy->addComponent(enemyComponent);
-    auto* sprite = new Kikan::LineQuadSprite();
-    sprite->dimensions = glm::vec2(100, 100);
-    sprite->color = glm::vec4(.8, .5, .4, 1);
-    sprite->thickness = 6;
-    enemy->addComponent(sprite);
+    enemy->getComponent<EnemyComponent>()->enemyID = id;
     Kikan::Engine::Kikan()->getECS()->getScene()->addEntity(enemy);
 
     _enemies[id] = enemy;
