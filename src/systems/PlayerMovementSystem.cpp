@@ -3,6 +3,9 @@
 #include "Kikan/ecs/Entity.h"
 #include "Kikan/Engine.h"
 #include "Kikan/input/Input.h"
+#include "Kikan/ecs/components/Physics.h"
+#include "components/DColliderComponent.h"
+#include "Constants.h"
 
 PlayerMovementSystem::PlayerMovementSystem() {
     singleInclude(PlayerComponent);
@@ -11,18 +14,21 @@ PlayerMovementSystem::PlayerMovementSystem() {
 void PlayerMovementSystem::update(double dt) {
     for (Kikan::Entity *e: _entities) {
         auto *transform = e->getComponent<Kikan::Transform>();
-        if (Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::W)){
-            transform->position.y+=10;
-        }
-        if (Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::S)){
-            transform->position.y-=10;
-        }
+        auto *physics = e->getComponent<Kikan::Physics>();
+        auto *collider = e->getComponent<DColliderComponent>();
+        if(!physics || !collider)
+            return;
 
         if (Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::D)){
-            transform->position.x+=10;
+            physics->acceleration.x += MOVEMENT_SPEED;
         }
         if (Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::A)){
-            transform->position.x-=10;
+            physics->acceleration.x += -MOVEMENT_SPEED;
+        }
+
+        if(Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::SPACE)){
+            if(collider->hasCollidedB)
+                physics->velocity.y = JUMP_FORCE;
         }
     }
 }

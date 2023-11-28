@@ -11,6 +11,7 @@
 #include "components/SColliderComponent.h"
 #include "components/DColliderComponent.h"
 #include "systems/CollisionSystem.h"
+#include "Constants.h"
 
 int WinMain() {
     Kikan::Engine::init();
@@ -26,7 +27,7 @@ int WinMain() {
     engine->getECS()->getScene()->addSystem(spriteSystem);
 
     auto* physicsSystem = new PhysicsSystem();
-    physicsSystem->gravity = -.0007f;
+    physicsSystem->gravity = GRAVITY;
     auto* movSystem = new PlayerMovementSystem();
     auto* clientSystem = new NetworkingClientSystem();
     auto* collisionSystem = new CollisionSystem();
@@ -46,6 +47,7 @@ int WinMain() {
         entity->getComponent<Kikan::Transform>()->position = glm::vec3(500, 200, 0);
 
         auto* physics = new Kikan::Physics();
+        physics->friction.x = PLAYER_FRICTION;
         entity->addComponent(physics);
 
         auto* sprite = new Kikan::LineQuadSprite();

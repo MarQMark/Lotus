@@ -26,14 +26,14 @@ void PhysicsSystem::update(double dt) {
         }
 
         // Add Gravity to acceleration
-        physics->acceleration += glm::vec2(0.0f, gravity);
+        physics->acceleration.y += gravity;
 
         // Peak downward acceleration
         if (physics->velocity.y <= 0)
-            physics->acceleration += glm::vec2 (0.0f, 2.0f * gravity);
+            physics->acceleration.y += 2.f * gravity;
 
         // Friction
-        physics->acceleration += glm::vec2(physics->friction.x * physics->velocity.y * physics->friction.x, 0);
+        physics->acceleration.x += physics->velocity.x * -physics->friction.x;
 
         // Physics calculation
         glm::vec2 oldVelocity = physics->velocity;
