@@ -14,6 +14,62 @@
 #include "Constants.h"
 #include "util/Spawner.h"
 #include "systems/CameraSystem.h"
+#include "systems/EffectSystem.h"
+
+void addBoundaries(){
+    Kikan::Engine* engine = Kikan::Engine::Kikan();
+    // Ground
+    {
+        auto *entity = new Kikan::Entity();
+        entity->getComponent<Kikan::Transform>()->position = glm::vec3(0, 20, 0);
+
+        auto *sprite = new Kikan::LineQuadSprite();
+        sprite->dimensions = glm::vec2(1000, 20);
+        sprite->color = glm::vec4(.4, .4, .4, 1);
+        sprite->thickness = 5;
+        entity->addComponent(sprite);
+
+        auto *collider = new SColliderComponent();
+        collider->dimensions = glm::vec2(1000, 20);
+        entity->addComponent(collider);
+
+        engine->getECS()->getScene()->addEntity(entity);
+    }
+    // Left Wall
+    {
+        auto *entity = new Kikan::Entity();
+        entity->getComponent<Kikan::Transform>()->position = glm::vec3(1000, 1000, 0);
+
+        auto *sprite = new Kikan::LineQuadSprite();
+        sprite->dimensions = glm::vec2(20, 1000);
+        sprite->color = glm::vec4(.4, .4, .4, 1);
+        sprite->thickness = 5;
+        entity->addComponent(sprite);
+
+        auto *collider = new SColliderComponent();
+        collider->dimensions = glm::vec2(20, 1000);
+        entity->addComponent(collider);
+
+        engine->getECS()->getScene()->addEntity(entity);
+    }
+    // Right Wall
+    {
+        auto *entity = new Kikan::Entity();
+        entity->getComponent<Kikan::Transform>()->position = glm::vec3(-20, 1000, 0);
+
+        auto *sprite = new Kikan::LineQuadSprite();
+        sprite->dimensions = glm::vec2(20, 1000);
+        sprite->color = glm::vec4(.4, .4, .4, 1);
+        sprite->thickness = 5;
+        entity->addComponent(sprite);
+
+        auto *collider = new SColliderComponent();
+        collider->dimensions = glm::vec2(20, 1000);
+        entity->addComponent(collider);
+
+        engine->getECS()->getScene()->addEntity(entity);
+    }
+}
 
 int WinMain() {
     Kikan::Engine::init();
@@ -27,12 +83,14 @@ int WinMain() {
     auto* cameraSystem = new CameraSystem();
     auto* physicsSystem = new PhysicsSystem();
     physicsSystem->gravity = GRAVITY;
+    auto* effectSystem = new EffectSystem();
     auto* movSystem = new PlayerMovementSystem();
     auto* clientSystem = new NetworkingClientSystem();
     auto* collisionSystem = new CollisionSystem();
 
     engine->getECS()->getScene()->addSystem(cameraSystem);
     engine->getECS()->getScene()->addSystem(physicsSystem);
+    engine->getECS()->getScene()->addSystem(effectSystem);
     engine->getECS()->getScene()->addSystem(movSystem);
     engine->getECS()->getScene()->addSystem(clientSystem);
     engine->getECS()->getScene()->addSystem(collisionSystem);
@@ -48,23 +106,7 @@ int WinMain() {
         engine->getECS()->getScene()->addEntity(entity);
     }
 
-    // Ground
-    {
-        auto* entity = new Kikan::Entity();
-        entity->getComponent<Kikan::Transform>()->position = glm::vec3(50, 20, 0);
-
-        auto* sprite = new Kikan::LineQuadSprite();
-        sprite->dimensions = glm::vec2(900, 20);
-        sprite->color = glm::vec4(.4, .4, .4, 1);
-        sprite->thickness = 5;
-        entity->addComponent(sprite);
-
-        auto* collider = new SColliderComponent();
-        collider->dimensions = glm::vec2(900, 20);
-        entity->addComponent(collider);
-
-        engine->getECS()->getScene()->addEntity(entity);
-    }
+    addBoundaries();
 
     std::string title = "Lotus\n";
     engine->setTitle(title);
