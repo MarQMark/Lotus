@@ -13,26 +13,25 @@
 #include "systems/CollisionSystem.h"
 #include "Constants.h"
 #include "util/Spawner.h"
+#include "systems/CameraSystem.h"
 
 int WinMain() {
     Kikan::Engine::init();
     Kikan::Engine* engine = Kikan::Engine::Kikan();
 
-    Kikan::Renderer::Camera camera;
-    camera.scale(2/1280., 2/720.);
-    camera.translate(-1280/2., -720/2.);
-    ((Kikan::Renderer::StdRenderer*)engine->getRenderer())->mvp = camera.matrix();
 
     auto* spriteSystem = new Kikan::SpriteRenderSystem();
 
     engine->getECS()->getScene()->addSystem(spriteSystem);
 
+    auto* cameraSystem = new CameraSystem();
     auto* physicsSystem = new PhysicsSystem();
     physicsSystem->gravity = GRAVITY;
     auto* movSystem = new PlayerMovementSystem();
     auto* clientSystem = new NetworkingClientSystem();
     auto* collisionSystem = new CollisionSystem();
 
+    engine->getECS()->getScene()->addSystem(cameraSystem);
     engine->getECS()->getScene()->addSystem(physicsSystem);
     engine->getECS()->getScene()->addSystem(movSystem);
     engine->getECS()->getScene()->addSystem(clientSystem);
@@ -45,23 +44,23 @@ int WinMain() {
     // Player
     {
         auto* entity = Spawner::spawnPlayer();
-        entity->getComponent<Kikan::Transform>()->position = glm::vec3(500, 200, 0);
+        entity->getComponent<Kikan::Transform>()->position = glm::vec3(500, 300, 0);
         engine->getECS()->getScene()->addEntity(entity);
     }
 
     // Ground
     {
         auto* entity = new Kikan::Entity();
-        entity->getComponent<Kikan::Transform>()->position = glm::vec3(200, 100, 0);
+        entity->getComponent<Kikan::Transform>()->position = glm::vec3(50, 20, 0);
 
         auto* sprite = new Kikan::LineQuadSprite();
-        sprite->dimensions = glm::vec2(880, 50);
+        sprite->dimensions = glm::vec2(900, 20);
         sprite->color = glm::vec4(.4, .4, .4, 1);
-        sprite->thickness = 10;
+        sprite->thickness = 5;
         entity->addComponent(sprite);
 
         auto* collider = new SColliderComponent();
-        collider->dimensions = glm::vec2(880, 50);
+        collider->dimensions = glm::vec2(900, 20);
         entity->addComponent(collider);
 
         engine->getECS()->getScene()->addEntity(entity);

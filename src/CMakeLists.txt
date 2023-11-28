@@ -9,6 +9,7 @@ add_executable(Lotus
         systems/EnemySystem.cpp
         systems/CollisionSystem.cpp
         systems/PhysicsSystem.cpp
+        systems/CameraSystem.cpp
 
         util/Spawner.cpp
 )
