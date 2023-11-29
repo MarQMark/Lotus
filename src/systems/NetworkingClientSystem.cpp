@@ -8,19 +8,33 @@
 #include "networking/Messages.h"
 #include "components/EnemyComponent.h"
 #include "util/Spawner.h"
+#include "components/MessageComponent.h"
+#include "Kikan/ecs/components/Physics.h"
+#include "components/TriggerComponent.h"
 
 #include <sys/socket.h>
 #include <netinet/in.h>
 
+
 NetworkingClientSystem::NetworkingClientSystem() {
     includeSingle(PlayerComponent);
+    includeSingle(MessageComponent);
 }
 
 void NetworkingClientSystem::addEntity(Kikan::Entity *entity) {
+    if (entity->getComponent<MessageComponent>()){
+        _m_queue.push(entity);
+        return;
+    }
+
     ISystem::addEntity(entity);
     if(entity->getComponent<PlayerComponent>()){
         _player = entity;
     }
+}
+
+void NetworkingClientSystem::removeEntity(Kikan::Entity *entity) {
+    ISystem::removeEntity(entity);
 }
 
 void NetworkingClientSystem::addEnemy(uint16_t id){
@@ -102,21 +116,35 @@ void NetworkingClientSystem::update(double dt) {
         kikanPrintE("Client: Auth successful\n");
     }
 
-    //for (Kikan::Entity *e: _entities) {
+    //for (Kikan::Entity *e: _entities)
+    {
         auto *transform = _player->getComponent<Kikan::Transform>();
 
         Message msg{};
-        msg.hdr.id = 1;
+        msg.hdr.id = MessageID::C2SPos;
         msg.hdr.len = sizeof(C2S_Pos);
         msg.body.c2s_pos.x = transform->position.x;
         msg.body.c2s_pos.y = transform->position.y;
 
         send(_sock_fd, &msg, MESSAGE_SIZE(msg), MSG_NOSIGNAL);
+    }
 
+    // send all queued messages
+    while(!_m_queue.empty()){
+        auto* entity = _m_queue.front();
+        auto msgComponent = entity->getComponent<MessageComponent>();
+        send(_sock_fd, &msgComponent->msg, MESSAGE_SIZE(msgComponent->msg), MSG_NOSIGNAL);
+        _m_queue.pop();
+        delete entity;
+    }
+
+    Message msg{};
+    while(true){
 
         int ret = recv(_sock_fd, &msg, sizeof(Header), MSG_DONTWAIT);
-        if(ret == -1)
+        if(ret == -1){
             return;
+        }
         if(ret != sizeof(Header)){
             kikanPrint("Client: Invalid header length: %d\n", ret);
             return;
@@ -131,8 +159,6 @@ void NetworkingClientSystem::update(double dt) {
             if(msg.body.s2c_join.playerID == _player->getComponent<PlayerComponent>()->playerID){
                 kikanPrint("Client: Received join for own ID\n");
             }
-
-            kikanPrint("AAAAAAAAAAA\n");
 
             addEnemy(msg.body.s2c_join.playerID);
         }
@@ -154,6 +180,27 @@ void NetworkingClientSystem::update(double dt) {
                 transform2->position.y = data.y;
             }
         }
-    //}
+        else if(msg.hdr.id == MessageID::Attack){
+            ret = recv(_sock_fd, &msg.body, sizeof(BAttack), MSG_DONTWAIT);
+            if(ret != msg.hdr.len){
+                kikanPrint("Client: Invalid body length: %d\n", ret);
+                return;
+            }
+            if(msg.body.s2c_join.playerID == _player->getComponent<PlayerComponent>()->playerID){
+                kikanPrint("Client: Received join for own ID\n");
+            }
+
+            auto* attack = Spawner::spawnAttack();
+            attack->getComponent<Kikan::Transform>()->position.x = msg.body.attack.x;
+            attack->getComponent<Kikan::Transform>()->position.y = msg.body.attack.y;
+            if(msg.body.attack.direction == 1){
+                attack->getComponent<Kikan::Physics>()->velocity.x *= -1;
+                attack->getComponent<TriggerComponent>()->impulse.x *= -1;
+            }
+            Kikan::Engine::Kikan()->getECS()->getScene()->addEntity(attack);
+        }
+
+    }
 }
+
 

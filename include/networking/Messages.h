@@ -10,6 +10,7 @@ enum MessageID {
     S2CAuth,
     S2CJoin,
     C2SPos,
+    Attack,
     S2CData
 };
 
@@ -58,11 +59,19 @@ typedef struct __attribute__((packed)) {
     float y;
 }C2S_Pos;
 
+typedef struct __attribute__((packed)) {
+    float x;
+    float y;
+    uint32_t nation;
+    uint8_t direction; // 0 = right, 1 = left
+}BAttack;
+
 typedef union __attribute__((packed)) {
     C2S_Auth c2s_auth;
     S2C_Auth s2c_auth;
     S2C_Join s2c_join;
     C2S_Pos c2s_pos;
+    BAttack attack;
 }Body;
 
 typedef struct __attribute__((packed)) {

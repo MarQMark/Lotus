@@ -138,7 +138,9 @@ void NetworkingServerSystem::update(double dt) {
         if(ret != msg.hdr.len){
             continue;
         }
-        else{
+
+        // receive Position
+        if(msg.hdr.id == MessageID::C2SPos){
             client->pos = glm::vec2(msg.body.c2s_pos.x, msg.body.c2s_pos.y);
             client->initData = true;
 
@@ -149,6 +151,16 @@ void NetworkingServerSystem::update(double dt) {
                         .y = client->pos.y,
                 };
                 dataMsgs.push_back(data);
+            }
+        }
+
+        // receive Attack
+        if(msg.hdr.id == MessageID::Attack){
+            for (auto* enemy: _entities) {
+                if(e == enemy)
+                    continue;
+
+                send(enemy->getComponent<ClientComponent>()->sock_fd, &msg, MESSAGE_SIZE(msg), MSG_NOSIGNAL);
             }
         }
     }

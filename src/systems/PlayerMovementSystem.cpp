@@ -9,6 +9,7 @@
 #include "util/Spawner.h"
 #include "components/TriggerComponent.h"
 #include "components/EffectComponent.h"
+#include "components/MessageComponent.h"
 
 PlayerMovementSystem::PlayerMovementSystem() {
     includeSingle(PlayerComponent);
@@ -47,9 +48,22 @@ void PlayerMovementSystem::update(double dt) {
                     attack->getComponent<Kikan::Transform>()->position.x = transform->position.x + collider->offset.x + collider->dimensions.x + 10;
                 }
                 else {
-                    attack->getComponent<Kikan::Transform>()->position.x = transform->position.x + collider->offset.x - attack->getComponent<TriggerComponent>()->dimensions.x - 100;
+                    attack->getComponent<Kikan::Transform>()->position.x = transform->position.x + collider->offset.x - attack->getComponent<TriggerComponent>()->dimensions.x - 10;
                     attack->getComponent<Kikan::Physics>()->velocity.x *= -1;
                     attack->getComponent<TriggerComponent>()->impulse.x *= -1;
+                }
+
+                {
+                    auto* entity = new Kikan::Entity;
+                    auto* msgComponent = new MessageComponent();
+                    msgComponent->msg.hdr.id = MessageID::Attack;
+                    msgComponent->msg.hdr.len = sizeof(BAttack);
+                    msgComponent->msg.body.attack.nation = 0;
+                    msgComponent->msg.body.attack.direction = player->facing;
+                    msgComponent->msg.body.attack.x = attack->getComponent<Kikan::Transform>()->position.x;
+                    msgComponent->msg.body.attack.y = attack->getComponent<Kikan::Transform>()->position.y;
+                    entity->addComponent(msgComponent);
+                    Kikan::Engine::Kikan()->getECS()->getScene()->addEntity(entity);
                 }
 
                 effect->effects[EffectComponent::ID::FIRE_ATTACK_COOLDOWN] = FIRE_ATTACK_COOL;
