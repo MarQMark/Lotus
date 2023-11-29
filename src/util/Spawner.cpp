@@ -4,6 +4,8 @@
 #include "components/DColliderComponent.h"
 #include "components/PlayerComponent.h"
 #include "components/EnemyComponent.h"
+#include "components/TriggerComponent.h"
+#include "components/EffectComponent.h"
 
 Kikan::Entity *Spawner::spawnPlayer(Nation nation) {
     auto* entity = new Kikan::Entity;
@@ -18,6 +20,9 @@ Kikan::Entity *Spawner::spawnPlayer(Nation nation) {
 
     auto* player = new PlayerComponent();
     entity->addComponent(player);
+
+    auto* effect = new EffectComponent();
+    entity->addComponent(effect);
 
     return entity;
 }
@@ -37,6 +42,22 @@ Kikan::Entity *Spawner::spawnEnemy(Nation nation) {
 
 Kikan::Entity *Spawner::spawnAttack(Nation nation) {
     auto* entity = new Kikan::Entity;
+
+    auto* sprite = new Kikan::LineQuadSprite();
+    sprite->dimensions = glm::vec2(40, 20);
+    sprite->thickness = 10;
+    sprite->color = glm::vec4 (1.f, 0.f, 0.f, 1.f);
+    entity->addComponent(sprite);
+
+    auto* trigger = new TriggerComponent();
+    trigger->dimensions = glm::vec2(40, 20);
+    trigger->impulse = glm::vec2(0.15, 0);
+    entity->addComponent(trigger);
+
+    auto* physics = new Kikan::Physics();
+    physics->velocity.x = FIRE_ATTACK_VEL;
+    physics->gravity = false;
+    entity->addComponent(physics);
 
     return entity;
 }

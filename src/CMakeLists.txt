@@ -11,6 +11,7 @@ add_executable(Lotus
         systems/PhysicsSystem.cpp
         systems/CameraSystem.cpp
         systems/EffectSystem.cpp
+        systems/TriggerSystem.cpp
 
         util/Spawner.cpp
 )

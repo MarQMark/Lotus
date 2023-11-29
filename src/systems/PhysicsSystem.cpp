@@ -26,11 +26,11 @@ void PhysicsSystem::update(double dt) {
         }
 
         // Add Gravity to acceleration
-        physics->acceleration.y += gravity;
+        physics->acceleration.y += (gravity * (float)int(physics->gravity));
 
         // Peak downward acceleration
         if (physics->velocity.y <= 0)
-            physics->acceleration.y += 2.f * gravity;
+            physics->acceleration.y += 2.f * (gravity * (float)int(physics->gravity));
 
         // Friction
         physics->acceleration.x += physics->velocity.x * -physics->friction.x;

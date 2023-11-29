@@ -7,6 +7,8 @@ class PlayerComponent : public Kikan::IComponent {
 public:
     int32_t playerID = -1;
 
+    uint8_t facing = 0; // 0 = right, 1 = left
+
     void destroy() override{
         delete this;
     };

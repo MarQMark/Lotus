@@ -16,21 +16,26 @@
 #include "systems/CameraSystem.h"
 #include "systems/EffectSystem.h"
 
+#include "stb_image/stb_image.h"
+#include "Kikan/ecs/components/Texture2DSprite.h"
+#include "Kikan/renderer/stdRenderer/buffers/Texture2D.h"
+#include "systems/TriggerSystem.h"
+
 void addBoundaries(){
     Kikan::Engine* engine = Kikan::Engine::Kikan();
     // Ground
     {
         auto *entity = new Kikan::Entity();
-        entity->getComponent<Kikan::Transform>()->position = glm::vec3(0, 20, 0);
+        entity->getComponent<Kikan::Transform>()->position = glm::vec3(0, 80, 0);
 
         auto *sprite = new Kikan::LineQuadSprite();
-        sprite->dimensions = glm::vec2(1000, 20);
+        sprite->dimensions = glm::vec2(1000, 80);
         sprite->color = glm::vec4(.4, .4, .4, 1);
-        sprite->thickness = 5;
+        sprite->thickness = 50;
         entity->addComponent(sprite);
 
         auto *collider = new SColliderComponent();
-        collider->dimensions = glm::vec2(1000, 20);
+        collider->dimensions = glm::vec2(1000, 80);
         entity->addComponent(collider);
 
         engine->getECS()->getScene()->addEntity(entity);
@@ -86,6 +91,7 @@ int WinMain() {
     auto* effectSystem = new EffectSystem();
     auto* movSystem = new PlayerMovementSystem();
     auto* clientSystem = new NetworkingClientSystem();
+    auto* triggerSystem = new TriggerSystem();
     auto* collisionSystem = new CollisionSystem();
 
     engine->getECS()->getScene()->addSystem(cameraSystem);
@@ -93,16 +99,36 @@ int WinMain() {
     engine->getECS()->getScene()->addSystem(effectSystem);
     engine->getECS()->getScene()->addSystem(movSystem);
     engine->getECS()->getScene()->addSystem(clientSystem);
+    engine->getECS()->getScene()->addSystem(triggerSystem);
     engine->getECS()->getScene()->addSystem(collisionSystem);
 
     auto* serverSystem = new NetworkingServerSystem();
     engine->getECS()->createThread(10, 100);
     engine->getECS()->addThreadedSystem(serverSystem, 0);
 
+    stbi_set_flip_vertically_on_load(1);
+    {
+        int width, height, mapImgBPP;;
+        unsigned char* buff = stbi_load("/home/mark/CLionProjects/Lotus/res/Maps/OuterWall2/background.png", &width, &height, &mapImgBPP, 4);
+        auto* txt = new Kikan::Renderer::Texture2D(width, height, buff);
+
+        auto* entity = new Kikan::Entity;
+        auto* sprite = new Kikan::Texture2DSprite;
+        sprite->points[0] = glm::vec2(0, 562.5f);
+        sprite->points[1] = glm::vec2(1000, 562.5f);
+        sprite->points[2] = glm::vec2(1000, 0);
+        sprite->points[3] = glm::vec2(0, 0);
+        sprite->textureID = txt->get();
+        sprite->layer = .1;
+        sprite->color = glm::vec4(.5f);
+        entity->addComponent(sprite);
+        engine->getECS()->getScene()->addEntity(entity);
+    }
+
     // Player
     {
         auto* entity = Spawner::spawnPlayer();
-        entity->getComponent<Kikan::Transform>()->position = glm::vec3(500, 300, 0);
+        entity->getComponent<Kikan::Transform>()->position = glm::vec3(500, 800, 0);
         engine->getECS()->getScene()->addEntity(entity);
     }
 
