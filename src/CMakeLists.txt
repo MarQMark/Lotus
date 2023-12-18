@@ -14,7 +14,16 @@ add_executable(Lotus
         systems/TriggerSystem.cpp
 
         util/Spawner.cpp
+        util/ResourceManager.cpp
 )
+
+#copy res to target folder
+add_custom_target(copy_res ALL
+        COMMAND  ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_SOURCE_DIR}/../res
+        ${PROJECT_BINARY_DIR}/res
+        COMMENT "Copying shaders into binary directory")
+add_dependencies(Lotus copy_res)
 
 target_include_directories(Lotus
         PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../include

@@ -16,26 +16,27 @@
 #include "systems/CameraSystem.h"
 #include "systems/EffectSystem.h"
 
-#include "stb_image/stb_image.h"
 #include "Kikan/ecs/components/Texture2DSprite.h"
 #include "Kikan/renderer/stdRenderer/buffers/Texture2D.h"
 #include "systems/TriggerSystem.h"
+#include "util/ResourceManager.h"
 
 void addBoundaries(){
     Kikan::Engine* engine = Kikan::Engine::Kikan();
     // Ground
     {
         auto *entity = new Kikan::Entity();
-        entity->getComponent<Kikan::Transform>()->position = glm::vec3(0, 80, 0);
+        entity->getComponent<Kikan::Transform>()->position = glm::vec3(0, 81, 0);
 
         auto *sprite = new Kikan::LineQuadSprite();
-        sprite->dimensions = glm::vec2(1000, 80);
+        sprite->dimensions = glm::vec2(1000, 81);
         sprite->color = glm::vec4(.4, .4, .4, 1);
         sprite->thickness = 50;
+        sprite->layer = -.2;
         entity->addComponent(sprite);
 
         auto *collider = new SColliderComponent();
-        collider->dimensions = glm::vec2(1000, 80);
+        collider->dimensions = glm::vec2(1000, 81);
         entity->addComponent(collider);
 
         engine->getECS()->getScene()->addEntity(entity);
@@ -107,19 +108,46 @@ int WinMain() {
     engine->getECS()->addThreadedSystem(serverSystem, 0);
 
     stbi_set_flip_vertically_on_load(1);
-    {
-        int width, height, mapImgBPP;;
-        unsigned char* buff = stbi_load("/home/mark/CLionProjects/Lotus/res/Maps/OuterWall2/background.png", &width, &height, &mapImgBPP, 4);
-        auto* txt = new Kikan::Renderer::Texture2D(width, height, buff);
 
+    ResourceManager::add<TextureResource>(new TextureResource("res/Maps/OuterWall2/background.png"), Resource::ID::OUTER_WALL_BACKGROUND);
+    ResourceManager::add<TextureResource>(new TextureResource("res/Maps/OuterWall2/foreground.png"),  Resource::ID::OUTER_WALL_FOREGROUND);
+    ResourceManager::add<TextureResource>(new TextureResource("res/Maps/OuterWall2/Clouds.png"),     Resource::ID::OUTER_WALL_CLOUDS);
+
+    {
         auto* entity = new Kikan::Entity;
         auto* sprite = new Kikan::Texture2DSprite;
         sprite->points[0] = glm::vec2(0, 562.5f);
         sprite->points[1] = glm::vec2(1000, 562.5f);
         sprite->points[2] = glm::vec2(1000, 0);
         sprite->points[3] = glm::vec2(0, 0);
-        sprite->textureID = txt->get();
+        sprite->textureID = ResourceManager::get<TextureResource>(Resource::ID::OUTER_WALL_CLOUDS)->getID();
+        sprite->layer = .2;
+        sprite->color = glm::vec4(.5f);
+        entity->addComponent(sprite);
+        engine->getECS()->getScene()->addEntity(entity);
+    }
+    {
+        auto* entity = new Kikan::Entity;
+        auto* sprite = new Kikan::Texture2DSprite;
+        sprite->points[0] = glm::vec2(0, 562.5f);
+        sprite->points[1] = glm::vec2(1000, 562.5f);
+        sprite->points[2] = glm::vec2(1000, 0);
+        sprite->points[3] = glm::vec2(0, 0);
+        sprite->textureID = ResourceManager::get<TextureResource>(Resource::ID::OUTER_WALL_BACKGROUND)->getID();
         sprite->layer = .1;
+        sprite->color = glm::vec4(.5f);
+        entity->addComponent(sprite);
+        engine->getECS()->getScene()->addEntity(entity);
+    }
+    {
+        auto* entity = new Kikan::Entity;
+        auto* sprite = new Kikan::Texture2DSprite;
+        sprite->points[0] = glm::vec2(0, 562.5f);
+        sprite->points[1] = glm::vec2(1000, 562.5f);
+        sprite->points[2] = glm::vec2(1000, 0);
+        sprite->points[3] = glm::vec2(0, 0);
+        sprite->textureID = ResourceManager::get<TextureResource>(Resource::ID::OUTER_WALL_FOREGROUND)->getID();
+        sprite->layer = -.1;
         sprite->color = glm::vec4(.5f);
         entity->addComponent(sprite);
         engine->getECS()->getScene()->addEntity(entity);
