@@ -110,7 +110,7 @@ int WinMain() {
     stbi_set_flip_vertically_on_load(1);
 
     ResourceManager::add<TextureResource>(new TextureResource("res/Maps/OuterWall2/background.png"), Resource::ID::OUTER_WALL_BACKGROUND);
-    ResourceManager::add<TextureResource>(new TextureResource("res/Maps/OuterWall2/foreground.png"),  Resource::ID::OUTER_WALL_FOREGROUND);
+    ResourceManager::add<TextureResource>(new TextureResource("res/Maps/OuterWall2/foreground.png"), Resource::ID::OUTER_WALL_FOREGROUND);
     ResourceManager::add<TextureResource>(new TextureResource("res/Maps/OuterWall2/Clouds.png"),     Resource::ID::OUTER_WALL_CLOUDS);
 
     {

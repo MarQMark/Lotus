@@ -2,11 +2,13 @@
 #define LOTUS_RESOURCEMANAGER_H
 
 #include <map>
+#include <vector>
 #include <string>
 #include "Kikan/renderer/stdRenderer/buffers/Texture2D.h"
 
 #define STB_IMAGE_STATIC
 #include "stb_image/stb_image.h"
+#include "glm/vec2.hpp"
 
 class Resource{
 public:
@@ -36,10 +38,82 @@ public:
         return _height;
     }
 
-private:
+protected:
     Kikan::Renderer::Texture2D* _texture2D;
     int _width = 0;
     int _height = 0;
+};
+
+class SpriteSheetResource : public TextureResource {
+public:
+    SpriteSheetResource(const std::string &path) : TextureResource(path) {}
+    ~SpriteSheetResource(){
+        for (auto* s : _sprites)
+            delete s;
+    }
+
+    void addGrid(uint32_t w, uint32_t h) {
+        uint32_t rows = h /_height;
+        for (; rows > 0 ; rows--) {
+            addRow(w, h);
+        }
+    }
+    void addRow(uint32_t w, uint32_t h, uint32_t amount = 0, uint32_t offsetX = 0, uint32_t offsetY = 0) {
+        if(amount == 0)
+            amount = w / _width;
+
+        _rows.push_back(amount);
+        _last_row += offsetY;
+        uint32_t x = offsetX;
+        for (; amount > 0; amount--) {
+            _sprites.push_back(new Sprite(x, _last_row, w, h, _width, _height));
+            x += w;
+        }
+        _last_row += h;
+    }
+    void addSingle(uint32_t x, uint32_t y, uint32_t w, uint32_t h) {
+        _sprites.push_back(new Sprite(x, y, w, h, _width, _height));
+    }
+
+    void getTexCoords(glm::vec2 coords[4], uint32_t id){
+        auto* sprite = _sprites[id];
+        coords[0] = sprite->tl;
+        coords[1] = sprite->tr;
+        coords[2] = sprite->br;
+        coords[3] = sprite->bl;
+    }
+
+    void getTexCoords(glm::vec2 coords[4], uint32_t row, uint32_t column){
+        uint32_t id = column;
+        for(int i = 0; row > 0; i++, row--){
+            id += _rows[i];
+        }
+        getTexCoords(coords, id);
+    }
+
+private:
+    struct Sprite{
+    public:
+        Sprite(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint32_t absW, uint32_t absH) : x(x), y(y), w(w), h(h) {
+            float normX = (float)x / (float)absW;
+            float normY = 1.f - (float)y / (float)absH;
+            float normW = (float)w / (float)absW;
+            float normH = (float)h / (float)absH;
+
+            tl = glm::vec2(normX, normY);
+            tr = glm::vec2(normX + normW, normY);
+            br = glm::vec2(normX + normW, normY - normH);
+            bl = glm::vec2(normX, normY - normH);
+        }
+
+        uint32_t x, y, w, h;
+        glm::vec2 tl, tr, br, bl;
+    };
+
+    std::vector<Sprite*> _sprites;
+    std::vector<uint32_t> _rows; // counts how many sprites are in each row
+
+    uint32_t _last_row = 0;
 };
 
 class ResourceManager {
