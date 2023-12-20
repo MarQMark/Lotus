@@ -74,7 +74,7 @@ void Spawner::add_pe_common(Kikan::Entity *entity) {
     entity->addComponent(collider);
 
     auto* texture = new Kikan::Texture2DSprite;
-    texture->layer = -.3;
+    texture->layer = 0;
     texture->color = glm::vec4(1.f);
     entity->addComponent(texture);
 }

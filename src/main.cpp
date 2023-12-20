@@ -42,13 +42,13 @@ void createResources(){
     AnimationManager::addAnimation(animation, Animation::ID::FIRE_IDLE_RIGHT);
     animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::FIRE_PLAYER_SS), std::vector<uint32_t>{1}, 0);
     AnimationManager::addAnimation(animation, Animation::ID::FIRE_IDLE_LEFT);
-    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::FIRE_PLAYER_SS), std::vector<uint32_t>{2}, 0);
-    AnimationManager::addAnimation(animation, Animation::ID::FIRE_ATTACK_RIGHT);
-    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::FIRE_PLAYER_SS), std::vector<uint32_t>{3}, 0);
-    AnimationManager::addAnimation(animation, Animation::ID::FIRE_ATTACK_LEFT);
     animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::FIRE_PLAYER_SS), std::vector<uint32_t>{4}, 0);
-    AnimationManager::addAnimation(animation, Animation::ID::FIRE_JUMP_RIGHT);
+    AnimationManager::addAnimation(animation, Animation::ID::FIRE_ATTACK_RIGHT);
     animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::FIRE_PLAYER_SS), std::vector<uint32_t>{5}, 0);
+    AnimationManager::addAnimation(animation, Animation::ID::FIRE_ATTACK_LEFT);
+    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::FIRE_PLAYER_SS), std::vector<uint32_t>{8}, 0);
+    AnimationManager::addAnimation(animation, Animation::ID::FIRE_JUMP_RIGHT);
+    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::FIRE_PLAYER_SS), std::vector<uint32_t>{9}, 0);
     AnimationManager::addAnimation(animation, Animation::ID::FIRE_JUMP_LEFT);
     animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::FIRE_PLAYER_SS), 3, FIRE_MOV_ANI_SPEED);
     AnimationManager::addAnimation(animation, Animation::ID::FIRE_MOV_RIGHT);
@@ -157,7 +157,7 @@ int WinMain() {
         sprite->textureID = ResourceManager::get<TextureResource>(Resource::ID::OUTER_WALL_CLOUDS)->getID();
         sprite->layer = .2;
         sprite->color = glm::vec4(.5f);
-        //entity->addComponent(sprite);
+        entity->addComponent(sprite);
         engine->getECS()->getScene()->addEntity(entity);
     }
     {
@@ -170,7 +170,7 @@ int WinMain() {
         sprite->textureID = ResourceManager::get<TextureResource>(Resource::ID::OUTER_WALL_BACKGROUND)->getID();
         sprite->layer = .1;
         sprite->color = glm::vec4(.5f);
-        //entity->addComponent(sprite);
+        entity->addComponent(sprite);
         engine->getECS()->getScene()->addEntity(entity);
     }
     {
@@ -183,7 +183,7 @@ int WinMain() {
         sprite->textureID = ResourceManager::get<TextureResource>(Resource::ID::OUTER_WALL_FOREGROUND)->getID();
         sprite->layer = -.1;
         sprite->color = glm::vec4(.5f);
-        //entity->addComponent(sprite);
+        entity->addComponent(sprite);
         engine->getECS()->getScene()->addEntity(entity);
     }
 
