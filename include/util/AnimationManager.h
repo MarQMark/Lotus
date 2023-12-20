@@ -37,13 +37,13 @@ public:
 
     void getFrame(glm::vec2 texCoords[4]){
         double dt = ((std::chrono::duration<double, std::milli>)(std::chrono::high_resolution_clock::now() - _last_time)).count();
-        _comTime += dt;
+        _com_time += dt;
 
-        _curr_frame = ((uint32_t)(_comTime / _speed) + _curr_frame) % _frames.size();
+        _curr_frame = ((uint32_t)(_com_time / _speed) + _curr_frame) % _frames.size();
         _sprite_sheet->getTexCoords(texCoords, _frames[_curr_frame]);
 
-        if(_comTime > _speed){
-            _comTime -= _speed;
+        if(_com_time > _speed){
+            _com_time -= _speed;
         }
 
         _last_time = std::chrono::high_resolution_clock::now();
@@ -62,7 +62,7 @@ public:
     }
     void reset(){
         _curr_frame = 0;
-        _comTime = 0;
+        _com_time = 0;
         _last_time = std::chrono::high_resolution_clock::now();
     }
 private:
@@ -73,7 +73,7 @@ private:
     std::chrono::high_resolution_clock::time_point _last_time;
 
     double _speed;
-    double _comTime = 0;
+    double _com_time = 0;
     bool paused = false;
 };
 
