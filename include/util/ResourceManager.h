@@ -17,6 +17,8 @@ public:
         OUTER_WALL_FOREGROUND,
         OUTER_WALL_CLOUDS,
         OUTER_WALL_TRAIN,
+
+        FIRE_PLAYER_SS,
     };
 };
 
@@ -53,14 +55,14 @@ public:
     }
 
     void addGrid(uint32_t w, uint32_t h) {
-        uint32_t rows = h /_height;
+        uint32_t rows = _height / h;
         for (; rows > 0 ; rows--) {
             addRow(w, h);
         }
     }
     void addRow(uint32_t w, uint32_t h, uint32_t amount = 0, uint32_t offsetX = 0, uint32_t offsetY = 0) {
         if(amount == 0)
-            amount = w / _width;
+            amount = _width / w;
 
         _rows.push_back(amount);
         _last_row += offsetY;
@@ -89,6 +91,18 @@ public:
             id += _rows[i];
         }
         getTexCoords(coords, id);
+    }
+
+    uint32_t getSpriteID(uint32_t row, uint32_t column){
+        uint32_t id = column;
+        for(int i = 0; row > 0; i++, row--){
+            id += _rows[i];
+        }
+        return id;
+    }
+
+    uint32_t getRowAmount(uint32_t row){
+        return _rows[row];
     }
 
 private:

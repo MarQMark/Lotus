@@ -20,6 +20,41 @@
 #include "Kikan/renderer/stdRenderer/buffers/Texture2D.h"
 #include "systems/TriggerSystem.h"
 #include "util/ResourceManager.h"
+#include "util/AnimationManager.h"
+#include "systems/PlayerAnimationSystem.h"
+
+void createResources(){
+    //Textures
+    ResourceManager::add<TextureResource>(new TextureResource("res/Maps/OuterWall2/background.png"), Resource::ID::OUTER_WALL_BACKGROUND);
+    ResourceManager::add<TextureResource>(new TextureResource("res/Maps/OuterWall2/foreground.png"), Resource::ID::OUTER_WALL_FOREGROUND);
+    ResourceManager::add<TextureResource>(new TextureResource("res/Maps/OuterWall2/Clouds.png"),     Resource::ID::OUTER_WALL_CLOUDS);
+    ResourceManager::add<TextureResource>(new TextureResource("res/Maps/OuterWall2/Train.png"),     Resource::ID::OUTER_WALL_TRAIN);
+
+    // SpiteSheets
+    SpriteSheetResource* spriteSheet;
+    spriteSheet = new SpriteSheetResource("res/Fire/FirePlayerSpriteSheet.png");
+    spriteSheet->addGrid(650, 1200);
+    ResourceManager::add<SpriteSheetResource>(spriteSheet, Resource::ID::FIRE_PLAYER_SS);
+
+    // Animations
+    Animation* animation;
+    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::FIRE_PLAYER_SS), std::vector<uint32_t>{0}, 0);
+    AnimationManager::addAnimation(animation, Animation::ID::FIRE_IDLE_RIGHT);
+    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::FIRE_PLAYER_SS), std::vector<uint32_t>{1}, 0);
+    AnimationManager::addAnimation(animation, Animation::ID::FIRE_IDLE_LEFT);
+    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::FIRE_PLAYER_SS), std::vector<uint32_t>{2}, 0);
+    AnimationManager::addAnimation(animation, Animation::ID::FIRE_ATTACK_RIGHT);
+    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::FIRE_PLAYER_SS), std::vector<uint32_t>{3}, 0);
+    AnimationManager::addAnimation(animation, Animation::ID::FIRE_ATTACK_LEFT);
+    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::FIRE_PLAYER_SS), std::vector<uint32_t>{4}, 0);
+    AnimationManager::addAnimation(animation, Animation::ID::FIRE_JUMP_RIGHT);
+    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::FIRE_PLAYER_SS), std::vector<uint32_t>{5}, 0);
+    AnimationManager::addAnimation(animation, Animation::ID::FIRE_JUMP_LEFT);
+    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::FIRE_PLAYER_SS), 3, FIRE_MOV_ANI_SPEED);
+    AnimationManager::addAnimation(animation, Animation::ID::FIRE_MOV_RIGHT);
+    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::FIRE_PLAYER_SS), 4, FIRE_MOV_ANI_SPEED);
+    AnimationManager::addAnimation(animation, Animation::ID::FIRE_MOV_LEFT);
+}
 
 void addBoundaries(){
     Kikan::Engine* engine = Kikan::Engine::Kikan();
@@ -81,11 +116,6 @@ int WinMain() {
     Kikan::Engine::init();
     Kikan::Engine* engine = Kikan::Engine::Kikan();
 
-
-    auto* spriteSystem = new Kikan::SpriteRenderSystem();
-
-    engine->getECS()->getScene()->addSystem(spriteSystem);
-
     auto* cameraSystem = new CameraSystem();
     auto* physicsSystem = new PhysicsSystem();
     physicsSystem->gravity = GRAVITY;
@@ -94,6 +124,7 @@ int WinMain() {
     auto* clientSystem = new NetworkingClientSystem();
     auto* triggerSystem = new TriggerSystem();
     auto* collisionSystem = new CollisionSystem();
+    auto* playerAnimationSystem = new PlayerAnimationSystem();
 
     engine->getECS()->getScene()->addSystem(cameraSystem);
     engine->getECS()->getScene()->addSystem(physicsSystem);
@@ -102,6 +133,11 @@ int WinMain() {
     engine->getECS()->getScene()->addSystem(clientSystem);
     engine->getECS()->getScene()->addSystem(triggerSystem);
     engine->getECS()->getScene()->addSystem(collisionSystem);
+    engine->getECS()->getScene()->addSystem(playerAnimationSystem);
+
+    auto* spriteSystem = new Kikan::SpriteRenderSystem();
+
+    engine->getECS()->getScene()->addSystem(spriteSystem);
 
     auto* serverSystem = new NetworkingServerSystem();
     engine->getECS()->createThread(10, 100);
@@ -109,9 +145,7 @@ int WinMain() {
 
     stbi_set_flip_vertically_on_load(1);
 
-    ResourceManager::add<TextureResource>(new TextureResource("res/Maps/OuterWall2/background.png"), Resource::ID::OUTER_WALL_BACKGROUND);
-    ResourceManager::add<TextureResource>(new TextureResource("res/Maps/OuterWall2/foreground.png"), Resource::ID::OUTER_WALL_FOREGROUND);
-    ResourceManager::add<TextureResource>(new TextureResource("res/Maps/OuterWall2/Clouds.png"),     Resource::ID::OUTER_WALL_CLOUDS);
+    createResources();
 
     {
         auto* entity = new Kikan::Entity;
@@ -123,7 +157,7 @@ int WinMain() {
         sprite->textureID = ResourceManager::get<TextureResource>(Resource::ID::OUTER_WALL_CLOUDS)->getID();
         sprite->layer = .2;
         sprite->color = glm::vec4(.5f);
-        entity->addComponent(sprite);
+        //entity->addComponent(sprite);
         engine->getECS()->getScene()->addEntity(entity);
     }
     {
@@ -136,7 +170,7 @@ int WinMain() {
         sprite->textureID = ResourceManager::get<TextureResource>(Resource::ID::OUTER_WALL_BACKGROUND)->getID();
         sprite->layer = .1;
         sprite->color = glm::vec4(.5f);
-        entity->addComponent(sprite);
+        //entity->addComponent(sprite);
         engine->getECS()->getScene()->addEntity(entity);
     }
     {
@@ -149,7 +183,7 @@ int WinMain() {
         sprite->textureID = ResourceManager::get<TextureResource>(Resource::ID::OUTER_WALL_FOREGROUND)->getID();
         sprite->layer = -.1;
         sprite->color = glm::vec4(.5f);
-        entity->addComponent(sprite);
+        //entity->addComponent(sprite);
         engine->getECS()->getScene()->addEntity(entity);
     }
 

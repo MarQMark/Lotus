@@ -12,9 +12,11 @@ add_executable(Lotus
         systems/CameraSystem.cpp
         systems/EffectSystem.cpp
         systems/TriggerSystem.cpp
+        systems/PlayerAnimationSystem.cpp
 
         util/Spawner.cpp
         util/ResourceManager.cpp
+        util/AnimationManager.cpp
 )
 
 #copy res to target folder

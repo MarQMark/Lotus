@@ -6,6 +6,7 @@
 #include "components/EnemyComponent.h"
 #include "components/TriggerComponent.h"
 #include "components/EffectComponent.h"
+#include "Kikan/ecs/components/Texture2DSprite.h"
 
 Kikan::Entity *Spawner::spawnPlayer(Nation nation) {
     auto* entity = new Kikan::Entity;
@@ -71,4 +72,9 @@ void Spawner::add_pe_common(Kikan::Entity *entity) {
     auto* collider = new DColliderComponent();
     collider->dimensions = glm::vec2(50, 80);
     entity->addComponent(collider);
+
+    auto* texture = new Kikan::Texture2DSprite;
+    texture->layer = -.3;
+    texture->color = glm::vec4(1.f);
+    entity->addComponent(texture);
 }
