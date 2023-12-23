@@ -27,21 +27,21 @@ void PlayerAnimationSystem::update(double dt) {
         Animation* animation;
         if(!collider->hasCollidedB){
             if(player->facing == 0)
-                animation = AnimationManager::getAnimation(Animation::ID::FIRE_JUMP_RIGHT);
+                animation = AnimationManager::getAnimation(Animation::ID::FIRE_PLAYER_JUMP_R);
             else
-                animation = AnimationManager::getAnimation(Animation::ID::FIRE_JUMP_LEFT);
+                animation = AnimationManager::getAnimation(Animation::ID::FIRE_PLAYER_JUMP_L);
         }
         else if(physics->velocity.x > 0.2){
-            animation = AnimationManager::getAnimation(Animation::ID::FIRE_MOV_RIGHT);
+            animation = AnimationManager::getAnimation(Animation::ID::FIRE_PLAYER_MOV_R);
         }
         else if(physics->velocity.x < -0.2){
-            animation = AnimationManager::getAnimation(Animation::ID::FIRE_MOV_LEFT);
+            animation = AnimationManager::getAnimation(Animation::ID::FIRE_PLAYER_MOV_L);
         }
         else{
             if(player->facing == 0)
-                animation = AnimationManager::getAnimation(Animation::ID::FIRE_IDLE_RIGHT);
+                animation = AnimationManager::getAnimation(Animation::ID::FIRE_PLAYER_IDLE_R);
             else
-                animation = AnimationManager::getAnimation(Animation::ID::FIRE_IDLE_LEFT);
+                animation = AnimationManager::getAnimation(Animation::ID::FIRE_PLAYER_IDLE_L);
         }
 
         if(animComp->animation != animation){

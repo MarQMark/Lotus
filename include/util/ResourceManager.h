@@ -13,12 +13,20 @@
 class Resource{
 public:
     enum ID{
-        OUTER_WALL_BACKGROUND,
-        OUTER_WALL_FOREGROUND,
-        OUTER_WALL_CLOUDS,
-        OUTER_WALL_TRAIN,
+        TEX_OUTER_WALL_BACKGROUND,
+        TEX_OUTER_WALL_FOREGROUND,
+        TEX_OUTER_WALL_CLOUDS,
+        TEX_OUTER_WALL_TRAIN,
 
-        FIRE_PLAYER_SS,
+        SS_FIRE_PLAYER,
+        SS_EARTH_PLAYER,
+        SS_AIR_PLAYER,
+        SS_WATER_PLAYER,
+
+        SS_FIRE_ATTACK,
+        SS_EARTH_ATTACK,
+        SS_AIR_ATTACK,
+        SS_WATER_ATTACK,
     };
 };
 

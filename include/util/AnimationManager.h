@@ -11,15 +11,48 @@
 class Animation {
 public:
     enum ID{
-        FIRE_IDLE_RIGHT,
-        FIRE_IDLE_LEFT,
-        FIRE_ATTACK_RIGHT,
-        FIRE_ATTACK_LEFT,
-        FIRE_JUMP_RIGHT,
-        FIRE_JUMP_LEFT,
-        FIRE_MOV_RIGHT,
-        FIRE_MOV_LEFT,
+        // FIRE
+        FIRE_PLAYER_IDLE_R,
+        FIRE_PLAYER_IDLE_L,
+        FIRE_PLAYER_ATTACK_R,
+        FIRE_PLAYER_ATTACK_L,
+        FIRE_PLAYER_JUMP_R,
+        FIRE_PLAYER_JUMP_L,
+        FIRE_PLAYER_MOV_R,
+        FIRE_PLAYER_MOV_L,
+        FIRE_PLAYER_MOV_ABL_R,
+        FIRE_PLAYER_MOV_ABL_L,
 
+        FIRE_ATTACK_R,
+        FIRE_ATTACK_L,
+
+        // EARTH
+        EARTH_PLAYER_IDLE_R,
+        EARTH_PLAYER_IDLE_L,
+        EARTH_PLAYER_ATTACK_R,
+        EARTH_PLAYER_ATTACK_L,
+        EARTH_PLAYER_JUMP_R,
+        EARTH_PLAYER_JUMP_L,
+        EARTH_PLAYER_MOV_R,
+        EARTH_PLAYER_MOV_L,
+
+        EARTH_PLAYER_ULT,
+
+        EARTH_ATTACK_R,
+        EARTH_ATTACK_L,
+
+        // AIR
+        AIR_PLAYER_IDLE_R,
+        AIR_PLAYER_IDLE_L,
+        AIR_PLAYER_ATTACK_R,
+        AIR_PLAYER_ATTACK_L,
+        AIR_PLAYER_JUMP_R,
+        AIR_PLAYER_JUMP_L,
+        AIR_PLAYER_MOV_R,
+        AIR_PLAYER_MOV_L,
+
+        AIR_ATTACK_R,
+        AIR_ATTACK_L,
     };
 
     Animation(SpriteSheetResource* spriteSheet, std::vector<uint32_t> frames, double speed) : _sprite_sheet(spriteSheet), _frames(std::move(frames)), _speed(speed) {

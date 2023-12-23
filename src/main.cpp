@@ -22,39 +22,7 @@
 #include "util/ResourceManager.h"
 #include "util/AnimationManager.h"
 #include "systems/PlayerAnimationSystem.h"
-
-void createResources(){
-    //Textures
-    ResourceManager::add<TextureResource>(new TextureResource("res/Maps/OuterWall2/background.png"), Resource::ID::OUTER_WALL_BACKGROUND);
-    ResourceManager::add<TextureResource>(new TextureResource("res/Maps/OuterWall2/foreground.png"), Resource::ID::OUTER_WALL_FOREGROUND);
-    ResourceManager::add<TextureResource>(new TextureResource("res/Maps/OuterWall2/Clouds.png"),     Resource::ID::OUTER_WALL_CLOUDS);
-    ResourceManager::add<TextureResource>(new TextureResource("res/Maps/OuterWall2/Train.png"),     Resource::ID::OUTER_WALL_TRAIN);
-
-    // SpiteSheets
-    SpriteSheetResource* spriteSheet;
-    spriteSheet = new SpriteSheetResource("res/Fire/FirePlayerSpriteSheet.png");
-    spriteSheet->addGrid(650, 1200);
-    ResourceManager::add<SpriteSheetResource>(spriteSheet, Resource::ID::FIRE_PLAYER_SS);
-
-    // Animations
-    Animation* animation;
-    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::FIRE_PLAYER_SS), std::vector<uint32_t>{0}, 0);
-    AnimationManager::addAnimation(animation, Animation::ID::FIRE_IDLE_RIGHT);
-    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::FIRE_PLAYER_SS), std::vector<uint32_t>{1}, 0);
-    AnimationManager::addAnimation(animation, Animation::ID::FIRE_IDLE_LEFT);
-    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::FIRE_PLAYER_SS), std::vector<uint32_t>{4}, 0);
-    AnimationManager::addAnimation(animation, Animation::ID::FIRE_ATTACK_RIGHT);
-    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::FIRE_PLAYER_SS), std::vector<uint32_t>{5}, 0);
-    AnimationManager::addAnimation(animation, Animation::ID::FIRE_ATTACK_LEFT);
-    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::FIRE_PLAYER_SS), std::vector<uint32_t>{8}, 0);
-    AnimationManager::addAnimation(animation, Animation::ID::FIRE_JUMP_RIGHT);
-    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::FIRE_PLAYER_SS), std::vector<uint32_t>{9}, 0);
-    AnimationManager::addAnimation(animation, Animation::ID::FIRE_JUMP_LEFT);
-    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::FIRE_PLAYER_SS), 3, FIRE_MOV_ANI_SPEED);
-    AnimationManager::addAnimation(animation, Animation::ID::FIRE_MOV_RIGHT);
-    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::FIRE_PLAYER_SS), 4, FIRE_MOV_ANI_SPEED);
-    AnimationManager::addAnimation(animation, Animation::ID::FIRE_MOV_LEFT);
-}
+#include "util/Loader.h"
 
 void addBoundaries(){
     Kikan::Engine* engine = Kikan::Engine::Kikan();
@@ -145,7 +113,9 @@ int WinMain() {
 
     stbi_set_flip_vertically_on_load(1);
 
-    createResources();
+    loadTextures();
+    loadSpriteSheets();
+    createAnimations();
 
     {
         auto* entity = new Kikan::Entity;
@@ -154,7 +124,7 @@ int WinMain() {
         sprite->points[1] = glm::vec2(1000, 562.5f);
         sprite->points[2] = glm::vec2(1000, 0);
         sprite->points[3] = glm::vec2(0, 0);
-        sprite->textureID = ResourceManager::get<TextureResource>(Resource::ID::OUTER_WALL_CLOUDS)->getID();
+        sprite->textureID = ResourceManager::get<TextureResource>(Resource::ID::TEX_OUTER_WALL_CLOUDS)->getID();
         sprite->layer = .2;
         sprite->color = glm::vec4(.5f);
         entity->addComponent(sprite);
@@ -167,7 +137,7 @@ int WinMain() {
         sprite->points[1] = glm::vec2(1000, 562.5f);
         sprite->points[2] = glm::vec2(1000, 0);
         sprite->points[3] = glm::vec2(0, 0);
-        sprite->textureID = ResourceManager::get<TextureResource>(Resource::ID::OUTER_WALL_BACKGROUND)->getID();
+        sprite->textureID = ResourceManager::get<TextureResource>(Resource::ID::TEX_OUTER_WALL_BACKGROUND)->getID();
         sprite->layer = .1;
         sprite->color = glm::vec4(.5f);
         entity->addComponent(sprite);
@@ -180,7 +150,7 @@ int WinMain() {
         sprite->points[1] = glm::vec2(1000, 562.5f);
         sprite->points[2] = glm::vec2(1000, 0);
         sprite->points[3] = glm::vec2(0, 0);
-        sprite->textureID = ResourceManager::get<TextureResource>(Resource::ID::OUTER_WALL_FOREGROUND)->getID();
+        sprite->textureID = ResourceManager::get<TextureResource>(Resource::ID::TEX_OUTER_WALL_FOREGROUND)->getID();
         sprite->layer = -.1;
         sprite->color = glm::vec4(.5f);
         entity->addComponent(sprite);
