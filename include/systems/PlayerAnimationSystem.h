@@ -11,7 +11,6 @@ public:
     void update(double dt) override;
 
 private:
-    Animation* _last_animation;
 };
 
 

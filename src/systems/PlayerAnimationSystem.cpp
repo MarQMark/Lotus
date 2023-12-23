@@ -5,9 +5,10 @@
 #include "Kikan/ecs/components/Physics.h"
 #include "components/DColliderComponent.h"
 #include "util/AnimationManager.h"
+#include "components/AnimationComponent.h"
 
 PlayerAnimationSystem::PlayerAnimationSystem() {
-    includeSingle(PlayerComponent);
+    includeSingle(AnimationComponent);
     //includeSingle(EnemyComponent);
 }
 
@@ -18,6 +19,7 @@ void PlayerAnimationSystem::update(double dt) {
         auto* sprite = e->getComponent<Kikan::Texture2DSprite>();
         auto* physics = e->getComponent<Kikan::Physics>();
         auto* collider = e->getComponent<DColliderComponent>();
+        auto* animComp =  e->getComponent<AnimationComponent>();
         if(!sprite || !physics || !collider)
             return;
 
@@ -42,11 +44,13 @@ void PlayerAnimationSystem::update(double dt) {
                 animation = AnimationManager::getAnimation(Animation::ID::FIRE_IDLE_LEFT);
         }
 
-        if(_last_animation != animation)
-            animation->reset();
-        _last_animation = animation;
+        if(animComp->animation != animation){
+            animComp->currentFrame = 0;
+            animComp->lastTime = std::chrono::high_resolution_clock::now();
+        }
+        animComp->animation = animation;
 
-        animation->getFrame(texCoords);
+        animation->getFrame(texCoords, animComp->currentFrame, animComp->lastTime);
         for(int i = 0; i < 4; i++)
             sprite->texCoords[i] = texCoords[i];
         sprite->points[0] = glm::vec2(transform->position.x, transform->position.y);

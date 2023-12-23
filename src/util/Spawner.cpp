@@ -7,6 +7,7 @@
 #include "components/TriggerComponent.h"
 #include "components/EffectComponent.h"
 #include "Kikan/ecs/components/Texture2DSprite.h"
+#include "components/AnimationComponent.h"
 
 Kikan::Entity *Spawner::spawnPlayer(Nation nation) {
     auto* entity = new Kikan::Entity;
@@ -20,10 +21,14 @@ Kikan::Entity *Spawner::spawnPlayer(Nation nation) {
     entity->getComponent<Kikan::LineQuadSprite>()->color = glm::vec4(.4, .5, .8, 1);
 
     auto* player = new PlayerComponent();
+    player->nation = nation;
     entity->addComponent(player);
 
     auto* effect = new EffectComponent();
     entity->addComponent(effect);
+
+    auto* animator = new AnimationComponent();
+    entity->addComponent(animator);
 
     return entity;
 }

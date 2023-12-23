@@ -2,12 +2,14 @@
 #define LOTUS_PLAYERCOMPONENT_H
 
 #include "Kikan/ecs/components/IComponent.h"
+#include "Constants.h"
 
 class PlayerComponent : public Kikan::IComponent {
 public:
     int32_t playerID = -1;
 
     uint8_t facing = 0; // 0 = right, 1 = left
+    Nation nation = Nation::FIRE;
 
     void destroy() override{
         delete this;

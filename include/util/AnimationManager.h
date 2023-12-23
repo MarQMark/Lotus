@@ -23,7 +23,6 @@ public:
     };
 
     Animation(SpriteSheetResource* spriteSheet, std::vector<uint32_t> frames, double speed) : _sprite_sheet(spriteSheet), _frames(std::move(frames)), _speed(speed) {
-        _last_time = std::chrono::high_resolution_clock::now();
     }
     Animation(SpriteSheetResource* spriteSheet, uint32_t row, double speed) : _sprite_sheet(spriteSheet), _speed(speed){
         uint32_t amount = spriteSheet->getRowAmount(row);
@@ -31,22 +30,18 @@ public:
         _frames.resize(amount);
         for(uint32_t i = 0; i < amount; i++)
             _frames[i] = startID + i;
-
-        _last_time = std::chrono::high_resolution_clock::now();
     }
 
-    void getFrame(glm::vec2 texCoords[4]){
-        double dt = ((std::chrono::duration<double, std::milli>)(std::chrono::high_resolution_clock::now() - _last_time)).count();
-        _com_time += dt;
+    void getFrame(glm::vec2 texCoords[4], double &currentFrame, std::chrono::high_resolution_clock::time_point &lastTime) {
+        double dt = ((std::chrono::duration<double, std::milli>)(std::chrono::high_resolution_clock::now() - lastTime)).count();
 
-        _curr_frame = ((uint32_t)(_com_time / _speed) + _curr_frame) % _frames.size();
-        _sprite_sheet->getTexCoords(texCoords, _frames[_curr_frame]);
+        currentFrame = ((dt / _speed) + currentFrame);
+        if(currentFrame > (double)_frames.size())
+            currentFrame = 0;
 
-        if(_com_time > _speed){
-            _com_time -= _speed;
-        }
+        _sprite_sheet->getTexCoords(texCoords, _frames[(uint32_t)currentFrame]);
 
-        _last_time = std::chrono::high_resolution_clock::now();
+        lastTime = std::chrono::high_resolution_clock::now();
     }
     GLuint getID(){
         return _sprite_sheet->getID();
@@ -54,27 +49,11 @@ public:
     void setSpeed(double speed){
         _speed = speed;
     }
-    void pause(){
-        paused = true;
-    }
-    void resume(){
-        paused = false;
-    }
-    void reset(){
-        _curr_frame = 0;
-        _com_time = 0;
-        _last_time = std::chrono::high_resolution_clock::now();
-    }
+
 private:
     SpriteSheetResource* _sprite_sheet;
     std::vector<uint32_t> _frames;
-    uint32_t _curr_frame = 0;
-
-    std::chrono::high_resolution_clock::time_point _last_time;
-
     double _speed;
-    double _com_time = 0;
-    bool paused = false;
 };
 
 
