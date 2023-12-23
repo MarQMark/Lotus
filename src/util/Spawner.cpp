@@ -8,6 +8,7 @@
 #include "components/EffectComponent.h"
 #include "Kikan/ecs/components/Texture2DSprite.h"
 #include "components/AnimationComponent.h"
+#include "components/PlayerStateComponent.h"
 
 Kikan::Entity *Spawner::spawnPlayer(Nation nation) {
     auto* entity = new Kikan::Entity;
@@ -16,19 +17,16 @@ Kikan::Entity *Spawner::spawnPlayer(Nation nation) {
     physics->friction.x = PLAYER_FRICTION;
     entity->addComponent(physics);
 
-    add_pe_common(entity);
+    add_pe_common(entity, nation);
 
     entity->getComponent<Kikan::LineQuadSprite>()->color = glm::vec4(.4, .5, .8, 1);
+    entity->getComponent<Kikan::Texture2DSprite>()->layer = -0.01;
 
     auto* player = new PlayerComponent();
-    player->nation = nation;
     entity->addComponent(player);
 
     auto* effect = new EffectComponent();
     entity->addComponent(effect);
-
-    auto* animator = new AnimationComponent();
-    entity->addComponent(animator);
 
     return entity;
 }
@@ -39,7 +37,7 @@ Kikan::Entity *Spawner::spawnEnemy(Nation nation) {
     auto* enemyComponent = new EnemyComponent();
     entity->addComponent(enemyComponent);
 
-    add_pe_common(entity);
+    add_pe_common(entity, nation);
 
     entity->getComponent<Kikan::LineQuadSprite>()->color = glm::vec4(.8, .5, .4, 1);
 
@@ -68,7 +66,7 @@ Kikan::Entity *Spawner::spawnAttack(Nation nation) {
     return entity;
 }
 
-void Spawner::add_pe_common(Kikan::Entity *entity) {
+void Spawner::add_pe_common(Kikan::Entity *entity, Nation nation) {
     auto* sprite = new Kikan::LineQuadSprite();
     sprite->dimensions = glm::vec2(50, 80);
     sprite->thickness = 3;
@@ -82,4 +80,11 @@ void Spawner::add_pe_common(Kikan::Entity *entity) {
     texture->layer = 0;
     texture->color = glm::vec4(1.f);
     entity->addComponent(texture);
+
+    auto* playerState = new PlayerStateComponent();
+    playerState->nation = nation;
+    entity->addComponent(playerState);
+
+    auto* animator = new AnimationComponent();
+    entity->addComponent(animator);
 }

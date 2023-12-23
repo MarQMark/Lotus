@@ -23,6 +23,7 @@
 #include "util/AnimationManager.h"
 #include "systems/PlayerAnimationSystem.h"
 #include "util/Loader.h"
+#include "systems/PlayerStateSystem.h"
 
 void addBoundaries(){
     Kikan::Engine* engine = Kikan::Engine::Kikan();
@@ -92,6 +93,7 @@ int WinMain() {
     auto* clientSystem = new NetworkingClientSystem();
     auto* triggerSystem = new TriggerSystem();
     auto* collisionSystem = new CollisionSystem();
+    auto* playerStateSystem = new PlayerStateSystem();
     auto* playerAnimationSystem = new PlayerAnimationSystem();
 
     engine->getECS()->getScene()->addSystem(cameraSystem);
@@ -101,6 +103,7 @@ int WinMain() {
     engine->getECS()->getScene()->addSystem(clientSystem);
     engine->getECS()->getScene()->addSystem(triggerSystem);
     engine->getECS()->getScene()->addSystem(collisionSystem);
+    engine->getECS()->getScene()->addSystem(playerStateSystem);
     engine->getECS()->getScene()->addSystem(playerAnimationSystem);
 
     auto* spriteSystem = new Kikan::SpriteRenderSystem();

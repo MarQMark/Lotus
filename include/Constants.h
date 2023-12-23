@@ -28,4 +28,8 @@ static double EARTH_ATTACK_ANI_SPEED = 100;
 static double AIR_MOV_ANI_SPEED = 100;
 static double AIR_ATTACK_ANI_SPEED = 100;
 
+// ---------------------------- WATER ----------------------------
+static double WATER_MOV_ANI_SPEED = 100;
+static double WATER_ATTACK_ANI_SPEED = 100;
+
 #endif //LOTUS_CONSTANTS_H

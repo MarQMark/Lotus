@@ -10,6 +10,7 @@
 #include "components/TriggerComponent.h"
 #include "components/EffectComponent.h"
 #include "components/MessageComponent.h"
+#include "components/PlayerStateComponent.h"
 
 PlayerMovementSystem::PlayerMovementSystem() {
     includeSingle(PlayerComponent);
@@ -20,7 +21,7 @@ void PlayerMovementSystem::update(double dt) {
         auto *transform = e->getComponent<Kikan::Transform>();
         auto *physics = e->getComponent<Kikan::Physics>();
         auto *collider = e->getComponent<DColliderComponent>();
-        auto *player = e->getComponent<PlayerComponent>();
+        auto *player = e->getComponent<PlayerStateComponent>();
         if(!physics || !collider)
             return;
 
@@ -68,6 +69,14 @@ void PlayerMovementSystem::update(double dt) {
 
                 effect->effects[EffectComponent::ID::FIRE_ATTACK_COOLDOWN] = FIRE_ATTACK_COOL;
                 Kikan::Engine::Kikan()->getECS()->getScene()->addEntity(attack);
+            }
+        }
+
+        if(Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::N)){
+            auto* effect = e->getComponent<EffectComponent>();
+            if(effect && !effect->effects.count(42)) {
+                player->nation = Nation((player->nation + 1) % 4);
+                effect->effects[42] = 500;
             }
         }
     }

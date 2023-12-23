@@ -53,6 +53,19 @@ public:
 
         AIR_ATTACK_R,
         AIR_ATTACK_L,
+
+        // WATER
+        WATER_PLAYER_IDLE_R,
+        WATER_PLAYER_IDLE_L,
+        WATER_PLAYER_ATTACK_R,
+        WATER_PLAYER_ATTACK_L,
+        WATER_PLAYER_JUMP_R,
+        WATER_PLAYER_JUMP_L,
+        WATER_PLAYER_MOV_R,
+        WATER_PLAYER_MOV_L,
+
+        WATER_ATTACK_R,
+        WATER_ATTACK_L,
     };
 
     Animation(SpriteSheetResource* spriteSheet, std::vector<uint32_t> frames, double speed) : _sprite_sheet(spriteSheet), _frames(std::move(frames)), _speed(speed) {

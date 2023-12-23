@@ -13,6 +13,7 @@ add_executable(Lotus
         systems/EffectSystem.cpp
         systems/TriggerSystem.cpp
         systems/PlayerAnimationSystem.cpp
+        systems/PlayerStateSystem.cpp
 
         util/Spawner.cpp
         util/ResourceManager.cpp
