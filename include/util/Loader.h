@@ -11,6 +11,7 @@ void loadTextures(){
 void loadSpriteSheets(){
     SpriteSheetResource* spriteSheet;
 
+    // Players
     spriteSheet = new SpriteSheetResource("res/Fire/FirePlayerSpriteSheet.png");
     spriteSheet->addGrid(650, 1200);
     ResourceManager::add<SpriteSheetResource>(spriteSheet, Resource::ID::SS_FIRE_PLAYER);
@@ -24,6 +25,17 @@ void loadSpriteSheets(){
     spriteSheet = new SpriteSheetResource("res/Fire/FirePlayerSpriteSheet.png");
     spriteSheet->addGrid(650, 1200);
     ResourceManager::add<SpriteSheetResource>(spriteSheet, Resource::ID::SS_WATER_PLAYER);
+
+    // Attacks
+    spriteSheet = new SpriteSheetResource("res/Fire/fireballSprite.png");
+    spriteSheet->addGrid(300, 150);
+    ResourceManager::add<SpriteSheetResource>(spriteSheet, Resource::ID::SS_FIRE_ATTACK);
+    spriteSheet = new SpriteSheetResource("res/Earth/RockSprite.png");
+    spriteSheet->addGrid(340, 180);
+    ResourceManager::add<SpriteSheetResource>(spriteSheet, Resource::ID::SS_EARTH_ATTACK);
+    spriteSheet = new SpriteSheetResource("res/Air/AirAttack.png");
+    spriteSheet->addGrid(195, 485);
+    ResourceManager::add<SpriteSheetResource>(spriteSheet, Resource::ID::SS_AIR_ATTACK);
 }
 
 // TODO: Make better
@@ -105,6 +117,20 @@ void createAnimations(){
     AnimationManager::addAnimation(animation, Animation::ID::WATER_PLAYER_MOV_R);
     animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_WATER_PLAYER), 4, WATER_MOV_ANI_SPEED);
     AnimationManager::addAnimation(animation, Animation::ID::WATER_PLAYER_MOV_L);
+
+    // ATTACKS
+    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_FIRE_ATTACK), 1, FIRE_ATK_ANI_SPEED);
+    AnimationManager::addAnimation(animation, Animation::ID::FIRE_ATTACK_R);
+    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_FIRE_ATTACK), 0, FIRE_ATK_ANI_SPEED);
+    AnimationManager::addAnimation(animation, Animation::ID::FIRE_ATTACK_L);
+    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_EARTH_ATTACK), 1, EARTH_ATK_ANI_SPEED);
+    AnimationManager::addAnimation(animation, Animation::ID::EARTH_ATTACK_R);
+    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_EARTH_ATTACK), 0, EARTH_ATK_ANI_SPEED);
+    AnimationManager::addAnimation(animation, Animation::ID::EARTH_ATTACK_L);
+    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_AIR_ATTACK), 1, AIR_ATK_ANI_SPEED);
+    AnimationManager::addAnimation(animation, Animation::ID::AIR_ATTACK_R);
+    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_AIR_ATTACK), 0, AIR_ATK_ANI_SPEED);
+    AnimationManager::addAnimation(animation, Animation::ID::AIR_ATTACK_L);
 }
 
 #endif //LOTUS_LOADER_H

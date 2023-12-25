@@ -82,12 +82,12 @@ Animation* getIdleAnimation(PlayerStateComponent* player){
 void PlayerAnimationSystem::update(double dt) {
     for (auto* e : _entities) {
         auto* transform = e->getComponent<Kikan::Transform>();
-        auto* player = e->getComponent<PlayerStateComponent>();
         auto* sprite = e->getComponent<Kikan::Texture2DSprite>();
         auto* animComp =  e->getComponent<AnimationComponent>();
         if(!sprite)
             return;
 
+        auto* player = e->getComponent<PlayerStateComponent>();
         Animation* animation;
         if(!player->onGround)
             animation = getJumpAnimation(player, e);

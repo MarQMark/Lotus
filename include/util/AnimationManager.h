@@ -95,6 +95,7 @@ public:
     void setSpeed(double speed){
         _speed = speed;
     }
+    Animation::ID id;
 
 private:
     SpriteSheetResource* _sprite_sheet;
@@ -111,6 +112,7 @@ public:
 
     static void addAnimation(Animation* animation, uint32_t id){
         s_animations[id] = animation;
+        animation->id = (Animation::ID)id;
     }
 
 private:
