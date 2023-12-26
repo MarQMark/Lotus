@@ -7,7 +7,8 @@
 class EffectComponent : public Kikan::IComponent {
 public:
     enum ID{
-        FIRE_ATTACK_COOLDOWN,
+        ATTACK_CAST,
+        ATTACK_COOLDOWN,
 
     };
 

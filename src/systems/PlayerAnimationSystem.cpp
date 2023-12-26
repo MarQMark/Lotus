@@ -6,11 +6,34 @@
 #include "components/AnimationComponent.h"
 #include "components/PlayerStateComponent.h"
 #include "Constants.h"
+#include "components/EffectComponent.h"
 
 PlayerAnimationSystem::PlayerAnimationSystem() {
     includeAnd(sig(AnimationComponent), sig(PlayerStateComponent));
 }
 
+Animation* getAttackAnimation(PlayerStateComponent* player){
+    Animation::ID animationID;
+    switch (player->nation) {
+        case Nation::FIRE:
+            animationID = Animation::ID::FIRE_PLAYER_ATTACK_R;
+            break;
+        case Nation::EARTH:
+            animationID = Animation::ID::EARTH_PLAYER_ATTACK_R;
+            break;
+        case Nation::AIR:
+            animationID = Animation::ID::AIR_PLAYER_ATTACK_R;
+            break;
+        case Nation::WATER:
+            animationID = Animation::ID::WATER_PLAYER_ATTACK_R;
+            break;
+        default:
+            animationID = Animation::ID::FIRE_PLAYER_ATTACK_R;
+            break;
+    }
+    animationID = (Animation::ID)(animationID + player->facing);
+    return AnimationManager::getAnimation(animationID);
+}
 Animation* getJumpAnimation(PlayerStateComponent* player, Kikan::Entity* e){
     Animation::ID animationID;
     switch (player->nation) {
@@ -84,12 +107,15 @@ void PlayerAnimationSystem::update(double dt) {
         auto* transform = e->getComponent<Kikan::Transform>();
         auto* sprite = e->getComponent<Kikan::AASprite>();
         auto* animComp =  e->getComponent<AnimationComponent>();
-        if(!sprite)
+        auto* effect = e->getComponent<EffectComponent>();
+        if(!sprite || !effect)
             return;
 
         auto* player = e->getComponent<PlayerStateComponent>();
         Animation* animation;
-        if(!player->onGround)
+        if(effect->effects.count(EffectComponent::ID::ATTACK_CAST))
+            animation = getAttackAnimation(player);
+        else if(!player->onGround)
             animation = getJumpAnimation(player, e);
         else if(player->isMoving)
             animation = getMovingAnimation(player);

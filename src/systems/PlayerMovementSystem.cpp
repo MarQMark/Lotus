@@ -41,7 +41,7 @@ void PlayerMovementSystem::update(double dt) {
 
         if(Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::E)){
             auto* effect = e->getComponent<EffectComponent>();
-            if(effect && !effect->effects.count(EffectComponent::ID::FIRE_ATTACK_COOLDOWN)){
+            if(effect && !effect->effects.count(EffectComponent::ID::ATTACK_COOLDOWN)){
                 auto* attack = Spawner::spawnAttack(transform->position, player->nation, player->facing);
 
                 // send attack to server
@@ -58,7 +58,8 @@ void PlayerMovementSystem::update(double dt) {
                     Kikan::Engine::Kikan()->getECS()->getScene()->addEntity(entity);
                 }
 
-                effect->effects[EffectComponent::ID::FIRE_ATTACK_COOLDOWN] = FIRE_ATTACK_COOL;
+                effect->effects[EffectComponent::ID::ATTACK_CAST] = FIRE_ATTACK_CAST;
+                effect->effects[EffectComponent::ID::ATTACK_COOLDOWN] = FIRE_ATTACK_COOL;
                 Kikan::Engine::Kikan()->getECS()->getScene()->addEntity(attack);
             }
         }

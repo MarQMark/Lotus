@@ -20,6 +20,7 @@ static float PLAYER_HEIGHT = 80;
 // ----------------------------- FIRE -----------------------------
 static float FIRE_ATTACK_VEL = 1.f;
 static double FIRE_ATTACK_COOL = 1000.f; // in millis
+static double FIRE_ATTACK_CAST = 200.f; // in millis
 
 static double FIRE_MOV_ANI_SPEED = 100;
 
