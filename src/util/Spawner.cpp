@@ -45,30 +45,22 @@ Kikan::Entity *Spawner::spawnEnemy(Nation nation) {
     return entity;
 }
 
-Kikan::Entity *Spawner::spawnAttack(Nation nation, uint8_t dir) {
+Kikan::Entity *Spawner::spawnAttack(glm::vec2 pos, Nation nation, uint8_t dir) {
     auto* entity = new Kikan::Entity;
 
     auto* hitboxSprite = new Kikan::LineQuadSprite();
-    hitboxSprite->dimensions = glm::vec2(40, 20);
-    hitboxSprite->thickness = 10;
-    hitboxSprite->color = glm::vec4 (1.f, 0.f, 0.f, 1.f);
-    entity->addComponent(hitboxSprite);
-
     auto* trigger = new TriggerComponent();
-    trigger->dimensions = glm::vec2(40, 20);
-    trigger->impulse = glm::vec2(0.15, 0);
-    entity->addComponent(trigger);
-
     auto* physics = new Kikan::Physics();
-    physics->gravity = false;
-    entity->addComponent(physics);
-
     auto* animComp = new AnimationComponent();
     auto* damage = new DamageComponent();
     auto* sprite = new Kikan::Texture2DSprite();
 
+    trigger->impulse = glm::vec2(0.15, 0);
+    physics->gravity = false;
+
     double aspectRatio;
     uint32_t height;
+    float width;
     Animation::ID animationID;
     switch (nation) {
         case Nation::EARTH:
@@ -95,14 +87,28 @@ Kikan::Entity *Spawner::spawnAttack(Nation nation, uint8_t dir) {
             physics->velocity.x = FIRE_ATTACK_VEL;
             break;
     }
+    width = (float)(height * aspectRatio);
+    hitboxSprite->dimensions = glm::vec2(width, height);
+    hitboxSprite->thickness = 10;
+    hitboxSprite->color = glm::vec4 (1.f, 0.f, 0.f, 1.f);
+    trigger->dimensions = glm::vec2(width, height);
+
     if(dir == 1){
         physics->velocity.x *= -1;
         trigger->impulse.x *= -1;
         animationID = (Animation::ID)(animationID + 1);
+        entity->getComponent<Kikan::Transform>()->position.x = pos.x - width - 10;
     }
+    else{
+        entity->getComponent<Kikan::Transform>()->position.x = pos.x + PLAYER_WIDTH + 10;
+    }
+    entity->getComponent<Kikan::Transform>()->position.y = pos.y - 20;
 
     animComp->animation = AnimationManager::getAnimation(animationID);
 
+    entity->addComponent(hitboxSprite);
+    entity->addComponent(trigger);
+    entity->addComponent(physics);
     entity->addComponent(animComp);
     entity->addComponent(damage);
     entity->addComponent(sprite);
@@ -112,12 +118,12 @@ Kikan::Entity *Spawner::spawnAttack(Nation nation, uint8_t dir) {
 
 void Spawner::add_pe_common(Kikan::Entity *entity, Nation nation) {
     auto* sprite = new Kikan::LineQuadSprite();
-    sprite->dimensions = glm::vec2(50, 80);
+    sprite->dimensions = glm::vec2(PLAYER_WIDTH, PLAYER_HEIGHT);
     sprite->thickness = 3;
     entity->addComponent(sprite);
 
     auto* collider = new DColliderComponent();
-    collider->dimensions = glm::vec2(50, 80);
+    collider->dimensions = glm::vec2(PLAYER_WIDTH, PLAYER_HEIGHT);
     entity->addComponent(collider);
 
     auto* texture = new Kikan::Texture2DSprite;

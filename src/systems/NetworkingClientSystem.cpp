@@ -190,9 +190,7 @@ void NetworkingClientSystem::update(double dt) {
                 kikanPrint("Client: Received join for own ID\n");
             }
 
-            auto* attack = Spawner::spawnAttack();
-            attack->getComponent<Kikan::Transform>()->position.x = msg.body.attack.x;
-            attack->getComponent<Kikan::Transform>()->position.y = msg.body.attack.y;
+            auto* attack = Spawner::spawnAttack(glm::vec2(msg.body.attack.x, msg.body.attack.y));
             if(msg.body.attack.direction == 1){
                 attack->getComponent<Kikan::Physics>()->velocity.x *= -1;
                 attack->getComponent<TriggerComponent>()->impulse.x *= -1;

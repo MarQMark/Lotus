@@ -42,14 +42,9 @@ void PlayerMovementSystem::update(double dt) {
         if(Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::E)){
             auto* effect = e->getComponent<EffectComponent>();
             if(effect && !effect->effects.count(EffectComponent::ID::FIRE_ATTACK_COOLDOWN)){
-                auto* attack = Spawner::spawnAttack(player->nation, player->facing);
-                attack->getComponent<Kikan::Transform>()->position.y = transform->position.y + collider->offset.y - 20;
+                auto* attack = Spawner::spawnAttack(transform->position, player->nation, player->facing);
 
-                if(player->facing == 0)
-                    attack->getComponent<Kikan::Transform>()->position.x = transform->position.x + collider->offset.x + collider->dimensions.x + 10;
-                else
-                    attack->getComponent<Kikan::Transform>()->position.x = transform->position.x + collider->offset.x - attack->getComponent<TriggerComponent>()->dimensions.x - 10;
-
+                // send attack to server
                 {
                     auto* entity = new Kikan::Entity;
                     auto* msgComponent = new MessageComponent();
