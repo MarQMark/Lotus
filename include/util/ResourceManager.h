@@ -27,6 +27,8 @@ public:
         SS_EARTH_ATTACK,
         SS_AIR_ATTACK,
         SS_WATER_ATTACK,
+
+        SS_HEALTHBAR_ENEMY,
     };
 };
 

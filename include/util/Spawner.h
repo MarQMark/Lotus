@@ -14,6 +14,7 @@ public:
 private:
     // Add common components of Player and Enemy
     static void add_pe_common(Kikan::Entity* entity, Nation nation);
+    static void add_healthbar(Kikan::Entity* player);
 };
 
 

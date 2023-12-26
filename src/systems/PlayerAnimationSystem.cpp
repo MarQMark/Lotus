@@ -27,9 +27,6 @@ Animation* getAttackAnimation(PlayerStateComponent* player){
         case Nation::WATER:
             animationID = Animation::ID::WATER_PLAYER_ATTACK_R;
             break;
-        default:
-            animationID = Animation::ID::FIRE_PLAYER_ATTACK_R;
-            break;
     }
     animationID = (Animation::ID)(animationID + player->facing);
     return AnimationManager::getAnimation(animationID);
@@ -50,9 +47,6 @@ Animation* getJumpAnimation(PlayerStateComponent* player, Kikan::Entity* e){
         case Nation::WATER:
             animationID = Animation::ID::WATER_PLAYER_JUMP_R;
             break;
-        default:
-            animationID = Animation::ID::FIRE_PLAYER_JUMP_R;
-            break;
     }
     animationID = (Animation::ID)(animationID + player->facing);
     return AnimationManager::getAnimation(animationID);
@@ -72,9 +66,6 @@ Animation* getMovingAnimation(PlayerStateComponent* player){
         case Nation::WATER:
             animationID = Animation::ID::WATER_PLAYER_MOV_R;
             break;
-        default:
-            animationID = Animation::ID::FIRE_PLAYER_MOV_R;
-            break;
     }
     animationID = (Animation::ID)(animationID + player->facing);
     return AnimationManager::getAnimation(animationID);
@@ -93,9 +84,6 @@ Animation* getIdleAnimation(PlayerStateComponent* player){
             break;
         case Nation::WATER:
             animationID = Animation::ID::WATER_PLAYER_IDLE_R;
-            break;
-        default:
-            animationID = Animation::ID::FIRE_PLAYER_IDLE_R;
             break;
     }
     animationID = (Animation::ID)(animationID + player->facing);

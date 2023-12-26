@@ -5,7 +5,9 @@
 #include "Kikan/Engine.h"
 #include "Kikan/core/Logging.h"
 #include "components/PlayerComponent.h"
+#include "components/HealthComponent.h"
 #include "Kikan/ecs/components/Physics.h"
+#include "components/DamageComponent.h"
 
 TriggerSystem::TriggerSystem() {
     includeSingle(TriggerComponent);
@@ -100,6 +102,20 @@ void TriggerSystem::update(double dt) {
                     auto* physics = player->getComponent<Kikan::Physics>();
                     physics->acceleration += trigger->impulse;
                 }
+
+                // Add knockback
+                /*auto* physics = scEntity->getComponent<Kikan::Physics>();
+                if(physics)
+                    physics->acceleration += trigger->impulse;*/
+
+                // Add damage
+                auto* health = scEntity->getComponent<HealthComponent>();
+                auto* damage = entity->getComponent<DamageComponent>();
+                if(health && damage){
+                    kikanPrint("Auchie \n");
+                    health->health -= damage->damage;
+                }
+
 
                 i--;
                 Kikan::Engine::Kikan()->getECS()->getScene()->removeEntity(entity);

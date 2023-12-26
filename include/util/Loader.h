@@ -36,6 +36,11 @@ void loadSpriteSheets(){
     spriteSheet = new SpriteSheetResource("res/Air/AirAttack.png");
     spriteSheet->addGrid(195, 485);
     ResourceManager::add<SpriteSheetResource>(spriteSheet, Resource::ID::SS_AIR_ATTACK);
+
+    // Healthbar
+    spriteSheet = new SpriteSheetResource("res/Assets/SpriteSheetHealthbarEnemy.png");
+    spriteSheet->addGrid(400, 50);
+    ResourceManager::add<SpriteSheetResource>(spriteSheet, Resource::ID::SS_HEALTHBAR_ENEMY);
 }
 
 // TODO: Make better

@@ -16,9 +16,10 @@ static float JUMP_FORCE = 1.1f;
 
 static float PLAYER_WIDTH = 50;
 static float PLAYER_HEIGHT = 80;
+static double PLAYER_HEALTH = 100;
 
 // ----------------------------- FIRE -----------------------------
-static float FIRE_ATTACK_VEL = 1.f;
+static float FIRE_ATTACK_VEL = 0.1f;
 static double FIRE_ATTACK_COOL = 1000.f; // in millis
 static double FIRE_ATTACK_CAST = 200.f; // in millis
 

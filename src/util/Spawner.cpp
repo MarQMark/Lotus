@@ -10,6 +10,11 @@
 #include "components/AnimationComponent.h"
 #include "components/PlayerStateComponent.h"
 #include "components/DamageComponent.h"
+#include "Kikan/Engine.h"
+#include "components/HealthbarComponent.h"
+#include "components/HealthComponent.h"
+
+
 
 Kikan::Entity *Spawner::spawnPlayer(Nation nation) {
     auto* entity = new Kikan::Entity;
@@ -25,9 +30,6 @@ Kikan::Entity *Spawner::spawnPlayer(Nation nation) {
 
     auto* player = new PlayerComponent();
     entity->addComponent(player);
-
-    auto* effect = new EffectComponent();
-    entity->addComponent(effect);
 
     return entity;
 }
@@ -139,4 +141,34 @@ void Spawner::add_pe_common(Kikan::Entity *entity, Nation nation) {
 
     auto* animator = new AnimationComponent();
     entity->addComponent(animator);
+
+    auto* effect = new EffectComponent();
+    entity->addComponent(effect);
+
+    auto* health = new HealthComponent();
+    entity->addComponent(health);
+
+    add_healthbar(entity);
+}
+
+void Spawner::add_healthbar(Kikan::Entity* player){
+    auto* entity = new Kikan::Entity;
+    auto* sprite = new Kikan::AASprite();
+    sprite->dimensions = glm::vec2(10 * 400.f / 50.f, 10);
+    sprite->offset.y = 20;
+    sprite->offset.x = -(sprite->dimensions.x - PLAYER_WIDTH) / 2.f;
+    auto ss = ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_HEALTHBAR_ENEMY);
+    ss->getTexCoords(sprite->texCoords, 0);
+    sprite->textureID = ss->getID();
+
+    auto* healthbarComp = new HealthbarComponent();
+    entity->addComponent(healthbarComp);
+
+    // This probably will cause a crash at some point and is generally pretty bad. Too bad!
+    delete entity->getComponent<Kikan::Transform>();
+    entity->addComponent(player->getComponent<Kikan::Transform>());
+    entity->addComponent(player->getComponent<HealthComponent>());
+
+    entity->addComponent(sprite);
+    Kikan::Engine::Kikan()->getECS()->getScene()->addEntity(entity);
 }

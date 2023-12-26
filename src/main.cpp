@@ -25,6 +25,8 @@
 #include "util/Loader.h"
 #include "systems/PlayerStateSystem.h"
 #include "systems/AttackAnimationSystem.h"
+#include "Kikan/core/Timer.h"
+#include "systems/HealthbarSystem.h"
 
 void addBoundaries(){
     Kikan::Engine* engine = Kikan::Engine::Kikan();
@@ -97,6 +99,7 @@ int WinMain() {
     auto* playerStateSystem = new PlayerStateSystem();
     auto* playerAnimationSystem = new PlayerAnimationSystem();
     auto* attackAnimationSystem = new AttackAnimationSystem();
+    auto* healthbarSystem = new HealthbarSystem();
 
     engine->getECS()->getScene()->addSystem(cameraSystem);
     engine->getECS()->getScene()->addSystem(physicsSystem);
@@ -108,6 +111,7 @@ int WinMain() {
     engine->getECS()->getScene()->addSystem(playerStateSystem);
     engine->getECS()->getScene()->addSystem(playerAnimationSystem);
     engine->getECS()->getScene()->addSystem(attackAnimationSystem);
+    engine->getECS()->getScene()->addSystem(healthbarSystem);
 
     auto* spriteSystem = new Kikan::SpriteRenderSystem();
 
@@ -119,9 +123,18 @@ int WinMain() {
 
     stbi_set_flip_vertically_on_load(1);
 
-    loadTextures();
-    loadSpriteSheets();
-    createAnimations();
+    {
+        Kikan::Timer t("Textures");
+        loadTextures();
+    }
+    {
+        Kikan::Timer t("SpriteSheets");
+        loadSpriteSheets();
+    }
+    {
+        Kikan::Timer t("Animations");
+        createAnimations();
+    }
 
     {
         auto* entity = new Kikan::Entity;
