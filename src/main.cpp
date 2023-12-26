@@ -16,7 +16,7 @@
 #include "systems/CameraSystem.h"
 #include "systems/EffectSystem.h"
 
-#include "Kikan/ecs/components/Texture2DSprite.h"
+#include "Kikan/ecs/components/AASprite.h"
 #include "Kikan/renderer/stdRenderer/buffers/Texture2D.h"
 #include "systems/TriggerSystem.h"
 #include "util/ResourceManager.h"
@@ -125,11 +125,9 @@ int WinMain() {
 
     {
         auto* entity = new Kikan::Entity;
-        auto* sprite = new Kikan::Texture2DSprite;
-        sprite->points[0] = glm::vec2(0, 562.5f);
-        sprite->points[1] = glm::vec2(1000, 562.5f);
-        sprite->points[2] = glm::vec2(1000, 0);
-        sprite->points[3] = glm::vec2(0, 0);
+        auto* sprite = new Kikan::AASprite;
+        sprite->offset = glm::vec2(0, 562.5f);
+        sprite->dimensions = glm::vec2(1000, 562.5f);
         sprite->textureID = ResourceManager::get<TextureResource>(Resource::ID::TEX_OUTER_WALL_CLOUDS)->getID();
         sprite->layer = .2;
         sprite->color = glm::vec4(.5f);
@@ -138,11 +136,9 @@ int WinMain() {
     }
     {
         auto* entity = new Kikan::Entity;
-        auto* sprite = new Kikan::Texture2DSprite;
-        sprite->points[0] = glm::vec2(0, 562.5f);
-        sprite->points[1] = glm::vec2(1000, 562.5f);
-        sprite->points[2] = glm::vec2(1000, 0);
-        sprite->points[3] = glm::vec2(0, 0);
+        auto* sprite = new Kikan::AASprite;
+        sprite->offset = glm::vec2(0, 562.5f);
+        sprite->dimensions = glm::vec2(1000, 562.5f);
         sprite->textureID = ResourceManager::get<TextureResource>(Resource::ID::TEX_OUTER_WALL_BACKGROUND)->getID();
         sprite->layer = .1;
         sprite->color = glm::vec4(.5f);
@@ -151,11 +147,9 @@ int WinMain() {
     }
     {
         auto* entity = new Kikan::Entity;
-        auto* sprite = new Kikan::Texture2DSprite;
-        sprite->points[0] = glm::vec2(0, 562.5f);
-        sprite->points[1] = glm::vec2(1000, 562.5f);
-        sprite->points[2] = glm::vec2(1000, 0);
-        sprite->points[3] = glm::vec2(0, 0);
+        auto* sprite = new Kikan::AASprite;
+        sprite->offset = glm::vec2(0, 562.5f);
+        sprite->dimensions = glm::vec2(1000, 562.5f);
         sprite->textureID = ResourceManager::get<TextureResource>(Resource::ID::TEX_OUTER_WALL_FOREGROUND)->getID();
         sprite->layer = -.1;
         sprite->color = glm::vec4(.5f);

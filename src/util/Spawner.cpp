@@ -6,7 +6,7 @@
 #include "components/EnemyComponent.h"
 #include "components/TriggerComponent.h"
 #include "components/EffectComponent.h"
-#include "Kikan/ecs/components/Texture2DSprite.h"
+#include "Kikan/ecs/components/AASprite.h"
 #include "components/AnimationComponent.h"
 #include "components/PlayerStateComponent.h"
 #include "components/DamageComponent.h"
@@ -21,7 +21,7 @@ Kikan::Entity *Spawner::spawnPlayer(Nation nation) {
     add_pe_common(entity, nation);
 
     entity->getComponent<Kikan::LineQuadSprite>()->color = glm::vec4(.4, .5, .8, 1);
-    entity->getComponent<Kikan::Texture2DSprite>()->layer = -0.01;
+    entity->getComponent<Kikan::AASprite>()->layer = -0.01;
 
     auto* player = new PlayerComponent();
     entity->addComponent(player);
@@ -53,7 +53,7 @@ Kikan::Entity *Spawner::spawnAttack(glm::vec2 pos, Nation nation, uint8_t dir) {
     auto* physics = new Kikan::Physics();
     auto* animComp = new AnimationComponent();
     auto* damage = new DamageComponent();
-    auto* sprite = new Kikan::Texture2DSprite();
+    auto* sprite = new Kikan::AASprite();
 
     trigger->impulse = glm::vec2(0.15, 0);
     physics->gravity = false;
@@ -92,6 +92,7 @@ Kikan::Entity *Spawner::spawnAttack(glm::vec2 pos, Nation nation, uint8_t dir) {
     hitboxSprite->thickness = 10;
     hitboxSprite->color = glm::vec4 (1.f, 0.f, 0.f, 1.f);
     trigger->dimensions = glm::vec2(width, height);
+    sprite->dimensions = glm::vec2(width, height);
 
     if(dir == 1){
         physics->velocity.x *= -1;
@@ -126,7 +127,8 @@ void Spawner::add_pe_common(Kikan::Entity *entity, Nation nation) {
     collider->dimensions = glm::vec2(PLAYER_WIDTH, PLAYER_HEIGHT);
     entity->addComponent(collider);
 
-    auto* texture = new Kikan::Texture2DSprite;
+    auto* texture = new Kikan::AASprite;
+    texture->dimensions = glm::vec2(PLAYER_WIDTH, PLAYER_HEIGHT);
     texture->layer = 0;
     texture->color = glm::vec4(1.f);
     entity->addComponent(texture);

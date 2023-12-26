@@ -1,5 +1,5 @@
 #include "systems/PlayerAnimationSystem.h"
-#include "Kikan/ecs/components/Texture2DSprite.h"
+#include "Kikan/ecs/components/AASprite.h"
 #include "Kikan/ecs/components/Physics.h"
 #include "components/DColliderComponent.h"
 #include "util/AnimationManager.h"
@@ -82,7 +82,7 @@ Animation* getIdleAnimation(PlayerStateComponent* player){
 void PlayerAnimationSystem::update(double dt) {
     for (auto* e : _entities) {
         auto* transform = e->getComponent<Kikan::Transform>();
-        auto* sprite = e->getComponent<Kikan::Texture2DSprite>();
+        auto* sprite = e->getComponent<Kikan::AASprite>();
         auto* animComp =  e->getComponent<AnimationComponent>();
         if(!sprite)
             return;
@@ -107,10 +107,6 @@ void PlayerAnimationSystem::update(double dt) {
         animation->getFrame(texCoords, animComp->currentFrame, animComp->lastTime);
         for(int i = 0; i < 4; i++)
             sprite->texCoords[i] = texCoords[i];
-        sprite->points[0] = glm::vec2(transform->position.x, transform->position.y);
-        sprite->points[1] = glm::vec2(transform->position.x + 50, transform->position.y);
-        sprite->points[2] = glm::vec2(transform->position.x + 50, transform->position.y - 80);
-        sprite->points[3] = glm::vec2(transform->position.x, transform->position.y - 80);
         sprite->textureID = animation->getID();
     }
 }
