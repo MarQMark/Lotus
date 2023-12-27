@@ -27,6 +27,8 @@
 #include "systems/AttackAnimationSystem.h"
 #include "Kikan/core/Timer.h"
 #include "systems/HealthbarSystem.h"
+#include "systems/BgSpriteSystem.h"
+#include "components/BgSprite.h"
 
 void addBoundaries(){
     Kikan::Engine* engine = Kikan::Engine::Kikan();
@@ -100,6 +102,7 @@ int WinMain() {
     auto* playerAnimationSystem = new PlayerAnimationSystem();
     auto* attackAnimationSystem = new AttackAnimationSystem();
     auto* healthbarSystem = new HealthbarSystem();
+    auto* bgSpriteSystem = new BgSpriteSystem();
 
     engine->getECS()->getScene()->addSystem(cameraSystem);
     engine->getECS()->getScene()->addSystem(physicsSystem);
@@ -112,6 +115,7 @@ int WinMain() {
     engine->getECS()->getScene()->addSystem(playerAnimationSystem);
     engine->getECS()->getScene()->addSystem(attackAnimationSystem);
     engine->getECS()->getScene()->addSystem(healthbarSystem);
+    engine->getECS()->getScene()->addSystem(bgSpriteSystem);
 
     auto* spriteSystem = new Kikan::SpriteRenderSystem();
 
@@ -140,11 +144,15 @@ int WinMain() {
         auto* entity = new Kikan::Entity;
         auto* sprite = new Kikan::AASprite;
         sprite->offset = glm::vec2(0, 562.5f);
-        sprite->dimensions = glm::vec2(1000, 562.5f);
+        sprite->dimensions = glm::vec2(3000, 562.5f);
         sprite->textureID = ResourceManager::get<TextureResource>(Resource::ID::TEX_OUTER_WALL_CLOUDS)->getID();
         sprite->layer = .2;
         sprite->color = glm::vec4(.5f);
         entity->addComponent(sprite);
+        auto* bgSprite = new BgSprite();
+        bgSprite->vel.x = -.01f;
+        bgSprite->id = BgSprite::ID::CLOUDS;
+        entity->addComponent(bgSprite);
         engine->getECS()->getScene()->addEntity(entity);
     }
     {

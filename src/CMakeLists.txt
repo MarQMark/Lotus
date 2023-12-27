@@ -16,6 +16,7 @@ add_executable(Lotus
         systems/PlayerStateSystem.cpp
         systems/AttackAnimationSystem.cpp
         systems/HealthbarSystem.cpp
+        systems/BgSpriteSystem.cpp
 
         util/Spawner.cpp
         util/ResourceManager.cpp
