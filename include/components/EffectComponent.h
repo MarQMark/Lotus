@@ -9,7 +9,15 @@ public:
     enum ID{
         ATTACK_CAST,
         ATTACK_COOLDOWN,
+        ABILITY_CAST,
+        ABILITY_COOLDOWN,
+        ULT_CAST,
+        ULT_COOLDOWN,
 
+        BLOCK_MOV,
+        BLOCK_INPUT,
+
+        FIRE_ABILITY,
     };
 
     std::map<uint32_t, double> effects;

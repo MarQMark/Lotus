@@ -20,8 +20,8 @@ public:
         FIRE_PLAYER_JUMP_L,
         FIRE_PLAYER_MOV_R,
         FIRE_PLAYER_MOV_L,
-        FIRE_PLAYER_MOV_ABL_R,
-        FIRE_PLAYER_MOV_ABL_L,
+        FIRE_PLAYER_JUMP_ABL_R,
+        FIRE_PLAYER_JUMP_ABL_L,
 
         FIRE_ATTACK_R,
         FIRE_ATTACK_L,

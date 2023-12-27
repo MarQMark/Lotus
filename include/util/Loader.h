@@ -65,9 +65,9 @@ void createAnimations(){
     animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_FIRE_PLAYER), 4, FIRE_MOV_ANI_SPEED);
     AnimationManager::addAnimation(animation, Animation::ID::FIRE_PLAYER_MOV_L);
     animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_FIRE_PLAYER), 5, FIRE_MOV_ANI_SPEED);
-    AnimationManager::addAnimation(animation, Animation::ID::FIRE_PLAYER_MOV_ABL_R);
+    AnimationManager::addAnimation(animation, Animation::ID::FIRE_PLAYER_JUMP_ABL_R);
     animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_FIRE_PLAYER), 6, FIRE_MOV_ANI_SPEED);
-    AnimationManager::addAnimation(animation, Animation::ID::FIRE_PLAYER_MOV_ABL_L);
+    AnimationManager::addAnimation(animation, Animation::ID::FIRE_PLAYER_JUMP_ABL_L);
 
     // EARTH PLAYER
     animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_EARTH_PLAYER), std::vector<uint32_t>{0}, 0);

@@ -2,6 +2,7 @@
 #include "components/PlayerStateComponent.h"
 #include "components/DColliderComponent.h"
 #include "Kikan/ecs/components/Physics.h"
+#include "components/EffectComponent.h"
 
 PlayerStateSystem::PlayerStateSystem() {
     includeSingle(PlayerStateComponent);
@@ -19,5 +20,20 @@ void PlayerStateSystem::update(double dt) {
         if(physics)
             player->isMoving = (std::abs(physics->velocity.x) > 0.2f);
 
+        auto* effect = e->getComponent<EffectComponent>();
+        if(effect){
+            player->canMove = !effect->effects.count(EffectComponent::ID::BLOCK_MOV);
+            player->canInput = !effect->effects.count(EffectComponent::ID::BLOCK_INPUT);
+
+            if(effect->effects.count(EffectComponent::ID::FIRE_ABILITY)){
+                player->movMulti = 1.5f;
+                player->jumpMulti = 1.2f;
+            }
+            else{
+                // TODO: Move somewhere where called when effect ends (maybe effect component gets a callback when its over)
+                player->movMulti = 1.f;
+                player->jumpMulti = 1.f;
+            }
+        }
     }
 }

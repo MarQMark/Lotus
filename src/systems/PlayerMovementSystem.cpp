@@ -25,20 +25,10 @@ void PlayerMovementSystem::update(double dt) {
         if(!physics || !collider)
             return;
 
-        if (Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::D)){
-            physics->acceleration.x += MOVEMENT_SPEED;
-            player->facing = 0; // faces right
-        }
-        if (Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::A)){
-            physics->acceleration.x += -MOVEMENT_SPEED;
-            player->facing = 1; // faces left
-        }
+        if(!player->canInput)
+            return;
 
-        if(Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::SPACE)){
-            if(collider->hasCollidedB)
-                physics->velocity.y = JUMP_FORCE;
-        }
-
+        // ----------------------- Attack -----------------------
         if(Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::E)){
             auto* effect = e->getComponent<EffectComponent>();
             if(effect && !effect->effects.count(EffectComponent::ID::ATTACK_COOLDOWN)){
@@ -64,12 +54,62 @@ void PlayerMovementSystem::update(double dt) {
             }
         }
 
+        // ----------------------- Ability -----------------------
+        if(Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::LEFT_SHIFT)){
+            auto* effect = e->getComponent<EffectComponent>();
+            if(effect && !effect->effects.count(EffectComponent::ID::ABILITY_COOLDOWN)){
+                switch (player->nation) {
+                    case Nation::FIRE:
+                        effect->effects[EffectComponent::ID::FIRE_ABILITY] = 5000;
+                        break;
+                    case Nation::EARTH:
+                        break;
+                    case Nation::AIR:
+                    {
+                        auto* attack = Spawner::spawnAttack(transform->position, player->nation, 0);
+                        Kikan::Engine::Kikan()->getECS()->getScene()->addEntity(attack);
+                        attack = Spawner::spawnAttack(transform->position, player->nation, 1);
+                        Kikan::Engine::Kikan()->getECS()->getScene()->addEntity(attack);
+                    }
+                        break;
+                    case Nation::WATER:
+                        effect->effects[EffectComponent::ID::BLOCK_INPUT] = 2000;
+                        break;
+                }
+
+                effect->effects[EffectComponent::ID::ABILITY_CAST] = FIRE_ATTACK_CAST;
+                effect->effects[EffectComponent::ID::ABILITY_COOLDOWN] = FIRE_ATTACK_COOL;
+            }
+        }
+
+
+        // ----------------------- Ultimate -----------------------
+        // TODO
+
+        // ----------------------- Debug -----------------------
         if(Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::N)){
             auto* effect = e->getComponent<EffectComponent>();
             if(effect && !effect->effects.count(42)) {
                 player->nation = Nation((player->nation + 1) % 4);
                 effect->effects[42] = 500;
             }
+        }
+
+        // ----------------------- Movement -----------------------
+        if(!player->canMove)
+            return;
+
+        if (Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::D)){
+            physics->acceleration.x += MOVEMENT_SPEED * player->movMulti;
+            player->facing = 0; // faces right
+        }
+        if (Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::A)){
+            physics->acceleration.x += -MOVEMENT_SPEED * player->movMulti;
+            player->facing = 1; // faces left
+        }
+        if(Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::SPACE)){
+            if(collider->hasCollidedB)
+                physics->velocity.y = JUMP_FORCE * player->jumpMulti;
         }
     }
 }

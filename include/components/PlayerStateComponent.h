@@ -12,6 +12,11 @@ public:
     uint8_t facing = 0; // 0 = right, 1 = left
     bool onGround = false;
     bool isMoving = false;
+    bool canMove = true;
+    bool canInput = true;
+
+    float movMulti = 1.f;
+    float jumpMulti = 1.f;
 
     void destroy() override{
         delete this;

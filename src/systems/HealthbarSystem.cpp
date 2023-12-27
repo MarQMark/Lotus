@@ -13,7 +13,7 @@ void HealthbarSystem::update(double dt) {
         auto* sprite = e->getComponent<Kikan::AASprite>();
         auto* health = e->getComponent<HealthComponent>();
 
-        uint32_t id = std::min(std::max(11 - (int)(11 * (health->health / health->maxHealth)), 0), 11);
+        uint32_t id = std::min(std::max(10 - (int)(10 * (health->health / health->maxHealth)), 0), 10);
         ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_HEALTHBAR_ENEMY)->getTexCoords(sprite->texCoords, id);
     }
 }

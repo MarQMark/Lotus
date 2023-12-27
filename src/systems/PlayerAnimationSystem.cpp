@@ -35,8 +35,15 @@ Animation* getJumpAnimation(PlayerStateComponent* player, Kikan::Entity* e){
     Animation::ID animationID;
     switch (player->nation) {
         case Nation::FIRE:
-            // TODO: Add ability jump
-            animationID = Animation::ID::FIRE_PLAYER_JUMP_R;
+            {
+                auto* effects = e->getComponent<EffectComponent>();
+                if(effects && effects->effects.count(EffectComponent::ID::FIRE_ABILITY)){
+                    animationID = Animation::ID::FIRE_PLAYER_JUMP_ABL_R;
+                }
+                else{
+                    animationID = Animation::ID::FIRE_PLAYER_JUMP_R;
+                }
+            }
             break;
         case Nation::EARTH:
             animationID = Animation::ID::EARTH_PLAYER_JUMP_R;
@@ -51,11 +58,19 @@ Animation* getJumpAnimation(PlayerStateComponent* player, Kikan::Entity* e){
     animationID = (Animation::ID)(animationID + player->facing);
     return AnimationManager::getAnimation(animationID);
 }
-Animation* getMovingAnimation(PlayerStateComponent* player){
+Animation* getMovingAnimation(PlayerStateComponent* player, Kikan::Entity* e){
     Animation::ID animationID;
     switch (player->nation) {
         case Nation::FIRE:
-            animationID = Animation::ID::FIRE_PLAYER_MOV_R;
+            {
+                auto* effects = e->getComponent<EffectComponent>();
+                if(effects && effects->effects.count(EffectComponent::ID::FIRE_ABILITY)){
+                    animationID = Animation::ID::FIRE_PLAYER_JUMP_ABL_R;
+                }
+                else{
+                    animationID = Animation::ID::FIRE_PLAYER_MOV_R;
+                }
+            }
             break;
         case Nation::EARTH:
             animationID = Animation::ID::EARTH_PLAYER_MOV_R;
@@ -106,7 +121,7 @@ void PlayerAnimationSystem::update(double dt) {
         else if(!player->onGround)
             animation = getJumpAnimation(player, e);
         else if(player->isMoving)
-            animation = getMovingAnimation(player);
+            animation = getMovingAnimation(player, e);
         else
             animation = getIdleAnimation(player);
 
