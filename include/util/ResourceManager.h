@@ -37,7 +37,7 @@ public:
     TextureResource(const std::string& path){
         int mapImgBPP;;
         unsigned char* buff = stbi_load(path.c_str(), &_width, &_height, &mapImgBPP, 4);
-        _texture2D = new Kikan::Renderer::Texture2D(_width, _height, buff);
+        _texture2D = new Kikan::Texture2D(_width, _height, buff);
     };
 
     GLuint getID(){
@@ -51,7 +51,7 @@ public:
     }
 
 protected:
-    Kikan::Renderer::Texture2D* _texture2D;
+    Kikan::Texture2D* _texture2D;
     int _width = 0;
     int _height = 0;
 };

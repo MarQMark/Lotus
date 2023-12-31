@@ -6,7 +6,7 @@ CameraSystem::CameraSystem() {
 }
 
 void CameraSystem::update(double dt) {
-    auto* renderer = (Kikan::Renderer::StdRenderer*)Kikan::Engine::Kikan()->getRenderer();
+    auto* renderer = (Kikan::StdRenderer*)Kikan::Engine::Kikan()->getRenderer();
 
     _camera.reset();
 

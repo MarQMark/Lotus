@@ -13,7 +13,7 @@ public:
     void update(double dt) override;
 
 private:
-    Kikan::Renderer::Camera _camera;
+    Kikan::Camera _camera;
 };
 
 
