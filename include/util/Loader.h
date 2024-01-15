@@ -41,6 +41,33 @@ void loadSpriteSheets(){
     spriteSheet = new SpriteSheetResource("res/Assets/SpriteSheetHealthbarEnemy.png");
     spriteSheet->addGrid(400, 50);
     ResourceManager::add<SpriteSheetResource>(spriteSheet, Resource::ID::SS_HEALTHBAR_ENEMY);
+
+    spriteSheet = new SpriteSheetResource("res/Fire/SpriteSheetFireHealthbar.png");
+    spriteSheet->addGrid(5780, 960);
+    ResourceManager::add<SpriteSheetResource>(spriteSheet, Resource::ID::SS_HEALTHBAR_FIRE);
+    spriteSheet = new SpriteSheetResource("res/Earth/SpriteSheetEarthHealthbar.png");
+    spriteSheet->addGrid(5780, 960);
+    ResourceManager::add<SpriteSheetResource>(spriteSheet, Resource::ID::SS_HEALTHBAR_EARTH);
+    spriteSheet = new SpriteSheetResource("res/Air/SpriteSheetAirHealthbar.png");
+    spriteSheet->addGrid(5780, 960);
+    ResourceManager::add<SpriteSheetResource>(spriteSheet, Resource::ID::SS_HEALTHBAR_AIR);
+    spriteSheet = new SpriteSheetResource("res/Water/SpriteSheetWaterHealthbar.png");
+    spriteSheet->addGrid(5780, 960);
+    ResourceManager::add<SpriteSheetResource>(spriteSheet, Resource::ID::SS_HEALTHBAR_WATER);
+
+    // UI cooldowns
+    spriteSheet = new SpriteSheetResource("res/Fire/SpriteSheetFireAbilities.png");
+    spriteSheet->addGrid(910, 910);
+    ResourceManager::add<SpriteSheetResource>(spriteSheet, Resource::ID::SS_UI_COOLDOWN_FIRE);
+    spriteSheet = new SpriteSheetResource("res/Earth/SpriteSheetEarthAbilities.png");
+    spriteSheet->addGrid(910, 910);
+    ResourceManager::add<SpriteSheetResource>(spriteSheet, Resource::ID::SS_UI_COOLDOWN_EARTH);
+    spriteSheet = new SpriteSheetResource("res/Air/SpriteSheetAirAbilities.png");
+    spriteSheet->addGrid(910, 910);
+    ResourceManager::add<SpriteSheetResource>(spriteSheet, Resource::ID::SS_UI_COOLDOWN_AIR);
+    spriteSheet = new SpriteSheetResource("res/Fire/SpriteSheetFireAbilities.png");
+    spriteSheet->addGrid(910, 910);
+    ResourceManager::add<SpriteSheetResource>(spriteSheet, Resource::ID::SS_UI_COOLDOWN_WATER);
 }
 
 // TODO: Make better

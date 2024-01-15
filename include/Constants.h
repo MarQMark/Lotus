@@ -2,10 +2,10 @@
 #define LOTUS_CONSTANTS_H
 
 enum Nation{
-    FIRE,
-    WATER,
-    EARTH,
-    AIR
+    FIRE = 0,
+    WATER = 1,
+    EARTH = 2,
+    AIR = 3
 };
 
 static float GRAVITY = -.004f;
@@ -17,6 +17,21 @@ static float JUMP_FORCE = 1.1f;
 static float PLAYER_WIDTH = 50;
 static float PLAYER_HEIGHT = 80;
 static double PLAYER_HEALTH = 100;
+
+
+static double ATTACK_COOLDOWN[4] = {
+        1000.,
+        1000.,
+        1000.,
+        1000.
+};
+
+static double ABILITY_COOLDOWN[4] = {
+        2000.,
+        2000.,
+        2000.,
+        2000.
+};
 
 // ----------------------------- FIRE -----------------------------
 static float FIRE_ATTACK_VEL = 0.1f;

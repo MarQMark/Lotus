@@ -29,6 +29,15 @@ public:
         SS_WATER_ATTACK,
 
         SS_HEALTHBAR_ENEMY,
+        SS_HEALTHBAR_FIRE,
+        SS_HEALTHBAR_EARTH,
+        SS_HEALTHBAR_AIR,
+        SS_HEALTHBAR_WATER,
+
+        SS_UI_COOLDOWN_FIRE,
+        SS_UI_COOLDOWN_EARTH,
+        SS_UI_COOLDOWN_AIR,
+        SS_UI_COOLDOWN_WATER,
     };
 };
 
@@ -48,6 +57,9 @@ public:
     }
     int getHeight() const{
         return _height;
+    }
+    Kikan::Texture2D* getTexture2D(){
+        return _texture2D;
     }
 
 protected:

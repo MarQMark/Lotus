@@ -49,7 +49,7 @@ void PlayerMovementSystem::update(double dt) {
                 }
 
                 effect->effects[EffectComponent::ID::ATTACK_CAST] = FIRE_ATTACK_CAST;
-                effect->effects[EffectComponent::ID::ATTACK_COOLDOWN] = FIRE_ATTACK_COOL;
+                effect->effects[EffectComponent::ID::ATTACK_COOLDOWN] = ATTACK_COOLDOWN[player->nation];;
                 Kikan::Engine::Kikan()->getECS()->getScene()->addEntity(attack);
             }
         }
@@ -78,7 +78,7 @@ void PlayerMovementSystem::update(double dt) {
                 }
 
                 effect->effects[EffectComponent::ID::ABILITY_CAST] = FIRE_ATTACK_CAST;
-                effect->effects[EffectComponent::ID::ABILITY_COOLDOWN] = FIRE_ATTACK_COOL;
+                effect->effects[EffectComponent::ID::ABILITY_COOLDOWN] = ABILITY_COOLDOWN[player->nation];
             }
         }
 

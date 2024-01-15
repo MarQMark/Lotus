@@ -30,6 +30,34 @@
 #include "systems/BgSpriteSystem.h"
 #include "components/BgSprite.h"
 
+#include <Kikan/ui/elements/Label.h>
+
+void addUI() {
+    Kikan::Engine* engine = Kikan::Engine::Kikan();
+    auto* ui = engine->getUI();
+    ui->setDimensions(1600, 900);
+
+    auto* node = new Kikan::UINode("Arena");
+    ui->addNode(node);
+    auto* healthbar = new Kikan::Label("Healthbar", glm::vec2(20, 120), glm::vec2(5780 / 960 * 100, 100), nullptr);
+    ui->addElement(healthbar, node);
+    auto* attack = new Kikan::Label("Attack", glm::vec2(1600 - 140, 120), glm::vec2(100), nullptr);
+    ui->addElement(attack, node);
+    auto* ability = new Kikan::Label("Ability", glm::vec2(1600 - 260, 120), glm::vec2(100), nullptr);
+    ui->addElement(ability, node);
+    auto* ultimate = new Kikan::Label("Ultimate", glm::vec2(1600 - 380, 120), glm::vec2(100), nullptr);
+    ui->addElement(ultimate, node);
+    auto* attackGray = new Kikan::Label("AttackG", glm::vec2(1600 - 140, 120), glm::vec2(100), nullptr);
+    attackGray->setTextureLayerOffset(attackGray->getTextureLayerOffset() - 0.01f);
+    ui->addElement(attackGray, node);
+    auto* abilityGray = new Kikan::Label("AbilityG", glm::vec2(1600 - 260, 120), glm::vec2(100), nullptr);
+    abilityGray->setTextureLayerOffset(abilityGray->getTextureLayerOffset() - 0.01f);
+    ui->addElement(abilityGray, node);
+    auto* ultimateGray = new Kikan::Label("UltimateG", glm::vec2(1600 - 380, 120), glm::vec2(100), nullptr);
+    ultimateGray->setTextureLayerOffset(ultimateGray->getTextureLayerOffset() - 0.01f);
+    ui->addElement(ultimateGray, node);
+}
+
 void addBoundaries(){
     Kikan::Engine* engine = Kikan::Engine::Kikan();
     // Ground
@@ -186,6 +214,8 @@ int WinMain() {
     }
 
     addBoundaries();
+
+    addUI();
 
     std::string title = "Lotus\n";
     engine->setTitle(title);

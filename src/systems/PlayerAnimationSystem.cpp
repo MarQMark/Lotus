@@ -7,6 +7,9 @@
 #include "components/PlayerStateComponent.h"
 #include "Constants.h"
 #include "components/EffectComponent.h"
+#include "Kikan/Engine.h"
+#include "components/PlayerComponent.h"
+#include "Kikan/ui/elements/Label.h"
 
 PlayerAnimationSystem::PlayerAnimationSystem() {
     includeAnd(sig(AnimationComponent), sig(PlayerStateComponent));
@@ -105,6 +108,82 @@ Animation* getIdleAnimation(PlayerStateComponent* player){
     return AnimationManager::getAnimation(animationID);
 }
 
+void updateUICooldowns() {
+    auto* player = Kikan::Engine::Kikan()->getECS()->getScene()->getEntity(getSig(PlayerComponent));
+    if(!player)
+        return;
+
+    auto* playerState = player->getComponent<PlayerStateComponent>();
+    auto* effect = player->getComponent<EffectComponent>();
+    SpriteSheetResource* res;
+    switch (playerState->nation) {
+        case FIRE:
+            res = ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_UI_COOLDOWN_FIRE);
+            break;
+        case EARTH:
+            res = ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_UI_COOLDOWN_EARTH);
+            break;
+        case AIR:
+            res = ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_UI_COOLDOWN_AIR);
+            break;
+        case WATER:
+            res = ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_UI_COOLDOWN_WATER);
+            break;
+    }
+
+    auto* ui = Kikan::Engine::Kikan()->getUI();
+
+    {
+        auto* label = (Kikan::Label*)ui->getElement("Attack");
+        label->setTexture2D(res->getTexture2D());
+        glm::vec2 texCoords[4];
+        res->getTexCoords(texCoords, 0);
+        label->setTextureCoords(texCoords);
+    }
+    {
+        auto* label = (Kikan::Label*)ui->getElement("AttackG");
+        label->setTexture2D(res->getTexture2D());
+        glm::vec2 texCoords[4];
+        res->getTexCoords(texCoords, 1);
+        float cooldown = 0;
+        if(effect->effects.count(EffectComponent::ID::ATTACK_COOLDOWN))
+            cooldown = (float)(effect->effects[EffectComponent::ID::ATTACK_COOLDOWN] / ATTACK_COOLDOWN[playerState->nation]);
+        texCoords[2].y += (1 - cooldown) * (texCoords[1].y - texCoords[2].y);
+        texCoords[3].y += (1 - cooldown) * (texCoords[0].y - texCoords[3].y);
+        label->dim.y = cooldown * 100;
+        label->setTextureCoords(texCoords);
+    }
+
+    {
+        auto* label = (Kikan::Label*)ui->getElement("Ability");
+        label->setTexture2D(res->getTexture2D());
+        glm::vec2 texCoords[4];
+        res->getTexCoords(texCoords, 2);
+        label->setTextureCoords(texCoords);
+    }
+    {
+        auto* label = (Kikan::Label*)ui->getElement("AbilityG");
+        label->setTexture2D(res->getTexture2D());
+        glm::vec2 texCoords[4];
+        res->getTexCoords(texCoords, 3);
+        float cooldown = 0;
+        if(effect->effects.count(EffectComponent::ID::ABILITY_COOLDOWN))
+            cooldown = (float)(effect->effects[EffectComponent::ID::ABILITY_COOLDOWN] / ABILITY_COOLDOWN[playerState->nation]);
+        texCoords[2].y += (1 - cooldown) * (texCoords[1].y - texCoords[2].y);
+        texCoords[3].y += (1 - cooldown) * (texCoords[0].y - texCoords[3].y);
+        label->dim.y = cooldown * 100;
+        label->setTextureCoords(texCoords);
+    }
+
+    {
+        auto* label = (Kikan::Label*)ui->getElement("Ultimate");
+        label->setTexture2D(res->getTexture2D());
+        glm::vec2 texCoords[4];
+        res->getTexCoords(texCoords, 4);
+        label->setTextureCoords(texCoords);
+    }
+}
+
 void PlayerAnimationSystem::update(double dt) {
     for (auto* e : _entities) {
         auto* transform = e->getComponent<Kikan::Transform>();
@@ -138,4 +217,7 @@ void PlayerAnimationSystem::update(double dt) {
             sprite->texCoords[i] = texCoords[i];
         sprite->textureID = animation->getID();
     }
+
+
+    updateUICooldowns();
 }

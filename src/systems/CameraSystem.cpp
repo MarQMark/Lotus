@@ -14,6 +14,8 @@ void CameraSystem::update(double dt) {
     _camera.translate( 0, -1);
 
     float ratio = (float)renderer->getWidth()/(float)renderer->getHeight();
+    Kikan::Engine::Kikan()->getUI()->setDimensions(1600, 1600 / ratio);
+
     _camera.scale( 1.f, ratio);
 
     // move origin to bottom left
