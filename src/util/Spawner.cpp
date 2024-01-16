@@ -67,28 +67,22 @@ Kikan::Entity *Spawner::spawnAttack(glm::vec2 pos, Nation nation, uint8_t dir) {
     switch (nation) {
         case Nation::EARTH:
             aspectRatio = 340. / 180.;
-            height = EARTH_ATK_SPRITE_HEIGHT;
             animationID = Animation::ID::EARTH_ATTACK_R;
-            damage->damage = EARTH_ATK_DAMAGE;
-            physics->velocity.x = EARTH_ATTACK_VEL;
             break;
         case Nation::AIR:
             aspectRatio = 195. / 485.;
-            height = AIR_ATK_SPRITE_HEIGHT;
             animationID = Animation::ID::AIR_ATTACK_R;
-            damage->damage = AIR_ATK_DAMAGE;
-            physics->velocity.x = AIR_ATTACK_VEL;
             break;
         case Nation::WATER:
         case Nation::FIRE:
         default:
             aspectRatio = 300. / 150.;
-            height = FIRE_ATK_SPRITE_HEIGHT;
             animationID = Animation::ID::FIRE_ATTACK_R;
-            damage->damage = FIRE_ATK_DAMAGE;
-            physics->velocity.x = FIRE_ATTACK_VEL;
             break;
     }
+    height = ATK_SPRITE_HEIGHT[nation];
+    damage->damage = ATK_DAMAGE[nation];
+    physics->velocity.x = ATTACK_VEL[nation];
     width = (float)(height * aspectRatio);
     hitboxSprite->dimensions = glm::vec2(width, height);
     hitboxSprite->thickness = 10;

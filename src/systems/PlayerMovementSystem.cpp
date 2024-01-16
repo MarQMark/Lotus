@@ -31,54 +31,31 @@ void PlayerMovementSystem::update(double dt) {
         // ----------------------- Attack -----------------------
         if(Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::E)){
             auto* effect = e->getComponent<EffectComponent>();
-            if(effect && !effect->effects.count(EffectComponent::ID::ATTACK_COOLDOWN)){
-                auto* attack = Spawner::spawnAttack(transform->position, player->nation, player->facing);
+            if(effect && !effect->effects.count(EffectComponent::ID::ATTACK_COOLDOWN) && !effect->effects.count(EffectComponent::ID::ATTACK_CAST)){
 
                 // send attack to server
-                {
-                    auto* entity = new Kikan::Entity;
-                    auto* msgComponent = new MessageComponent();
-                    msgComponent->msg.hdr.id = MessageID::Attack;
-                    msgComponent->msg.hdr.len = sizeof(BAttack);
-                    msgComponent->msg.body.attack.nation = 0;
-                    msgComponent->msg.body.attack.direction = player->facing;
-                    msgComponent->msg.body.attack.x = attack->getComponent<Kikan::Transform>()->position.x;
-                    msgComponent->msg.body.attack.y = attack->getComponent<Kikan::Transform>()->position.y;
-                    entity->addComponent(msgComponent);
-                    Kikan::Engine::Kikan()->getECS()->getScene()->addEntity(entity);
-                }
+                //{
+                //    auto* entity = new Kikan::Entity;
+                //    auto* msgComponent = new MessageComponent();
+                //    msgComponent->msg.hdr.id = MessageID::Attack;
+                //    msgComponent->msg.hdr.len = sizeof(BAttack);
+                //    msgComponent->msg.body.attack.nation = 0;
+                //    msgComponent->msg.body.attack.direction = player->facing;
+                //    msgComponent->msg.body.attack.x = attack->getComponent<Kikan::Transform>()->position.x;
+                //    msgComponent->msg.body.attack.y = attack->getComponent<Kikan::Transform>()->position.y;
+                //    entity->addComponent(msgComponent);
+                //    Kikan::Engine::Kikan()->getECS()->getScene()->addEntity(entity);
+                //}
 
-                effect->effects[EffectComponent::ID::ATTACK_CAST] = FIRE_ATTACK_CAST;
-                effect->effects[EffectComponent::ID::ATTACK_COOLDOWN] = ATTACK_COOLDOWN[player->nation];;
-                Kikan::Engine::Kikan()->getECS()->getScene()->addEntity(attack);
+                effect->effects[EffectComponent::ID::ATTACK_CAST] = ATTACK_CAST[player->nation];
             }
         }
 
         // ----------------------- Ability -----------------------
         if(Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::LEFT_SHIFT)){
             auto* effect = e->getComponent<EffectComponent>();
-            if(effect && !effect->effects.count(EffectComponent::ID::ABILITY_COOLDOWN)){
-                switch (player->nation) {
-                    case Nation::FIRE:
-                        effect->effects[EffectComponent::ID::FIRE_ABILITY] = 5000;
-                        break;
-                    case Nation::EARTH:
-                        break;
-                    case Nation::AIR:
-                    {
-                        auto* attack = Spawner::spawnAttack(transform->position, player->nation, 0);
-                        Kikan::Engine::Kikan()->getECS()->getScene()->addEntity(attack);
-                        attack = Spawner::spawnAttack(transform->position, player->nation, 1);
-                        Kikan::Engine::Kikan()->getECS()->getScene()->addEntity(attack);
-                    }
-                        break;
-                    case Nation::WATER:
-                        effect->effects[EffectComponent::ID::BLOCK_INPUT] = 2000;
-                        break;
-                }
-
-                effect->effects[EffectComponent::ID::ABILITY_CAST] = FIRE_ATTACK_CAST;
-                effect->effects[EffectComponent::ID::ABILITY_COOLDOWN] = ABILITY_COOLDOWN[player->nation];
+            if(effect && !effect->effects.count(EffectComponent::ID::ABILITY_COOLDOWN) && !effect->effects.count(EffectComponent::ID::ABILITY_CAST)){
+                effect->effects[EffectComponent::ID::ABILITY_CAST] = ABILITY_CAST[player->nation];
             }
         }
 

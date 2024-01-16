@@ -29,10 +29,11 @@ void PlayerStateSystem::update(double dt) {
                 player->movMulti = 1.5f;
                 player->jumpMulti = 1.2f;
             }
-            else{
-                // TODO: Move somewhere where called when effect ends (maybe effect component gets a callback when its over)
-                player->movMulti = 1.f;
-                player->jumpMulti = 1.f;
+
+            if(effect->effects.count(EffectComponent::ID::ATTACK_CAST) ||
+               effect->effects.count(EffectComponent::ID::ABILITY_CAST) ||
+               effect->effects.count(EffectComponent::ID::ULT_CAST)){
+                player->canInput = false;
             }
         }
     }

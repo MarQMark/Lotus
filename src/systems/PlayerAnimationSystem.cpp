@@ -148,6 +148,8 @@ void updateUICooldowns() {
         float cooldown = 0;
         if(effect->effects.count(EffectComponent::ID::ATTACK_COOLDOWN))
             cooldown = (float)(effect->effects[EffectComponent::ID::ATTACK_COOLDOWN] / ATTACK_COOLDOWN[playerState->nation]);
+        else if(effect->effects.count(EffectComponent::ID::ATTACK_CAST))
+            cooldown = 1;
         texCoords[2].y += (1 - cooldown) * (texCoords[1].y - texCoords[2].y);
         texCoords[3].y += (1 - cooldown) * (texCoords[0].y - texCoords[3].y);
         label->dim.y = cooldown * 100;
@@ -169,6 +171,8 @@ void updateUICooldowns() {
         float cooldown = 0;
         if(effect->effects.count(EffectComponent::ID::ABILITY_COOLDOWN))
             cooldown = (float)(effect->effects[EffectComponent::ID::ABILITY_COOLDOWN] / ABILITY_COOLDOWN[playerState->nation]);
+        else if(effect->effects.count(EffectComponent::ID::ABILITY_CAST))
+            cooldown = 1;
         texCoords[2].y += (1 - cooldown) * (texCoords[1].y - texCoords[2].y);
         texCoords[3].y += (1 - cooldown) * (texCoords[0].y - texCoords[3].y);
         label->dim.y = cooldown * 100;

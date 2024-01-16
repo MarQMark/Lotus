@@ -87,13 +87,13 @@ void createAnimations(){
     AnimationManager::addAnimation(animation, Animation::ID::FIRE_PLAYER_JUMP_R);
     animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_FIRE_PLAYER), std::vector<uint32_t>{9}, 0);
     AnimationManager::addAnimation(animation, Animation::ID::FIRE_PLAYER_JUMP_L);
-    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_FIRE_PLAYER), 3, FIRE_MOV_ANI_SPEED);
+    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_FIRE_PLAYER), 3, MOVE_ANI_SPEED[Nation::FIRE]);
     AnimationManager::addAnimation(animation, Animation::ID::FIRE_PLAYER_MOV_R);
-    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_FIRE_PLAYER), 4, FIRE_MOV_ANI_SPEED);
+    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_FIRE_PLAYER), 4, MOVE_ANI_SPEED[Nation::FIRE]);
     AnimationManager::addAnimation(animation, Animation::ID::FIRE_PLAYER_MOV_L);
-    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_FIRE_PLAYER), 5, FIRE_MOV_ANI_SPEED);
+    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_FIRE_PLAYER), 5, MOVE_ANI_SPEED[Nation::FIRE]);
     AnimationManager::addAnimation(animation, Animation::ID::FIRE_PLAYER_JUMP_ABL_R);
-    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_FIRE_PLAYER), 6, FIRE_MOV_ANI_SPEED);
+    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_FIRE_PLAYER), 6, MOVE_ANI_SPEED[Nation::FIRE]);
     AnimationManager::addAnimation(animation, Animation::ID::FIRE_PLAYER_JUMP_ABL_L);
 
     // EARTH PLAYER
@@ -101,17 +101,17 @@ void createAnimations(){
     AnimationManager::addAnimation(animation, Animation::ID::EARTH_PLAYER_IDLE_R);
     animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_EARTH_PLAYER), std::vector<uint32_t>{1}, 0);
     AnimationManager::addAnimation(animation, Animation::ID::EARTH_PLAYER_IDLE_L);
-    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_EARTH_PLAYER), 1, EARTH_ATTACK_ANI_SPEED);
+    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_EARTH_PLAYER), 1, ATK_ANI_SPEED[Nation::EARTH]);
     AnimationManager::addAnimation(animation, Animation::ID::EARTH_PLAYER_ATTACK_R);
-    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_EARTH_PLAYER), 2, EARTH_ATTACK_ANI_SPEED);
+    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_EARTH_PLAYER), 2, ATK_ANI_SPEED[Nation::EARTH]);
     AnimationManager::addAnimation(animation, Animation::ID::EARTH_PLAYER_ATTACK_L);
     animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_EARTH_PLAYER), std::vector<uint32_t>{12}, 0);
     AnimationManager::addAnimation(animation, Animation::ID::EARTH_PLAYER_JUMP_R);
     animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_EARTH_PLAYER), std::vector<uint32_t>{13}, 0);
     AnimationManager::addAnimation(animation, Animation::ID::EARTH_PLAYER_JUMP_L);
-    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_EARTH_PLAYER), 4, EARTH_MOV_ANI_SPEED);
+    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_EARTH_PLAYER), 4, MOVE_ANI_SPEED[Nation::EARTH]);
     AnimationManager::addAnimation(animation, Animation::ID::EARTH_PLAYER_MOV_R);
-    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_EARTH_PLAYER), 5, EARTH_MOV_ANI_SPEED);
+    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_EARTH_PLAYER), 5, MOVE_ANI_SPEED[Nation::EARTH]);
     AnimationManager::addAnimation(animation, Animation::ID::EARTH_PLAYER_MOV_L);
 
     // AIR PLAYER
@@ -119,17 +119,17 @@ void createAnimations(){
     AnimationManager::addAnimation(animation, Animation::ID::AIR_PLAYER_IDLE_R);
     animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_AIR_PLAYER), std::vector<uint32_t>{1}, 0);
     AnimationManager::addAnimation(animation, Animation::ID::AIR_PLAYER_IDLE_L);
-    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_AIR_PLAYER), 1, AIR_ATTACK_ANI_SPEED);
+    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_AIR_PLAYER), 1, MOVE_ANI_SPEED[Nation::AIR]);
     AnimationManager::addAnimation(animation, Animation::ID::AIR_PLAYER_ATTACK_R);
-    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_AIR_PLAYER), 2, AIR_ATTACK_ANI_SPEED);
+    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_AIR_PLAYER), 2, MOVE_ANI_SPEED[Nation::AIR]);
     AnimationManager::addAnimation(animation, Animation::ID::AIR_PLAYER_ATTACK_L);
     animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_AIR_PLAYER), std::vector<uint32_t>{12}, 0);
     AnimationManager::addAnimation(animation, Animation::ID::AIR_PLAYER_JUMP_R);
     animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_AIR_PLAYER), std::vector<uint32_t>{13}, 0);
     AnimationManager::addAnimation(animation, Animation::ID::AIR_PLAYER_JUMP_L);
-    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_AIR_PLAYER), 4, AIR_MOV_ANI_SPEED);
+    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_AIR_PLAYER), 4, MOVE_ANI_SPEED[Nation::AIR]);
     AnimationManager::addAnimation(animation, Animation::ID::AIR_PLAYER_MOV_R);
-    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_AIR_PLAYER), 5, AIR_MOV_ANI_SPEED);
+    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_AIR_PLAYER), 5, MOVE_ANI_SPEED[Nation::AIR]);
     AnimationManager::addAnimation(animation, Animation::ID::AIR_PLAYER_MOV_L);
 
     // WATER PLAYER
@@ -137,31 +137,31 @@ void createAnimations(){
     AnimationManager::addAnimation(animation, Animation::ID::WATER_PLAYER_IDLE_R);
     animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_WATER_PLAYER), std::vector<uint32_t>{1}, 0);
     AnimationManager::addAnimation(animation, Animation::ID::WATER_PLAYER_IDLE_L);
-    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_WATER_PLAYER), 1, WATER_ATTACK_ANI_SPEED);
+    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_WATER_PLAYER), 1, MOVE_ANI_SPEED[Nation::WATER]);
     AnimationManager::addAnimation(animation, Animation::ID::WATER_PLAYER_ATTACK_R);
-    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_WATER_PLAYER), 2, WATER_ATTACK_ANI_SPEED);
+    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_WATER_PLAYER), 2, MOVE_ANI_SPEED[Nation::WATER]);
     AnimationManager::addAnimation(animation, Animation::ID::WATER_PLAYER_ATTACK_L);
     animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_WATER_PLAYER), std::vector<uint32_t>{12}, 0);
     AnimationManager::addAnimation(animation, Animation::ID::WATER_PLAYER_JUMP_R);
     animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_WATER_PLAYER), std::vector<uint32_t>{13}, 0);
     AnimationManager::addAnimation(animation, Animation::ID::WATER_PLAYER_JUMP_L);
-    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_WATER_PLAYER), 3, WATER_MOV_ANI_SPEED);
+    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_WATER_PLAYER), 3, MOVE_ANI_SPEED[Nation::WATER]);
     AnimationManager::addAnimation(animation, Animation::ID::WATER_PLAYER_MOV_R);
-    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_WATER_PLAYER), 4, WATER_MOV_ANI_SPEED);
+    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_WATER_PLAYER), 4, MOVE_ANI_SPEED[Nation::WATER]);
     AnimationManager::addAnimation(animation, Animation::ID::WATER_PLAYER_MOV_L);
 
     // ATTACKS
-    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_FIRE_ATTACK), 1, FIRE_ATK_ANI_SPEED);
+    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_FIRE_ATTACK), 1, ATK_ANI_SPEED[Nation::FIRE]);
     AnimationManager::addAnimation(animation, Animation::ID::FIRE_ATTACK_R);
-    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_FIRE_ATTACK), 0, FIRE_ATK_ANI_SPEED);
+    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_FIRE_ATTACK), 0, ATK_ANI_SPEED[Nation::FIRE]);
     AnimationManager::addAnimation(animation, Animation::ID::FIRE_ATTACK_L);
-    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_EARTH_ATTACK), 1, EARTH_ATK_ANI_SPEED);
+    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_EARTH_ATTACK), 1, ATK_ANI_SPEED[Nation::EARTH]);
     AnimationManager::addAnimation(animation, Animation::ID::EARTH_ATTACK_R);
-    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_EARTH_ATTACK), 0, EARTH_ATK_ANI_SPEED);
+    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_EARTH_ATTACK), 0, ATK_ANI_SPEED[Nation::EARTH]);
     AnimationManager::addAnimation(animation, Animation::ID::EARTH_ATTACK_L);
-    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_AIR_ATTACK), 1, AIR_ATK_ANI_SPEED);
+    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_AIR_ATTACK), 1, ATK_ANI_SPEED[Nation::AIR]);
     AnimationManager::addAnimation(animation, Animation::ID::AIR_ATTACK_R);
-    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_AIR_ATTACK), 0, AIR_ATK_ANI_SPEED);
+    animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_AIR_ATTACK), 0, ATK_ANI_SPEED[Nation::AIR]);
     AnimationManager::addAnimation(animation, Animation::ID::AIR_ATTACK_L);
 }
 
