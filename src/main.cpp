@@ -29,6 +29,8 @@
 #include "systems/HealthbarSystem.h"
 #include "systems/BgSpriteSystem.h"
 #include "components/BgSprite.h"
+#include "systems/InputSystem.h"
+#include "systems/NetworkSystem.h"
 
 void addBoundaries(){
     Kikan::Engine* engine = Kikan::Engine::Kikan();
@@ -89,13 +91,16 @@ void addBoundaries(){
 int WinMain() {
     Kikan::Engine::init();
     Kikan::Engine* engine = Kikan::Engine::Kikan();
+    engine->setTargetFPS(60);
 
+
+    auto* networkSystem = new NetworkSystem();
     auto* cameraSystem = new CameraSystem();
     auto* physicsSystem = new PhysicsSystem();
     physicsSystem->gravity = GRAVITY;
     auto* effectSystem = new EffectSystem();
     auto* movSystem = new PlayerMovementSystem();
-    auto* clientSystem = new NetworkingClientSystem();
+    //auto* clientSystem = new NetworkingClientSystem();
     auto* triggerSystem = new TriggerSystem();
     auto* collisionSystem = new CollisionSystem();
     auto* playerStateSystem = new PlayerStateSystem();
@@ -103,12 +108,16 @@ int WinMain() {
     auto* attackAnimationSystem = new AttackAnimationSystem();
     auto* healthbarSystem = new HealthbarSystem();
     auto* bgSpriteSystem = new BgSpriteSystem();
+    auto* inputSystem = new InputSystem();
+
 
     engine->getECS()->getScene()->addSystem(cameraSystem);
+    engine->getECS()->getScene()->addSystem(networkSystem);
     engine->getECS()->getScene()->addSystem(physicsSystem);
     engine->getECS()->getScene()->addSystem(effectSystem);
+    engine->getECS()->getScene()->addSystem(inputSystem);
     engine->getECS()->getScene()->addSystem(movSystem);
-    engine->getECS()->getScene()->addSystem(clientSystem);
+    //engine->getECS()->getScene()->addSystem(clientSystem);
     engine->getECS()->getScene()->addSystem(triggerSystem);
     engine->getECS()->getScene()->addSystem(collisionSystem);
     engine->getECS()->getScene()->addSystem(playerStateSystem);
@@ -121,9 +130,9 @@ int WinMain() {
 
     engine->getECS()->getScene()->addSystem(spriteSystem);
 
-    auto* serverSystem = new NetworkingServerSystem();
-    engine->getECS()->createThread(10, 100);
-    engine->getECS()->addThreadedSystem(serverSystem, 0);
+    //auto* serverSystem = new NetworkingServerSystem();
+    //engine->getECS()->createThread(10, 100);
+    //engine->getECS()->addThreadedSystem(serverSystem, 0);
 
     stbi_set_flip_vertically_on_load(1);
 
@@ -178,9 +187,17 @@ int WinMain() {
         engine->getECS()->getScene()->addEntity(entity);
     }
 
+
     // Player
     {
         auto* entity = Spawner::spawnPlayer();
+        entity->getComponent<Kikan::Transform>()->position = glm::vec3(500, 800, 0);
+        engine->getECS()->getScene()->addEntity(entity);
+    }
+
+    // Enemy
+    {
+        auto* entity = Spawner::spawnPlayer(Nation::AIR, true);
         entity->getComponent<Kikan::Transform>()->position = glm::vec3(500, 800, 0);
         engine->getECS()->getScene()->addEntity(entity);
     }

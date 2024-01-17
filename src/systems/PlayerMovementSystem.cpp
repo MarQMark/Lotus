@@ -11,17 +11,23 @@
 #include "components/EffectComponent.h"
 #include "components/MessageComponent.h"
 #include "components/PlayerStateComponent.h"
+#include "util/GameState.h"
 
 PlayerMovementSystem::PlayerMovementSystem() {
     includeSingle(PlayerComponent);
 }
 
 void PlayerMovementSystem::update(double dt) {
+    GameState& gameState = GameState::getInstance();
+    if(!gameState.UpdateGame)
+        return;
+
     for (Kikan::Entity *e: _entities) {
         auto *transform = e->getComponent<Kikan::Transform>();
         auto *physics = e->getComponent<Kikan::Physics>();
         auto *collider = e->getComponent<DColliderComponent>();
         auto *player = e->getComponent<PlayerStateComponent>();
+
         if(!physics || !collider)
             return;
 
@@ -29,7 +35,7 @@ void PlayerMovementSystem::update(double dt) {
             return;
 
         // ----------------------- Attack -----------------------
-        if(Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::E)){
+        if(gameState.getPlayerInput(player->playerID) & static_cast<unsigned int>(InputCommand::Attack)){
             auto* effect = e->getComponent<EffectComponent>();
             if(effect && !effect->effects.count(EffectComponent::ID::ATTACK_COOLDOWN)){
                 auto* attack = Spawner::spawnAttack(transform->position, player->nation, player->facing);
@@ -55,7 +61,7 @@ void PlayerMovementSystem::update(double dt) {
         }
 
         // ----------------------- Ability -----------------------
-        if(Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::LEFT_SHIFT)){
+        if(gameState.getPlayerInput(player->playerID) & static_cast<unsigned int>(InputCommand::Ability)){
             auto* effect = e->getComponent<EffectComponent>();
             if(effect && !effect->effects.count(EffectComponent::ID::ABILITY_COOLDOWN)){
                 switch (player->nation) {
@@ -96,20 +102,32 @@ void PlayerMovementSystem::update(double dt) {
         }
 
         // ----------------------- Movement -----------------------
+        //kikanPrint(reinterpret_cast<const char *>(gameState.getPlayerInput(player->playerID)));
+        //kikanPrint("\n");
+        //kikanPrint("playerId:");
+        //kikanPrint(reinterpret_cast<const char *>(player->playerID));
+        //kikanPrint("\n");
+       // std::cout << gameState.getPlayerInput(player->playerID) << std::endl;
+
         if(!player->canMove)
             return;
+        if(!player->isEnemy)
+        {
+            std::cout << gameState.getPlayerInput(player->playerID) << std::endl;
 
-        if (Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::D)){
+        }
+        if (gameState.getPlayerInput(player->playerID) & static_cast<unsigned int>(InputCommand::Right)){
             physics->acceleration.x += MOVEMENT_SPEED * player->movMulti;
             player->facing = 0; // faces right
         }
-        if (Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::A)){
+        if (gameState.getPlayerInput(player->playerID) & static_cast<unsigned int>(InputCommand::Left)){
             physics->acceleration.x += -MOVEMENT_SPEED * player->movMulti;
             player->facing = 1; // faces left
         }
-        if(Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::SPACE)){
+        if(gameState.getPlayerInput(player->playerID) & static_cast<unsigned int>(InputCommand::Jump)){
             if(collider->hasCollidedB)
                 physics->velocity.y = JUMP_FORCE * player->jumpMulti;
         }
     }
+    gameState.UpdateGame = false;
 }

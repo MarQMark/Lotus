@@ -1,3 +1,4 @@
+#include <random>
 #include "util/Spawner.h"
 #include "Kikan/ecs/components/Physics.h"
 #include "Kikan/ecs/components/LineQuadSprite.h"
@@ -13,10 +14,10 @@
 #include "Kikan/Engine.h"
 #include "components/HealthbarComponent.h"
 #include "components/HealthComponent.h"
+#include "util/GameState.h"
 
 
-
-Kikan::Entity *Spawner::spawnPlayer(Nation nation) {
+Kikan::Entity *Spawner::spawnPlayer(Nation nation, bool isEnemy) {
     auto* entity = new Kikan::Entity;
 
     auto* physics = new Kikan::Physics();
@@ -30,6 +31,16 @@ Kikan::Entity *Spawner::spawnPlayer(Nation nation) {
 
     auto* player = new PlayerComponent();
     entity->addComponent(player);
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<int> distribution(1000, 9999);
+    //todo make random Id
+    entity->getComponent<PlayerStateComponent>()->playerID = distribution(gen);
+    entity->getComponent<PlayerStateComponent>()->isEnemy = isEnemy;
+
+    GameState::getInstance().setPlayerComponent(entity->getComponent<PlayerStateComponent>()->playerID);
+    GameState::getInstance().setPlayerInput(entity->getComponent<PlayerStateComponent>()->playerID, 0);
+
 
     return entity;
 }
@@ -37,10 +48,15 @@ Kikan::Entity *Spawner::spawnPlayer(Nation nation) {
 Kikan::Entity *Spawner::spawnEnemy(Nation nation) {
     auto* entity = new Kikan::Entity;
 
+    auto* physics = new Kikan::Physics();
+    physics->friction.x = PLAYER_FRICTION;
+    entity->addComponent(physics);
+
+    add_pe_common(entity, nation);
+
     auto* enemyComponent = new EnemyComponent();
     entity->addComponent(enemyComponent);
 
-    add_pe_common(entity, nation);
 
     entity->getComponent<Kikan::LineQuadSprite>()->color = glm::vec4(.8, .5, .4, 1);
 

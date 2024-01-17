@@ -4,6 +4,7 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <typeinfo>
 #include "Kikan/renderer/stdRenderer/buffers/Texture2D.h"
 
 #define STB_IMAGE_STATIC

@@ -6,7 +6,7 @@
 
 class Spawner {
 public:
-    static Kikan::Entity* spawnPlayer(Nation nation = Nation::FIRE);
+    static Kikan::Entity* spawnPlayer(Nation nation = Nation::FIRE, bool isEnemy = false);
     static Kikan::Entity* spawnEnemy(Nation nation = Nation::FIRE);
 
     static Kikan::Entity* spawnAttack(glm::vec2 pos, Nation nation = Nation::FIRE, uint8_t dir = 0);

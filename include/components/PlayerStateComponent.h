@@ -9,11 +9,14 @@ public:
 
     Nation nation = Nation::FIRE;
 
+    int32_t playerID = -1;
+
     uint8_t facing = 0; // 0 = right, 1 = left
     bool onGround = false;
     bool isMoving = false;
     bool canMove = true;
     bool canInput = true;
+    bool isEnemy = false;
 
     float movMulti = 1.f;
     float jumpMulti = 1.f;

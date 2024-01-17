@@ -1,11 +1,31 @@
 #ifndef LOTUS_CONSTANTS_H
 #define LOTUS_CONSTANTS_H
 
+#include <cstdint>
+
 enum Nation{
     FIRE,
     WATER,
     EARTH,
     AIR
+};
+
+enum class InputCommand : unsigned int
+{
+    None = 0,
+    Left = 1,
+    Right = 2,
+    Jump = 4,
+    Ability = 8,
+    Attack = 16,
+    Super = 32,
+};
+
+enum class NetworkState
+{
+    None,
+    Hosting,
+    Client,
 };
 
 static float GRAVITY = -.004f;

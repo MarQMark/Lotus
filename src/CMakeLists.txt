@@ -21,6 +21,13 @@ add_executable(Lotus
         util/Spawner.cpp
         util/ResourceManager.cpp
         util/AnimationManager.cpp
+        systems/NetworkSystem.cpp
+        systems/NetworkSystem.cpp
+        ../include/systems/NetworkSystem.h
+        ../include/util/GameState.h
+        util/GameState.cpp
+        ../include/systems/InputSystem.h
+        systems/InputSystem.cpp
 )
 
 #copy res to target folder
