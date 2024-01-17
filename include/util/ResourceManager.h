@@ -18,6 +18,8 @@ public:
         TEX_OUTER_WALL_CLOUDS,
         TEX_OUTER_WALL_TRAIN,
 
+        TEX_EARTH_ABILITY,
+
         SS_FIRE_PLAYER,
         SS_EARTH_PLAYER,
         SS_AIR_PLAYER,

@@ -76,6 +76,10 @@ static uint32_t ATK_SPRITE_HEIGHT[4] = {
 
 // ----------------------------- FIRE -----------------------------
 // ---------------------------- EARTH ----------------------------
+static float EARTH_ABL_SPRITE_WIDTH = 100;
+static double EARTH_ABL_DAMAGE = 30;
+static float EARTH_ABL_IMPULSE = .1;
+
 // ----------------------------- AIR ------------------------------
 // ---------------------------- WATER ----------------------------
 static double HEAL_HEALTH = 20;

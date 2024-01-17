@@ -71,19 +71,21 @@ void TriggerSystem::update(double dt) {
         auto* transform = entity->getComponent<Kikan::Transform>();
         auto* trigger = entity->getComponent<TriggerComponent>();
 
-        for (auto* scEntity : _s_entities) {
-            auto* scTransform = scEntity->getComponent<Kikan::Transform>();
-            auto* scCollider = scEntity->getComponent<SColliderComponent>();
+        if(trigger->triggerStatic){
+            for (auto* scEntity : _s_entities) {
+                auto* scTransform = scEntity->getComponent<Kikan::Transform>();
+                auto* scCollider = scEntity->getComponent<SColliderComponent>();
 
-            if(collidedAABB(
-                    glm::vec2(transform->position.x, transform->position.y) + trigger->offset - glm::vec2(0, trigger->dimensions.y),
-                    trigger->dimensions,
-                    glm::vec2(scTransform->position.x, scTransform->position.y) + scCollider->offset - glm::vec2(0, scCollider->dimensions.y),
-                    scCollider->dimensions
-            )){
-                i--;
-                Kikan::Engine::Kikan()->getECS()->getScene()->removeEntity(entity);
-                continue;
+                if(collidedAABB(
+                        glm::vec2(transform->position.x, transform->position.y) + trigger->offset - glm::vec2(0, trigger->dimensions.y),
+                        trigger->dimensions,
+                        glm::vec2(scTransform->position.x, scTransform->position.y) + scCollider->offset - glm::vec2(0, scCollider->dimensions.y),
+                        scCollider->dimensions
+                )){
+                    i--;
+                    Kikan::Engine::Kikan()->getECS()->getScene()->removeEntity(entity);
+                    continue;
+                }
             }
         }
 
@@ -118,7 +120,8 @@ void TriggerSystem::update(double dt) {
 
 
                 i--;
-                Kikan::Engine::Kikan()->getECS()->getScene()->removeEntity(entity);
+                // TODO: Fix Memory Leak
+                Kikan::Engine::Kikan()->getECS()->getScene()->deleteEntity(entity);
                 continue;
             }
         }

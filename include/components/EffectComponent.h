@@ -18,6 +18,9 @@ public:
         BLOCK_INPUT,
 
         FIRE_ABILITY,
+
+
+        SELF_DESTRUCT,
     };
 
     std::map<uint32_t, double> effects;

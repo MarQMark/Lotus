@@ -6,6 +6,8 @@ void loadTextures(){
     ResourceManager::add<TextureResource>(new TextureResource("res/Maps/OuterWall2/foreground.png"), Resource::ID::TEX_OUTER_WALL_FOREGROUND);
     ResourceManager::add<TextureResource>(new TextureResource("res/Maps/OuterWall2/Clouds.png"),     Resource::ID::TEX_OUTER_WALL_CLOUDS);
     ResourceManager::add<TextureResource>(new TextureResource("res/Maps/OuterWall2/Train.png"),      Resource::ID::TEX_OUTER_WALL_TRAIN);
+
+    ResourceManager::add<TextureResource>(new TextureResource("res/Earth/LaunchSprite.png"),      Resource::ID::TEX_EARTH_ABILITY);
 }
 
 void loadSpriteSheets(){

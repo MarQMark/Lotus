@@ -166,3 +166,57 @@ void Spawner::add_healthbar(Kikan::Entity* player){
     entity->addComponent(sprite);
     Kikan::Engine::Kikan()->getECS()->getScene()->addEntity(entity);
 }
+
+Kikan::Entity *Spawner::spawnEarthAbility(glm::vec2 pos, uint8_t dir) {
+    auto* entity = new Kikan::Entity;
+
+    auto* res = ResourceManager::get<TextureResource>(Resource::ID::TEX_EARTH_ABILITY);
+    float w = EARTH_ABL_SPRITE_WIDTH;
+    float h = EARTH_ABL_SPRITE_WIDTH * ((float)res->getHeight() / (float)res->getWidth());
+
+    auto* transform = entity->getComponent<Kikan::Transform>();
+    transform->position.y = pos.y - PLAYER_HEIGHT;
+    if(dir == 1){
+        transform->position.x = pos.x - w - PLAYER_WIDTH / 2.f;
+    }
+    else{
+        transform->position.x = pos.x + PLAYER_WIDTH * 1.5f;
+    }
+
+    auto* texture = new Kikan::AASprite;
+    texture->dimensions = glm::vec2(w, h);
+    texture->layer = -0.1f;
+    texture->textureID = res->getID();
+    texture->color = glm::vec4(1.f);
+    entity->addComponent(texture);
+
+    if(dir == 1){
+        texture->texCoords[0] = glm::vec2 (1, 1);
+        texture->texCoords[1] = glm::vec2 (0, 1);
+        texture->texCoords[2] = glm::vec2 (0, 0);
+        texture->texCoords[3] = glm::vec2 (1, 0);
+    }
+
+    float speed = .1f;
+    auto* effect = new EffectComponent();
+    effect->effects[EffectComponent::ID::SELF_DESTRUCT] = h / speed;
+    entity->addComponent(effect);
+
+    auto* physics = new Kikan::Physics();
+    physics->gravity = false;
+    physics->velocity.y = speed;
+    entity->addComponent(physics);
+
+    auto* trigger = new TriggerComponent();
+    trigger->dimensions.x = w;
+    trigger->dimensions.y = h;
+    trigger->triggerStatic = false;
+    trigger->impulse.y = EARTH_ABL_IMPULSE;
+    entity->addComponent(trigger);
+
+    auto* damage = new DamageComponent();
+    damage->damage = EARTH_ABL_DAMAGE;
+    entity->addComponent(damage);
+
+    return entity;
+}

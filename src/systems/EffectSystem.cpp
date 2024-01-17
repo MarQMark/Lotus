@@ -10,7 +10,7 @@ EffectSystem::EffectSystem() {
     includeSingle(EffectComponent);
 }
 
-void endEffect(Kikan::Entity* e, EffectComponent::ID id){
+void endPlayerEffect(Kikan::Entity* e, EffectComponent::ID id){
     auto* transform = e->getComponent<Kikan::Transform>();
     auto* player = e->getComponent<PlayerStateComponent>();
     auto* effect = e->getComponent<EffectComponent>();
@@ -27,7 +27,10 @@ void endEffect(Kikan::Entity* e, EffectComponent::ID id){
                 case Nation::FIRE:
                     effect->effects[EffectComponent::ID::FIRE_ABILITY] = 5000;
                     break;
-                case Nation::EARTH:
+                case Nation::EARTH:{
+                    auto* ability = Spawner::spawnEarthAbility(transform->position, player->facing);
+                    Kikan::Engine::Kikan()->getECS()->getScene()->addEntity(ability);
+                }
                     break;
                 case Nation::AIR:
                 {
@@ -60,7 +63,11 @@ void EffectSystem::update(double dt) {
         for(auto effect = effectComponent->effects.begin(); effect != effectComponent->effects.cend(); ){
 
             if(effect->second <= 0){
-                endEffect(entity, (EffectComponent::ID)effect->first);
+                if(effect->first == EffectComponent::ID::SELF_DESTRUCT)
+                    _to_be_destroyed.push_back(entity);
+
+                if(entity->getComponent<PlayerStateComponent>())
+                    endPlayerEffect(entity, (EffectComponent::ID)effect->first);
                 effectComponent->effects.erase(effect++);
             }
             else{
@@ -69,4 +76,10 @@ void EffectSystem::update(double dt) {
             }
         }
     }
+
+    for(uint32_t i = 0; i < _to_be_destroyed.size(); i++){
+        // TODO: FIX memory leak
+        Kikan::Engine::Kikan()->getECS()->getScene()->removeEntity(_to_be_destroyed[i]);
+    }
+    _to_be_destroyed.clear();
 }

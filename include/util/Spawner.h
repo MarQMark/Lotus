@@ -10,6 +10,7 @@ public:
     static Kikan::Entity* spawnEnemy(Nation nation = Nation::FIRE);
 
     static Kikan::Entity* spawnAttack(glm::vec2 pos, Nation nation = Nation::FIRE, uint8_t dir = 0);
+    static Kikan::Entity* spawnEarthAbility(glm::vec2 pos, uint8_t dir = 0);
 
 private:
     // Add common components of Player and Enemy

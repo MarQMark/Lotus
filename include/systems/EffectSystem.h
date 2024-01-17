@@ -11,7 +11,7 @@ public:
     void update(double dt) override;
 
 private:
-
+    std::vector<Kikan::Entity*> _to_be_destroyed;
 };
 
 
