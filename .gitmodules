@@ -1,3 +1,6 @@
 [submodule "external/kikan"]
 	path = external/kikan
 	url = https://github.com/MarQMark/Kikan.git
+[submodule "external/nbnet"]
+	path = external/nbnet
+	url = https://github.com/nathhB/nbnet/
