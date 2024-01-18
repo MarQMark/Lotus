@@ -78,8 +78,7 @@ void EffectSystem::update(double dt) {
     }
 
     for(uint32_t i = 0; i < _to_be_destroyed.size(); i++){
-        // TODO: FIX memory leak
-        Kikan::Engine::Kikan()->getECS()->getScene()->removeEntity(_to_be_destroyed[i]);
+        Kikan::Engine::Kikan()->getECS()->getScene()->deleteEntity(_to_be_destroyed[i]);
     }
     _to_be_destroyed.clear();
 }

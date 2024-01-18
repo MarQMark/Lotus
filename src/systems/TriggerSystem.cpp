@@ -83,7 +83,7 @@ void TriggerSystem::update(double dt) {
                         scCollider->dimensions
                 )){
                     i--;
-                    Kikan::Engine::Kikan()->getECS()->getScene()->removeEntity(entity);
+                    Kikan::Engine::Kikan()->getECS()->getScene()->deleteEntity(entity);
                     continue;
                 }
             }
@@ -120,7 +120,6 @@ void TriggerSystem::update(double dt) {
 
 
                 i--;
-                // TODO: Fix Memory Leak
                 Kikan::Engine::Kikan()->getECS()->getScene()->deleteEntity(entity);
                 continue;
             }
