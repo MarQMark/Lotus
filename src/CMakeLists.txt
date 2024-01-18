@@ -41,6 +41,7 @@ add_dependencies(Lotus copy_res)
 target_include_directories(Lotus
         PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../include
         PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../external/kikan/include
+        PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../external
         PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../external/kikan/external/glfw/include
 )
 
