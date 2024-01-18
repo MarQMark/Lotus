@@ -33,19 +33,16 @@ void InputSystem::update(double dt) {
         if (player->isEnemy)
             return;
         gameState.setDirecInput(player->playerID, NetInputBuffer);
-        //gameState.clearPlayerInput(player->playerID);
-        NetInputBuffer |= 0;
+        NetInputBuffer = 0;
         // ----------------------- Attack -----------------------
         if(Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::E)){
-            NetInputBuffer = static_cast<unsigned int>(InputCommand::Attack);
-            //gameState.setPlayerInput(player->playerID, static_cast<unsigned int>(InputCommand::Attack));
+            NetInputBuffer |= static_cast<unsigned int>(InputCommand::Attack);
         }
 
         // ----------------------- Ability -----------------------
         if(Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::LEFT_SHIFT)){
             NetInputBuffer |= static_cast<unsigned int>(InputCommand::Ability);
 
-            //gameState.setPlayerInput(player->playerID, static_cast<unsigned int>(InputCommand::Ability));
 
         }
         // ----------------------- Ultimate -----------------------
@@ -56,19 +53,16 @@ void InputSystem::update(double dt) {
         if (Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::D)){
             NetInputBuffer |= static_cast<unsigned int>(InputCommand::Right);
 
-            //gameState.setPlayerInput(player->playerID, static_cast<unsigned int>(InputCommand::Right));
 
         }
         if (Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::A)){
             NetInputBuffer |= static_cast<unsigned int>(InputCommand::Left);
 
-            //gameState.setPlayerInput(player->playerID, static_cast<unsigned int>(InputCommand::Left));
 
         }
         if(Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::SPACE)){
             NetInputBuffer |= static_cast<unsigned int>(InputCommand::Jump);
 
-            //gameState.setPlayerInput(player->playerID, static_cast<unsigned int>(InputCommand::Jump));
 
         }
 

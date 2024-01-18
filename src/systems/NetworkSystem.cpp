@@ -35,11 +35,11 @@ enum
 #include "systems/NetworkSystem.h"
 #include "util/GameState.h"
 
-struct NetworkInputPackage
+typedef struct __attribute__((packed))
 {
     unsigned int InputCommand { 0 };
     int FrameCount { 0 };
-};
+} NetworkInputPackage;
 
 const int INPUT_HISTORY_SIZE = 100;
 NetworkInputPackage NetworkInputHistory[INPUT_HISTORY_SIZE];
@@ -87,7 +87,7 @@ void InitializeClient()
 
 }
 
-NetworkInputPackage ReadInputMessageCommon(const NBN_MessageInfo msg_info)
+NetworkInputPackage ReadInputMessageCommon(const NBN_MessageInfo& msg_info)
 {
     // Get info about the received message
     //NBN_MessageInfo msg_info = NBN_GameClient_GetMessageInfo();
@@ -100,6 +100,7 @@ NetworkInputPackage ReadInputMessageCommon(const NBN_MessageInfo msg_info)
     NetworkInputPackage InputPackage;
     memcpy(&InputPackage, msg->bytes, sizeof(NetworkInputPackage));
 
+    std::cout << "recevied Frame[" << InputPackage.FrameCount << "]" << std::endl;
 
     // Destroy the received message
     NBN_ByteArrayMessage_Destroy(msg);
@@ -129,17 +130,19 @@ NetworkInputPackage ReadInputMessageClient()
 
 }
 
-void SendInputMessage(NetworkInputPackage InputPackage)
+void SendInputMessage(NetworkInputPackage &InputPackage)
 {
+    std::cout << "sending FrameCount[" << InputPackage.FrameCount << "]" << std::endl;
 
-    if (NBN_GameClient_SendUnreliableByteArray((uint8_t *)&InputPackage, sizeof (InputCommand)) < 0)
+    if (NBN_GameClient_SendUnreliableByteArray((uint8_t *)&InputPackage, sizeof (NetworkInputPackage)) < 0)
         exit(-1);
 
 }
 
-void SendInputMessageHost(NetworkInputPackage InputPackage)
+void SendInputMessageHost(NetworkInputPackage &InputPackage)
 {
-    if (NBN_GameServer_SendUnreliableByteArrayTo(client, (uint8_t *)&InputPackage, sizeof (InputCommand)))
+    std::cout << "sending FrameCount[" << InputPackage.FrameCount << "]" << std::endl;
+    if (NBN_GameServer_SendUnreliableByteArrayTo(client, (uint8_t *)&InputPackage, sizeof (NetworkInputPackage)))
         exit(-1);
 }
 
@@ -280,8 +283,10 @@ void NetworkSystem::update(double dt) {
 
     bool bReceivedInput = false;
 
+
     // Wenn wir Hosten dann setze den Input des Gegners und send unser Input an Client
     if (NetState == NetworkState::Hosting) {
+
         LatesInputPackage = TickNetworkHost(
                 NetworkInputPackage{gameState.getPlayerInput(player->playerID), gameState.FrameCount + 1}, bReceivedInput);
         //gameState.setPlayerInput(enemies->playerID, LatesInputPackage.InputCommand);
@@ -289,6 +294,7 @@ void NetworkSystem::update(double dt) {
     }
         // Wenn wir Client Sind dann setze den Input des Gegners und send unser Input an Client
     else if (NetState == NetworkState::Client) {
+
         LatesInputPackage = TickNetworkClient(
                 NetworkInputPackage{gameState.getPlayerInput(player->playerID), gameState.FrameCount + 1}, bReceivedInput);
         //gameState.setPlayerInput(enemies->playerID, LatesInputPackage.InputCommand);
@@ -306,7 +312,7 @@ void NetworkSystem::update(double dt) {
 
     if(bReceivedInput)
     {
-        std::cout << "Received Net Input: Frame[" << LatesInputPackage.FrameCount << "]" << std::endl;
+        //std::cout << "Received Net Input: Frame[" << LatesInputPackage.FrameCount << "]" << std::endl;
         // Update network input buffer
         NetworkInputHistory[InputHistoryIndex] = LatesInputPackage;
         InputHistoryIndex = (InputHistoryIndex + 1) % INPUT_HISTORY_SIZE;
@@ -332,7 +338,7 @@ void NetworkSystem::update(double dt) {
 
         }
 
-        if (isUpdateNextFrame) {
+        if (true) {
             std::cout << "Game Ticked[" << gameState.FrameCount << "]" << std::endl;
             gameState.UpdateGame = true;
             gameState.setPlayerInput(enemies->playerID, ToUseOpponentInputCommand);
