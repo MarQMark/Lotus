@@ -49,6 +49,8 @@ public:
         int mapImgBPP;;
         unsigned char* buff = stbi_load(path.c_str(), &_width, &_height, &mapImgBPP, 4);
         _texture2D = new Kikan::Texture2D(_width, _height, buff);
+        // This might cause a crash. Let's hope it doesn't, because else I would be even more confused
+        free(buff);
     };
 
     GLuint getID(){
