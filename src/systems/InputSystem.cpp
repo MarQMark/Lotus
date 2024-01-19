@@ -32,7 +32,11 @@ void InputSystem::update(double dt) {
 
         if (player->isEnemy)
             return;
-        gameState.setDirecInput(player->playerID, NetInputBuffer);
+
+
+        //gameState.setDirecInput(player->playerID, NetInputBuffer);
+
+
         NetInputBuffer = 0;
         // ----------------------- Attack -----------------------
         if(Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::E)){
@@ -66,7 +70,7 @@ void InputSystem::update(double dt) {
 
         }
 
-
+        gameState.setPlayerInputHistory(player->playerID, gameState.FrameCount + NET_INPUT_DELAY, NetInputBuffer);
 
 
 

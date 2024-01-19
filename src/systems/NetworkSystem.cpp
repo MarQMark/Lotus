@@ -35,15 +35,12 @@ enum
 #include "systems/NetworkSystem.h"
 #include "util/GameState.h"
 
-typedef struct __attribute__((packed))
-{
-    unsigned int InputCommand { 0 };
-    int FrameCount { 0 };
-} NetworkInputPackage;
 
-const int INPUT_HISTORY_SIZE = 100;
-NetworkInputPackage NetworkInputHistory[INPUT_HISTORY_SIZE];
 int InputHistoryIndex = 0;
+
+int LatestNetworkFrame = -1;
+
+
 
 static NBN_ConnectionHandle client = 0;
 
@@ -279,69 +276,90 @@ void NetworkSystem::update(double dt) {
     }
     //todo loop durch every enemy to reciev and send input
 
-    NetworkInputPackage LatesInputPackage{0, -1};
+    NetworkInputPackage LatesInputPackage{};
 
     bool bReceivedInput = false;
+
+    NetworkInputPackage ToSendNetPackage;
+    // Prepare the network package to send to opponent (maybe just do this if your not an enemy???)
+    {
+        const int InputStartIndex = gameState.FrameCount - NET_PACKET_INPUT_HISTORY_SIZE + 1 + NET_INPUT_DELAY;
+        //Fill the network package input history with our local input
+        for (int i = 0; i < NET_PACKET_INPUT_HISTORY_SIZE; ++i)
+        {
+            if (InputStartIndex + i >= 0)
+            {
+                ToSendNetPackage.InputHistory[i] = gameState.getPlayerInputHistory(player->playerID,
+                                                                                   InputStartIndex + i);
+            }
+            else
+            {
+                ToSendNetPackage.InputHistory[i] = UINT_MAX;
+
+            }
+        }
+        ToSendNetPackage.FrameCount = gameState.FrameCount + NET_INPUT_DELAY;
+    }
 
 
     // Wenn wir Hosten dann setze den Input des Gegners und send unser Input an Client
     if (NetState == NetworkState::Hosting) {
-
-        LatesInputPackage = TickNetworkHost(
-                NetworkInputPackage{gameState.getPlayerInput(player->playerID), gameState.FrameCount + 1}, bReceivedInput);
-        //gameState.setPlayerInput(enemies->playerID, LatesInputPackage.InputCommand);
-        //gameState.NetFrameCount = LatesInputPackage.FrameCount;
+        LatesInputPackage = TickNetworkHost(ToSendNetPackage, bReceivedInput);
     }
         // Wenn wir Client Sind dann setze den Input des Gegners und send unser Input an Client
     else if (NetState == NetworkState::Client) {
-
-        LatesInputPackage = TickNetworkClient(
-                NetworkInputPackage{gameState.getPlayerInput(player->playerID), gameState.FrameCount + 1}, bReceivedInput);
-        //gameState.setPlayerInput(enemies->playerID, LatesInputPackage.InputCommand);
-        //gameState.NetFrameCount = LatesInputPackage.FrameCount;
-
+        LatesInputPackage = TickNetworkClient(ToSendNetPackage, bReceivedInput);
     }
 
 
-    for (const auto& InputPackage: NetworkInputHistory) {
-        if (InputPackage.FrameCount == LatesInputPackage.FrameCount) {
-            bReceivedInput = true;
-            break;
-        }
-    }
+    //for (const auto& InputPackage: NetworkInputHistory) {
+    //    if (InputPackage.FrameCount == LatesInputPackage.FrameCount) {
+    //        bReceivedInput = true;
+    //        break;
+    //    }
+    //}
 
     if(bReceivedInput)
     {
-        //std::cout << "Received Net Input: Frame[" << LatesInputPackage.FrameCount << "]" << std::endl;
+        std::cout << "Received Net Input: Frame[" << LatesInputPackage.FrameCount << "]" << std::endl;
         // Update network input buffer
-        NetworkInputHistory[InputHistoryIndex] = LatesInputPackage;
-        InputHistoryIndex = (InputHistoryIndex + 1) % INPUT_HISTORY_SIZE;
+        //NetworkInputHistory[InputHistoryIndex] = LatesInputPackage;
+        //InputHistoryIndex = (InputHistoryIndex + 1) % INPUT_HISTORY_SIZE;
+        const int StartFrame = LatesInputPackage.FrameCount-NET_PACKET_INPUT_HISTORY_SIZE + 1;
+        for (int i = 0; i < NET_PACKET_INPUT_HISTORY_SIZE; ++i)
+        {
+            const int CheckFrame = StartFrame + i;
+            if(CheckFrame  == (LatestNetworkFrame+1))
+            {
+                LatestNetworkFrame++;
+            }
+            //std::cout << "Input: " << LatesInputPackage.InputHistory[i] << " Frame: " << LatesInputPackage.FrameCount-NET_PACKET_INPUT_HISTORY_SIZE + i + 1 << std::endl;
+
+            gameState.setPlayerInputHistory(enemies->playerID, StartFrame+i, LatesInputPackage.InputHistory[i]);
+
+        }
     }
 
 
     // Frame Limiter
     {
         bool isUpdateNextFrame = (gameState.FrameCount == 0);
-        int ToUseOpponentInputCommand = 0;
-        // Find input for the next game simulation frame
-        for (const auto &InputPackage: NetworkInputHistory) {
-            if (InputPackage.FrameCount == gameState.FrameCount) {
-                ToUseOpponentInputCommand = InputPackage.InputCommand;
-                isUpdateNextFrame = true;
-                break;
-            }
+
+        if(LatestNetworkFrame > gameState.FrameCount)
+        {
+            isUpdateNextFrame = true;
         }
 
         if(NetState == NetworkState::None)
         {
             isUpdateNextFrame = false;
-
         }
 
-        if (true) {
+        if (isUpdateNextFrame) {
             std::cout << "Game Ticked[" << gameState.FrameCount << "]" << std::endl;
+            gameState.setPlayerInput(player->playerID, gameState.getPlayerInputHistory(player->playerID, gameState.FrameCount + NET_INPUT_DELAY));
             gameState.UpdateGame = true;
-            gameState.setPlayerInput(enemies->playerID, ToUseOpponentInputCommand);
+            gameState.setPlayerInput(enemies->playerID, gameState.getPlayerInputHistory(enemies->playerID, gameState.FrameCount));
             gameState.NetFrameCount = LatesInputPackage.FrameCount;
             gameState.FrameCount++;
 

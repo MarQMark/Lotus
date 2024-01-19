@@ -41,6 +41,22 @@ unsigned int GameState::getPlayerComponent(unsigned int playerSignature) const {
     return (it != playerComponents.end()) ? it->second : 0;
 }
 
+void GameState::setPlayerInputHistory(unsigned int playerSignature, int frameCount,  unsigned int  input)
+{
+        if (frameCount >= 0 && frameCount < INPUT_HISTOTY_LENTGH) {
+            // Set the input value for the specified player and frame
+            inputHistory[playerSignature][frameCount] = input;
+
+        }
+}
+
+unsigned int GameState::getPlayerInputHistory(unsigned int playerSignature, int frameCount) const
+{
+    auto playerIt = inputHistory.find(playerSignature);
+    return (playerIt != inputHistory.end()) ? playerIt->second[frameCount] : 0;
+}
+
+
 unsigned int GameState::getEnemyId() {
     return 0;
 }

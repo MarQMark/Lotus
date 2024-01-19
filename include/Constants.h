@@ -3,6 +3,19 @@
 
 #include <cstdint>
 
+constexpr int NET_INPUT_DELAY = 1;
+
+constexpr int INPUT_HISTOTY_LENTGH = 3*60*60;
+
+constexpr  unsigned int NET_PACKET_INPUT_HISTORY_SIZE = 10;
+
+struct NetworkInputPackage
+{
+    unsigned int InputHistory[NET_PACKET_INPUT_HISTORY_SIZE];
+    int FrameCount { 0 };
+};
+
+
 enum Nation{
     FIRE,
     WATER,

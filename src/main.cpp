@@ -205,7 +205,7 @@ int WinMain() {
     addBoundaries();
 
     std::string title = "Lotus\n";
-    engine->setTitle(title);
+    //engine->setTitle(title);
 
     while (engine->shouldRun()) {
         engine->update();

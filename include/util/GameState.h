@@ -34,11 +34,19 @@ public:
     int FrameCount { 0 };
     int NetFrameCount { 0 };
 
+    void setPlayerInputHistory(unsigned int playerSignature, int frameCount,  unsigned int  input);
+
+    unsigned int getPlayerInputHistory(unsigned int playerSignature, int frameCount) const;
+
+
+
     bool UpdateGame = false;
 
 private:
     std::unordered_map<unsigned int, unsigned int> playerInputs;
     std::unordered_map<unsigned int, unsigned int> playerComponents;
+    // 2 = player Records the input history for every frame for 2 players
+    std::unordered_map<unsigned int, unsigned int[INPUT_HISTOTY_LENTGH]> inputHistory;
 
 
     // Private constructor to prevent instantiation
