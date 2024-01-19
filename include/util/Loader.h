@@ -1,7 +1,12 @@
 #ifndef LOTUS_LOADER_H
 #define LOTUS_LOADER_H
 
+#include "Kikan/core/Timer.h"
+
+
 void loadTextures(){
+    Kikan::Timer t("Textures");
+
     ResourceManager::add<TextureResource>(new TextureResource("res/Maps/OuterWall2/background.png"), Resource::ID::TEX_OUTER_WALL_BACKGROUND);
     ResourceManager::add<TextureResource>(new TextureResource("res/Maps/OuterWall2/foreground.png"), Resource::ID::TEX_OUTER_WALL_FOREGROUND);
     ResourceManager::add<TextureResource>(new TextureResource("res/Maps/OuterWall2/Clouds.png"),     Resource::ID::TEX_OUTER_WALL_CLOUDS);
@@ -11,6 +16,7 @@ void loadTextures(){
 }
 
 void loadSpriteSheets(){
+    Kikan::Timer t("SpriteSheets");
     SpriteSheetResource* spriteSheet;
 
     // Players
@@ -44,18 +50,18 @@ void loadSpriteSheets(){
     spriteSheet->addGrid(400, 50);
     ResourceManager::add<SpriteSheetResource>(spriteSheet, Resource::ID::SS_HEALTHBAR_ENEMY);
 
-    spriteSheet = new SpriteSheetResource("res/Fire/SpriteSheetFireHealthbar.png");
-    spriteSheet->addGrid(5780, 960);
-    ResourceManager::add<SpriteSheetResource>(spriteSheet, Resource::ID::SS_HEALTHBAR_FIRE);
-    spriteSheet = new SpriteSheetResource("res/Earth/SpriteSheetEarthHealthbar.png");
-    spriteSheet->addGrid(5780, 960);
-    ResourceManager::add<SpriteSheetResource>(spriteSheet, Resource::ID::SS_HEALTHBAR_EARTH);
-    spriteSheet = new SpriteSheetResource("res/Air/SpriteSheetAirHealthbar.png");
-    spriteSheet->addGrid(5780, 960);
-    ResourceManager::add<SpriteSheetResource>(spriteSheet, Resource::ID::SS_HEALTHBAR_AIR);
-    spriteSheet = new SpriteSheetResource("res/Water/SpriteSheetWaterHealthbar.png");
-    spriteSheet->addGrid(5780, 960);
-    ResourceManager::add<SpriteSheetResource>(spriteSheet, Resource::ID::SS_HEALTHBAR_WATER);
+    //spriteSheet = new SpriteSheetResource("res/Fire/SpriteSheetFireHealthbar.png");
+    //spriteSheet->addGrid(5780, 960);
+    //ResourceManager::add<SpriteSheetResource>(spriteSheet, Resource::ID::SS_HEALTHBAR_FIRE);
+    //spriteSheet = new SpriteSheetResource("res/Earth/SpriteSheetEarthHealthbar.png");
+    //spriteSheet->addGrid(5780, 960);
+    //ResourceManager::add<SpriteSheetResource>(spriteSheet, Resource::ID::SS_HEALTHBAR_EARTH);
+    //spriteSheet = new SpriteSheetResource("res/Air/SpriteSheetAirHealthbar.png");
+    //spriteSheet->addGrid(5780, 960);
+    //ResourceManager::add<SpriteSheetResource>(spriteSheet, Resource::ID::SS_HEALTHBAR_AIR);
+    //spriteSheet = new SpriteSheetResource("res/Water/SpriteSheetWaterHealthbar.png");
+    //spriteSheet->addGrid(5780, 960);
+    //ResourceManager::add<SpriteSheetResource>(spriteSheet, Resource::ID::SS_HEALTHBAR_WATER);
 
     // UI cooldowns
     spriteSheet = new SpriteSheetResource("res/Fire/SpriteSheetFireAbilities.png");
@@ -74,6 +80,7 @@ void loadSpriteSheets(){
 
 // TODO: Make better
 void createAnimations(){
+    Kikan::Timer t("Animations");
     Animation* animation;
 
     // FIRE PLAYER
@@ -166,5 +173,12 @@ void createAnimations(){
     animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_AIR_ATTACK), 0, ATK_ANI_SPEED[Nation::AIR]);
     AnimationManager::addAnimation(animation, Animation::ID::AIR_ATTACK_L);
 }
+
+void loadResources(){
+    loadTextures();
+    loadSpriteSheets();
+    createAnimations();
+}
+
 
 #endif //LOTUS_LOADER_H

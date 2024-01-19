@@ -32,21 +32,6 @@ void PlayerMovementSystem::update(double dt) {
         if(Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::E)){
             auto* effect = e->getComponent<EffectComponent>();
             if(effect && !effect->effects.count(EffectComponent::ID::ATTACK_COOLDOWN) && !effect->effects.count(EffectComponent::ID::ATTACK_CAST)){
-
-                // send attack to server
-                //{
-                //    auto* entity = new Kikan::Entity;
-                //    auto* msgComponent = new MessageComponent();
-                //    msgComponent->msg.hdr.id = MessageID::Attack;
-                //    msgComponent->msg.hdr.len = sizeof(BAttack);
-                //    msgComponent->msg.body.attack.nation = 0;
-                //    msgComponent->msg.body.attack.direction = player->facing;
-                //    msgComponent->msg.body.attack.x = attack->getComponent<Kikan::Transform>()->position.x;
-                //    msgComponent->msg.body.attack.y = attack->getComponent<Kikan::Transform>()->position.y;
-                //    entity->addComponent(msgComponent);
-                //    Kikan::Engine::Kikan()->getECS()->getScene()->addEntity(entity);
-                //}
-
                 effect->effects[EffectComponent::ID::ATTACK_CAST] = ATTACK_CAST[player->nation];
             }
         }
@@ -61,7 +46,13 @@ void PlayerMovementSystem::update(double dt) {
 
 
         // ----------------------- Ultimate -----------------------
-        // TODO
+        if(Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::Q)){
+            auto* effect = e->getComponent<EffectComponent>();
+            if(player->ultCharge == 100 && effect && !effect->effects.count(EffectComponent::ID::ULT_COOLDOWN) && !effect->effects.count(EffectComponent::ID::ULT_CAST)){
+                effect->effects[EffectComponent::ID::ULT_CAST] = ULT_CAST[player->nation];
+                player->ultCharge = 0;
+            }
+        }
 
         // ----------------------- Debug -----------------------
         if(Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::N)){

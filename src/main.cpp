@@ -155,18 +155,7 @@ int WinMain() {
 
     stbi_set_flip_vertically_on_load(1);
 
-    {
-        Kikan::Timer t("Textures");
-        loadTextures();
-    }
-    {
-        Kikan::Timer t("SpriteSheets");
-        loadSpriteSheets();
-    }
-    {
-        Kikan::Timer t("Animations");
-        createAnimations();
-    }
+    loadResources();
 
     {
         auto* entity = new Kikan::Entity;

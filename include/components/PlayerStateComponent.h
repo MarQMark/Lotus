@@ -18,6 +18,8 @@ public:
     float movMulti = 1.f;
     float jumpMulti = 1.f;
 
+    float ultCharge = 0;
+
     void destroy() override{
         delete this;
     }

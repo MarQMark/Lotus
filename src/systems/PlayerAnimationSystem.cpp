@@ -186,6 +186,17 @@ void updateUICooldowns() {
         res->getTexCoords(texCoords, 4);
         label->setTextureCoords(texCoords);
     }
+    {
+        auto* label = (Kikan::Label*)ui->getElement("UltimateG");
+        label->setTexture2D(res->getTexture2D());
+        glm::vec2 texCoords[4];
+        res->getTexCoords(texCoords, 5);
+        float cooldown = 1.f - playerState->ultCharge / 100.f;
+        texCoords[2].y += (1 - cooldown) * (texCoords[1].y - texCoords[2].y);
+        texCoords[3].y += (1 - cooldown) * (texCoords[0].y - texCoords[3].y);
+        label->dim.y = cooldown * 100;
+        label->setTextureCoords(texCoords);
+    }
 }
 
 void PlayerAnimationSystem::update(double dt) {

@@ -25,6 +25,10 @@ void PlayerStateSystem::update(double dt) {
             player->canMove = !effect->effects.count(EffectComponent::ID::BLOCK_MOV);
             player->canInput = !effect->effects.count(EffectComponent::ID::BLOCK_INPUT);
 
+            if(!effect->effects.count(EffectComponent::ID::ULT_CAST) &&
+               !effect->effects.count(EffectComponent::ID::ULT_COOLDOWN))
+                player->ultCharge = std::min(player->ultCharge += ULT_GAIN[player->nation] * dt, 100.f);
+
             if(effect->effects.count(EffectComponent::ID::FIRE_ABILITY)){
                 player->movMulti = 1.5f;
                 player->jumpMulti = 1.2f;

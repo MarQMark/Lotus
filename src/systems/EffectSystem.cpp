@@ -43,10 +43,10 @@ void endPlayerEffect(Kikan::Entity* e, EffectComponent::ID id){
                 case Nation::WATER:{
                     auto* health = e->getComponent<HealthComponent>();
                     health->health = std::min(health->health + HEAL_HEALTH, health->maxHealth);
-                    effect->effects[EffectComponent::ID::ABILITY_COOLDOWN] = ABILITY_COOLDOWN[player->nation];
                     break;
                 }
             }
+            effect->effects[EffectComponent::ID::ABILITY_COOLDOWN] = ABILITY_COOLDOWN[player->nation];
         }
         case EffectComponent::ID::FIRE_ABILITY:
             player->movMulti = 1.f;
