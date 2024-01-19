@@ -25,8 +25,8 @@ enum
 #define NBN_LogWarning(...) kikanPrint( __VA_ARGS__)
 
 #define NBNET_IMPL
-#include "../external/nbnet/nbnet.h"
-#include "../external/nbnet/net_drivers/udp.h"
+#include "nbnet/nbnet.h"
+#include "nbnet/net_drivers/udp.h"
 #include "components/PlayerStateComponent.h"
 #include "Kikan/Engine.h"
 #include "Kikan/input/Input.h"
