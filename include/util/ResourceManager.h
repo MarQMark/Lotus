@@ -22,6 +22,9 @@ public:
 
         TEX_EARTH_ABILITY,
 
+
+        SS_NULL,
+
         SS_FIRE_PLAYER,
         SS_EARTH_PLAYER,
         SS_AIR_PLAYER,
@@ -31,9 +34,6 @@ public:
         SS_EARTH_ATTACK,
         SS_AIR_ATTACK,
         SS_WATER_ATTACK,
-
-
-        SS_NULL,
 
         SS_HEALTHBAR_ENEMY,
         SS_HEALTHBAR_FIRE,
@@ -59,6 +59,11 @@ public:
         // This might cause a crash. Let's hope it doesn't, because else I would be even more confused
         free(buff);
     };
+    TextureResource(unsigned char* buff, int width, int height) : _width(width), _height(height) {
+        struct Kikan::Texture2D::Options ops;
+        ops.internalformat = GL_COMPRESSED_RGBA;
+        _texture2D = new Kikan::Texture2D(width, height, buff, &ops);
+    }
 
     TextureResource(){
 #define SQUARES 16
@@ -115,6 +120,7 @@ protected:
 class SpriteSheetResource : public TextureResource {
 public:
     SpriteSheetResource(const std::string &path) : TextureResource(path) {}
+    SpriteSheetResource(unsigned char* buff, int width, int height) : TextureResource(buff, width, height) {}
     SpriteSheetResource() : TextureResource() {}
     ~SpriteSheetResource(){
         for (auto* s : _sprites)
@@ -222,6 +228,7 @@ public:
         if(id < Resource::ID::SS_NULL){
             if(!s_textures.count(calc_id(Resource::ID::TEX_NULL, getID<T>())))
                 add<TextureResource>(new TextureResource(), Resource::ID::TEX_NULL);
+            add<T>(s_textures[calc_id(Resource::ID::TEX_NULL, getID<T>())], id);
             return (T*)s_textures[calc_id(Resource::ID::TEX_NULL, getID<T>())];
         }
         else{
@@ -230,6 +237,7 @@ public:
                 res->addGrid(res->getWidth(), res->getHeight());
                 add<SpriteSheetResource>(res, Resource::ID::SS_NULL);
             }
+            add<T>(s_textures[calc_id(Resource::ID::TEX_NULL, getID<T>())], id);
             return (T*)s_textures[calc_id(Resource::ID::SS_NULL, getID<T>())];
         }
     }

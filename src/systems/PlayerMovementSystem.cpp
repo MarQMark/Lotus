@@ -22,6 +22,13 @@ void PlayerMovementSystem::update(double dt) {
         auto *physics = e->getComponent<Kikan::Physics>();
         auto *collider = e->getComponent<DColliderComponent>();
         auto *player = e->getComponent<PlayerStateComponent>();
+
+        if(transform->position.y < -100){
+            transform->position.y = 100;
+            physics->velocity = glm::vec2(0);
+            physics->acceleration = glm::vec2(0);
+        }
+
         if(!physics || !collider)
             return;
 

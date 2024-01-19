@@ -22,13 +22,13 @@
 #include "util/ResourceManager.h"
 #include "util/AnimationManager.h"
 #include "systems/PlayerAnimationSystem.h"
-#include "util/Loader.h"
 #include "systems/PlayerStateSystem.h"
 #include "systems/AttackAnimationSystem.h"
 #include "Kikan/core/Timer.h"
 #include "systems/HealthbarSystem.h"
 #include "systems/BgSpriteSystem.h"
 #include "components/BgSprite.h"
+#include "systems/ResourceLoadingSystem.h"
 
 #include <Kikan/ui/elements/Label.h>
 
@@ -118,6 +118,7 @@ int WinMain() {
     Kikan::Engine::init();
     Kikan::Engine* engine = Kikan::Engine::Kikan();
 
+    auto* resLoadingSystem = new ResourceLoadingSystem();
     auto* cameraSystem = new CameraSystem();
     auto* physicsSystem = new PhysicsSystem();
     physicsSystem->gravity = GRAVITY;
@@ -132,6 +133,7 @@ int WinMain() {
     auto* healthbarSystem = new HealthbarSystem();
     auto* bgSpriteSystem = new BgSpriteSystem();
 
+    engine->getECS()->getScene()->addSystem(resLoadingSystem);
     engine->getECS()->getScene()->addSystem(cameraSystem);
     engine->getECS()->getScene()->addSystem(physicsSystem);
     engine->getECS()->getScene()->addSystem(effectSystem);
@@ -152,10 +154,6 @@ int WinMain() {
     auto* serverSystem = new NetworkingServerSystem();
     engine->getECS()->createThread(10, 100);
     engine->getECS()->addThreadedSystem(serverSystem, 0);
-
-    stbi_set_flip_vertically_on_load(1);
-
-    loadResources();
 
     {
         auto* entity = new Kikan::Entity;
