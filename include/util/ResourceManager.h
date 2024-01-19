@@ -13,6 +13,8 @@
 class Resource{
 public:
     enum ID{
+        TEX_NULL,
+
         TEX_OUTER_WALL_BACKGROUND,
         TEX_OUTER_WALL_FOREGROUND,
         TEX_OUTER_WALL_CLOUDS,
@@ -29,6 +31,9 @@ public:
         SS_EARTH_ATTACK,
         SS_AIR_ATTACK,
         SS_WATER_ATTACK,
+
+
+        SS_NULL,
 
         SS_HEALTHBAR_ENEMY,
         SS_HEALTHBAR_FIRE,
@@ -48,10 +53,45 @@ public:
     TextureResource(const std::string& path){
         int mapImgBPP;;
         unsigned char* buff = stbi_load(path.c_str(), &_width, &_height, &mapImgBPP, 4);
-        _texture2D = new Kikan::Texture2D(_width, _height, buff);
+        struct Kikan::Texture2D::Options ops;
+        ops.internalformat = GL_COMPRESSED_RGBA;
+        _texture2D = new Kikan::Texture2D(_width, _height, buff, &ops);
         // This might cause a crash. Let's hope it doesn't, because else I would be even more confused
         free(buff);
     };
+
+    TextureResource(){
+#define SQUARES 16
+#define SQ_RES 16
+        uint32_t size = SQUARES * SQ_RES * SQUARES * SQ_RES* 4;
+        unsigned char buff[size];
+        for(uint32_t i = 0; i < size; i += 4){
+            char color = 0;
+            int row = (i / 4) / (SQUARES * SQ_RES);
+            if(row % (SQUARES * 2) < SQUARES){
+                if((i / 4) % (SQUARES * 2) < SQUARES)
+                    color = 255;
+            }
+            else{
+                if((i / 4) % (SQUARES * 2) >= SQUARES)
+                    color = 255;
+            }
+
+
+            buff[i + 0] = color;
+            buff[i + 1] = 0;
+            buff[i + 2] = color;
+            buff[i + 3] = 255;
+        }
+        _width = SQUARES * SQ_RES;
+        _height = SQUARES * SQ_RES;
+#undef SQUARES
+#undef SQ_RES
+
+        struct Kikan::Texture2D::Options ops;
+        ops.internalformat = GL_COMPRESSED_RGBA;
+        _texture2D = new Kikan::Texture2D(_width, _height, buff, &ops);
+    }
 
     GLuint getID(){
         return _texture2D->get();
@@ -75,6 +115,7 @@ protected:
 class SpriteSheetResource : public TextureResource {
 public:
     SpriteSheetResource(const std::string &path) : TextureResource(path) {}
+    SpriteSheetResource() : TextureResource() {}
     ~SpriteSheetResource(){
         for (auto* s : _sprites)
             delete s;
@@ -104,6 +145,8 @@ public:
     }
 
     void getTexCoords(glm::vec2 coords[4], uint32_t id){
+        id = std::min(id, (uint32_t)_sprites.size() - 1);
+
         auto* sprite = _sprites[id];
         coords[0] = sprite->tl;
         coords[1] = sprite->tr;
@@ -113,6 +156,8 @@ public:
 
     void getTexCoords(glm::vec2 coords[4], uint32_t row, uint32_t column){
         uint32_t id = column;
+        id = std::min(id, (uint32_t)_rows.size() - 1);
+
         for(int i = 0; row > 0; i++, row--){
             id += _rows[i];
         }
@@ -121,6 +166,8 @@ public:
 
     uint32_t getSpriteID(uint32_t row, uint32_t column){
         uint32_t id = column;
+        id = std::min(id, (uint32_t)_rows.size() - 1);
+
         for(int i = 0; row > 0; i++, row--){
             id += _rows[i];
         }
@@ -128,6 +175,7 @@ public:
     }
 
     uint32_t getRowAmount(uint32_t row){
+        row = std::min(row, (uint32_t)_rows.size() - 1);
         return _rows[row];
     }
 
@@ -168,7 +216,22 @@ public:
 
     template<class T>
     static T* get(uint32_t id) {
-        return (T*)s_textures[calc_id(id, getID<T>())];
+        if(s_textures.count(calc_id(id, getID<T>())))
+            return (T*)s_textures[calc_id(id, getID<T>())];
+
+        if(id < Resource::ID::SS_NULL){
+            if(!s_textures.count(calc_id(Resource::ID::TEX_NULL, getID<T>())))
+                add<TextureResource>(new TextureResource(), Resource::ID::TEX_NULL);
+            return (T*)s_textures[calc_id(Resource::ID::TEX_NULL, getID<T>())];
+        }
+        else{
+            if(!s_textures.count(calc_id(Resource::ID::SS_NULL, getID<T>()))){
+                auto* res = new SpriteSheetResource();
+                res->addGrid(res->getWidth(), res->getHeight());
+                add<SpriteSheetResource>(res, Resource::ID::SS_NULL);
+            }
+            return (T*)s_textures[calc_id(Resource::ID::SS_NULL, getID<T>())];
+        }
     }
 
 private:
