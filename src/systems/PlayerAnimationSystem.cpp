@@ -179,6 +179,7 @@ void updateUICooldowns() {
         label->setTextureCoords(texCoords);
     }
 
+#ifdef ENABLE_ULT
     {
         auto* label = (Kikan::Label*)ui->getElement("Ultimate");
         label->setTexture2D(res->getTexture2D());
@@ -197,6 +198,7 @@ void updateUICooldowns() {
         label->dim.y = cooldown * 100;
         label->setTextureCoords(texCoords);
     }
+#endif
 }
 
 void PlayerAnimationSystem::update(double dt) {

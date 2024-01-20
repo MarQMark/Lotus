@@ -25,18 +25,23 @@ void PlayerStateSystem::update(double dt) {
             player->canMove = !effect->effects.count(EffectComponent::ID::BLOCK_MOV);
             player->canInput = !effect->effects.count(EffectComponent::ID::BLOCK_INPUT);
 
+#ifdef ENABLE_ULT
             if(!effect->effects.count(EffectComponent::ID::ULT_CAST) &&
                !effect->effects.count(EffectComponent::ID::ULT_COOLDOWN))
                 player->ultCharge = std::min(player->ultCharge += ULT_GAIN[player->nation] * dt, 100.f);
+#endif
 
             if(effect->effects.count(EffectComponent::ID::FIRE_ABILITY)){
                 player->movMulti = 1.5f;
                 player->jumpMulti = 1.2f;
             }
 
-            if(effect->effects.count(EffectComponent::ID::ATTACK_CAST) ||
-               effect->effects.count(EffectComponent::ID::ABILITY_CAST) ||
-               effect->effects.count(EffectComponent::ID::ULT_CAST)){
+            if(effect->effects.count(EffectComponent::ID::ATTACK_CAST)
+               || effect->effects.count(EffectComponent::ID::ABILITY_CAST)
+#ifdef ENABLE_ULT
+               || effect->effects.count(EffectComponent::ID::ULT_CAST)
+#endif
+               ){
                 player->canInput = false;
             }
         }

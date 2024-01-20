@@ -31,12 +31,6 @@ static double ABILITY_COOLDOWN[4] = {
         2000.,
         2000.
 };
-static double ULT_COOLDOWN[4] = {
-        2000.,
-        2000.,
-        2000.,
-        2000.
-};
 static float ATTACK_VEL[4] =  {
         0.1f,
         1.f,
@@ -55,12 +49,26 @@ static double ABILITY_CAST[4] = {
         200.f,
         2000.f
 };
+#ifdef ENABLE_ULT
 static double ULT_CAST[4] = {
         200.f,
         200.f,
         200.f,
         200.f
 };
+static double ULT_COOLDOWN[4] = {
+        2000.,
+        2000.,
+        2000.,
+        2000.
+};
+static float ULT_GAIN[4] = {
+        0.01f,
+        0.01f,
+        0.01f,
+        0.01f
+};
+#endif
 static double MOVE_ANI_SPEED[4] = {
         100.,
         100.,
@@ -84,12 +92,6 @@ static uint32_t ATK_SPRITE_HEIGHT[4] = {
         20,
         50,
         10
-};
-static float ULT_GAIN[4] = {
-        0.01f,
-        0.01f,
-        0.01f,
-        0.01f
 };
 
 // ----------------------------- FIRE -----------------------------

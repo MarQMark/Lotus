@@ -18,7 +18,9 @@ void HealthbarSystem::update(double dt) {
         auto* health = e->getComponent<HealthComponent>();
 
         uint32_t id = std::min(std::max(10 - (int)(10 * (health->health / health->maxHealth)), 0), 10);
-        ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_HEALTHBAR_ENEMY)->getTexCoords(sprite->texCoords, id);
+        auto res = ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_HEALTHBAR_ENEMY);
+        res->getTexCoords(sprite->texCoords, id);
+        sprite->textureID = res->getID();
     }
 
 

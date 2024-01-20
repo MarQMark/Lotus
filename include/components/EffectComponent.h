@@ -11,8 +11,10 @@ public:
         ATTACK_COOLDOWN,
         ABILITY_CAST,
         ABILITY_COOLDOWN,
+#ifdef ENABLE_ULT
         ULT_CAST,
         ULT_COOLDOWN,
+#endif
 
         BLOCK_MOV,
         BLOCK_INPUT,

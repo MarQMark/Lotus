@@ -45,17 +45,21 @@ void addUI() {
     ui->addElement(attack, node);
     auto* ability = new Kikan::Label("Ability", glm::vec2(1600 - 260, 120), glm::vec2(100), nullptr);
     ui->addElement(ability, node);
+#ifdef ENABLE_ULT
     auto* ultimate = new Kikan::Label("Ultimate", glm::vec2(1600 - 380, 120), glm::vec2(100), nullptr);
     ui->addElement(ultimate, node);
+#endif
     auto* attackGray = new Kikan::Label("AttackG", glm::vec2(1600 - 140, 120), glm::vec2(100), nullptr);
     attackGray->setTextureLayerOffset(attackGray->getTextureLayerOffset() - 0.01f);
     ui->addElement(attackGray, node);
     auto* abilityGray = new Kikan::Label("AbilityG", glm::vec2(1600 - 260, 120), glm::vec2(100), nullptr);
     abilityGray->setTextureLayerOffset(abilityGray->getTextureLayerOffset() - 0.01f);
     ui->addElement(abilityGray, node);
+#ifdef ENABLE_ULT
     auto* ultimateGray = new Kikan::Label("UltimateG", glm::vec2(1600 - 380, 120), glm::vec2(100), nullptr);
     ultimateGray->setTextureLayerOffset(ultimateGray->getTextureLayerOffset() - 0.01f);
     ui->addElement(ultimateGray, node);
+#endif
 }
 
 void addBoundaries(){
@@ -117,6 +121,8 @@ void addBoundaries(){
 int WinMain() {
     Kikan::Engine::init();
     Kikan::Engine* engine = Kikan::Engine::Kikan();
+
+    Resource::init();
 
     auto* resLoadingSystem = new ResourceLoadingSystem();
     auto* cameraSystem = new CameraSystem();

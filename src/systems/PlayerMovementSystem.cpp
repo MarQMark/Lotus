@@ -52,6 +52,7 @@ void PlayerMovementSystem::update(double dt) {
         }
 
 
+#ifdef ENABLE_ULT
         // ----------------------- Ultimate -----------------------
         if(Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::Q)){
             auto* effect = e->getComponent<EffectComponent>();
@@ -60,6 +61,7 @@ void PlayerMovementSystem::update(double dt) {
                 player->ultCharge = 0;
             }
         }
+#endif
 
         // ----------------------- Debug -----------------------
         if(Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::N)){
