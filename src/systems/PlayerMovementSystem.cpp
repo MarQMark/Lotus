@@ -24,7 +24,8 @@ void PlayerMovementSystem::update(double dt) {
         auto *player = e->getComponent<PlayerStateComponent>();
 
         if(transform->position.y < -100){
-            transform->position.y = 100;
+            transform->position.y = 150;
+            transform->position.x = 500;
             physics->velocity = glm::vec2(0);
             physics->acceleration = glm::vec2(0);
         }

@@ -403,6 +403,12 @@ void ResourceLoadingSystem::update(double dt) {
         create_sprite_sheets();
         createAnimations();
         _load_delay = MAX_LOAD_DELAY;
+        if(_load_cnt > MAX_LOAD_CNT){
+            for (auto p : _data) {
+                delete p.second.buff;
+            }
+        }
+
     }else{
         _load_delay -= dt;
     }
