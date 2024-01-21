@@ -42,9 +42,11 @@ void HealthbarSystem::update(double dt) {
         case AIR:
             res = ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_HEALTHBAR_AIR);
             break;
+#ifdef ENABLE_WATER
         case WATER:
             res = ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_HEALTHBAR_WATER);
             break;
+#endif
     }
 
     auto* ui = Kikan::Engine::Kikan()->getUI();

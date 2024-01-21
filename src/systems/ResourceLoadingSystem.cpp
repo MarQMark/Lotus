@@ -46,12 +46,14 @@ void ResourceLoadingSystem::loadResources() {
         .width = width,
         .height = height,
     };
+#ifdef ENABLE_WATER
     buff = stbi_load("res/Fire/FirePlayerSpriteSheet.png", &width, &height, &mapImgBPP, 4);
     _data[Resource::ID::SS_WATER_PLAYER] = LoadingData {
             .buff = buff,
             .width = width,
             .height = height,
     };
+#endif
     // Attacks
     buff = stbi_load("res/Fire/fireballSprite.png", &width, &height, &mapImgBPP, 4);
     _data[Resource::ID::SS_FIRE_ATTACK] = LoadingData {
@@ -98,12 +100,14 @@ void ResourceLoadingSystem::loadResources() {
         .width = width,
         .height = height,
     };
+#ifdef ENABLE_WATER
     buff = stbi_load("res/Water/SpriteSheetWaterHealthbar.png", &width, &height, &mapImgBPP, 4);
     _data[Resource::ID::SS_HEALTHBAR_WATER] = LoadingData {
             .buff = buff,
             .width = width,
             .height = height,
     };
+#endif
 
     // UI cooldowns
     buff = stbi_load("res/Fire/SpriteSheetFireAbilities.png", &width, &height, &mapImgBPP, 4);
@@ -124,12 +128,14 @@ void ResourceLoadingSystem::loadResources() {
         .width = width,
         .height = height,
     };
+#ifdef ENABLE_WATER
     buff = stbi_load("res/Fire/SpriteSheetFireAbilities.png", &width, &height, &mapImgBPP, 4);
     _data[Resource::ID::SS_UI_COOLDOWN_WATER] = LoadingData {
             .buff = buff,
             .width = width,
             .height = height,
     };
+#endif
 
     printf("Thread end\n");
     _finished_loading = true;
@@ -140,7 +146,9 @@ void allocSpriteSheets(){
     ResourceManager::add<SpriteSheetResource>(new SpriteSheetResource(), Resource::ID::SS_FIRE_PLAYER);
     ResourceManager::add<SpriteSheetResource>(new SpriteSheetResource(), Resource::ID::SS_EARTH_PLAYER);
     ResourceManager::add<SpriteSheetResource>(new SpriteSheetResource(), Resource::ID::SS_AIR_PLAYER);
+#ifdef ENABLE_WATER
     ResourceManager::add<SpriteSheetResource>(new SpriteSheetResource(), Resource::ID::SS_WATER_PLAYER);
+#endif
 
     // Attacks
     ResourceManager::add<SpriteSheetResource>(new SpriteSheetResource(), Resource::ID::SS_FIRE_ATTACK);
@@ -152,13 +160,17 @@ void allocSpriteSheets(){
     ResourceManager::add<SpriteSheetResource>(new SpriteSheetResource(), Resource::ID::SS_HEALTHBAR_FIRE);
     ResourceManager::add<SpriteSheetResource>(new SpriteSheetResource(), Resource::ID::SS_HEALTHBAR_EARTH);
     ResourceManager::add<SpriteSheetResource>(new SpriteSheetResource(), Resource::ID::SS_HEALTHBAR_AIR);
+#ifdef ENABLE_WATER
     ResourceManager::add<SpriteSheetResource>(new SpriteSheetResource(), Resource::ID::SS_HEALTHBAR_WATER);
+#endif
 
     // UI cooldowns
     ResourceManager::add<SpriteSheetResource>(new SpriteSheetResource(), Resource::ID::SS_UI_COOLDOWN_FIRE);
     ResourceManager::add<SpriteSheetResource>(new SpriteSheetResource(), Resource::ID::SS_UI_COOLDOWN_EARTH);
     ResourceManager::add<SpriteSheetResource>(new SpriteSheetResource(), Resource::ID::SS_UI_COOLDOWN_AIR);
+#ifdef ENABLE_WATER
     ResourceManager::add<SpriteSheetResource>(new SpriteSheetResource(), Resource::ID::SS_UI_COOLDOWN_WATER);
+#endif
 }
 
 void ResourceLoadingSystem::create_sprite_sheets() {
@@ -181,12 +193,14 @@ void ResourceLoadingSystem::create_sprite_sheets() {
             spriteSheet->create(_data[Resource::ID::SS_AIR_PLAYER].buff, _data[Resource::ID::SS_AIR_PLAYER].width, _data[Resource::ID::SS_AIR_PLAYER].height);
             spriteSheet->addGrid(650, 1200);
             break;
+#ifdef ENABLE_WATER
         case 3:
             // TODO: Change to actual water player once finished
             spriteSheet = ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_WATER_PLAYER);
             spriteSheet->create(_data[Resource::ID::SS_WATER_PLAYER].buff, _data[Resource::ID::SS_WATER_PLAYER].width, _data[Resource::ID::SS_WATER_PLAYER].height);
             spriteSheet->addGrid(650, 1200);
             break;
+#endif
 
         // Attacks
         case 4:
@@ -226,11 +240,13 @@ void ResourceLoadingSystem::create_sprite_sheets() {
             spriteSheet->create(_data[Resource::ID::SS_HEALTHBAR_AIR].buff, _data[Resource::ID::SS_HEALTHBAR_AIR].width, _data[Resource::ID::SS_HEALTHBAR_AIR].height);
             spriteSheet->addGrid(5780, 960);
             break;
+#ifdef ENABLE_WATER
         case 11:
             spriteSheet = ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_HEALTHBAR_WATER);
             spriteSheet->create(_data[Resource::ID::SS_HEALTHBAR_WATER].buff, _data[Resource::ID::SS_HEALTHBAR_WATER].width, _data[Resource::ID::SS_HEALTHBAR_WATER].height);
             spriteSheet->addGrid(5780, 960);
             break;
+#endif
 
         // UI cooldowns
         case 12:
@@ -248,11 +264,13 @@ void ResourceLoadingSystem::create_sprite_sheets() {
             spriteSheet->create(_data[Resource::ID::SS_UI_COOLDOWN_AIR].buff, _data[Resource::ID::SS_UI_COOLDOWN_AIR].width, _data[Resource::ID::SS_UI_COOLDOWN_AIR].height);
             spriteSheet->addGrid(910, 910);
             break;
+#ifdef ENABLE_WATER
         case MAX_LOAD_CNT:
             spriteSheet = ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_UI_COOLDOWN_WATER);
             spriteSheet->create(_data[Resource::ID::SS_UI_COOLDOWN_WATER].buff, _data[Resource::ID::SS_UI_COOLDOWN_WATER].width, _data[Resource::ID::SS_UI_COOLDOWN_WATER].height);
             spriteSheet->addGrid(910, 910);
             break;
+#endif
 
     }
 
@@ -321,6 +339,7 @@ void alllocAnimations(){
     animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_AIR_PLAYER));
     AnimationManager::addAnimation(animation, Animation::ID::AIR_PLAYER_MOV_L);
 
+#ifdef ENABLE_WATER
     // WATER PLAYER
     animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_WATER_PLAYER), std::vector<uint32_t>{0}, 0);
     AnimationManager::addAnimation(animation, Animation::ID::WATER_PLAYER_IDLE_R);
@@ -338,6 +357,7 @@ void alllocAnimations(){
     AnimationManager::addAnimation(animation, Animation::ID::WATER_PLAYER_MOV_R);
     animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_WATER_PLAYER));
     AnimationManager::addAnimation(animation, Animation::ID::WATER_PLAYER_MOV_L);
+#endif
 
     // ATTACKS
     animation = new Animation(ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_FIRE_ATTACK));
@@ -373,11 +393,13 @@ void createAnimations(){
     AnimationManager::getAnimation(Animation::ID::AIR_PLAYER_MOV_R)->create(4, MOVE_ANI_SPEED[Nation::AIR]);
     AnimationManager::getAnimation(Animation::ID::AIR_PLAYER_MOV_L)->create(5, MOVE_ANI_SPEED[Nation::AIR]);
 
+#ifdef ENABLE_WATER
     // WATER PLAYER
     AnimationManager::getAnimation(Animation::ID::WATER_PLAYER_ATTACK_R)->create(1, MOVE_ANI_SPEED[Nation::WATER]);
     AnimationManager::getAnimation(Animation::ID::WATER_PLAYER_ATTACK_L)->create(2, MOVE_ANI_SPEED[Nation::WATER]);
     AnimationManager::getAnimation(Animation::ID::WATER_PLAYER_MOV_R)->create(4, MOVE_ANI_SPEED[Nation::WATER]);
     AnimationManager::getAnimation(Animation::ID::WATER_PLAYER_MOV_L)->create(5, MOVE_ANI_SPEED[Nation::WATER]);
+#endif
 
     // ATTACKS
     AnimationManager::getAnimation(Animation::ID::FIRE_ATTACK_R)->create(1, ATK_ANI_SPEED[Nation::FIRE]);

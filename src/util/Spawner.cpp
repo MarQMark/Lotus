@@ -73,7 +73,9 @@ Kikan::Entity *Spawner::spawnAttack(glm::vec2 pos, Nation nation, uint8_t dir) {
             aspectRatio = 195. / 485.;
             animationID = Animation::ID::AIR_ATTACK_R;
             break;
+#ifdef ENABLE_WATER
         case Nation::WATER:
+#endif
         case Nation::FIRE:
         default:
             aspectRatio = 300. / 150.;

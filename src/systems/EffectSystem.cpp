@@ -40,11 +40,13 @@ void endPlayerEffect(Kikan::Entity* e, EffectComponent::ID id){
                     Kikan::Engine::Kikan()->getECS()->getScene()->addEntity(attack);
                 }
                     break;
+#ifdef ENABLE_WATER
                 case Nation::WATER:{
                     auto* health = e->getComponent<HealthComponent>();
                     health->health = std::min(health->health + HEAL_HEALTH, health->maxHealth);
                     break;
                 }
+#endif
             }
             effect->effects[EffectComponent::ID::ABILITY_COOLDOWN] = ABILITY_COOLDOWN[player->nation];
         }

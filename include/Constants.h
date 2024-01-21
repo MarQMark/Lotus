@@ -5,7 +5,9 @@ enum Nation{
     FIRE = 0,
     EARTH = 1,
     AIR = 2,
+#ifdef ENABLE_WATER
     WATER = 3
+#endif
 };
 
 static float GRAVITY = -.004f;

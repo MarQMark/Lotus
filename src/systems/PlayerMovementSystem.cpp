@@ -68,7 +68,11 @@ void PlayerMovementSystem::update(double dt) {
         if(Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::N)){
             auto* effect = e->getComponent<EffectComponent>();
             if(effect && !effect->effects.count(42)) {
+#ifdef ENABLE_WATER
                 player->nation = Nation((player->nation + 1) % 4);
+#else
+                player->nation = Nation((player->nation + 1) % 3);
+#endif
                 effect->effects[42] = 500;
             }
         }

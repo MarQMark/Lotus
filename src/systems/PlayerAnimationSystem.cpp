@@ -27,9 +27,11 @@ Animation* getAttackAnimation(PlayerStateComponent* player){
         case Nation::AIR:
             animationID = Animation::ID::AIR_PLAYER_ATTACK_R;
             break;
+#ifdef ENABLE_WATER
         case Nation::WATER:
             animationID = Animation::ID::WATER_PLAYER_ATTACK_R;
             break;
+#endif
     }
     animationID = (Animation::ID)(animationID + player->facing);
     return AnimationManager::getAnimation(animationID);
@@ -54,9 +56,11 @@ Animation* getJumpAnimation(PlayerStateComponent* player, Kikan::Entity* e){
         case Nation::AIR:
             animationID = Animation::ID::AIR_PLAYER_JUMP_R;
             break;
+#ifdef ENABLE_WATER
         case Nation::WATER:
             animationID = Animation::ID::WATER_PLAYER_JUMP_R;
             break;
+#endif
     }
     animationID = (Animation::ID)(animationID + player->facing);
     return AnimationManager::getAnimation(animationID);
@@ -81,9 +85,11 @@ Animation* getMovingAnimation(PlayerStateComponent* player, Kikan::Entity* e){
         case Nation::AIR:
             animationID = Animation::ID::AIR_PLAYER_MOV_R;
             break;
+#ifdef ENABLE_WATER
         case Nation::WATER:
             animationID = Animation::ID::WATER_PLAYER_MOV_R;
             break;
+#endif
     }
     animationID = (Animation::ID)(animationID + player->facing);
     return AnimationManager::getAnimation(animationID);
@@ -100,9 +106,11 @@ Animation* getIdleAnimation(PlayerStateComponent* player){
         case Nation::AIR:
             animationID = Animation::ID::AIR_PLAYER_IDLE_R;
             break;
+#ifdef ENABLE_WATER
         case Nation::WATER:
             animationID = Animation::ID::WATER_PLAYER_IDLE_R;
             break;
+#endif
     }
     animationID = (Animation::ID)(animationID + player->facing);
     return AnimationManager::getAnimation(animationID);
@@ -126,9 +134,11 @@ void updateUICooldowns() {
         case AIR:
             res = ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_UI_COOLDOWN_AIR);
             break;
+#ifdef ENABLE_WATER
         case WATER:
             res = ResourceManager::get<SpriteSheetResource>(Resource::ID::SS_UI_COOLDOWN_WATER);
             break;
+#endif
     }
 
     auto* ui = Kikan::Engine::Kikan()->getUI();
