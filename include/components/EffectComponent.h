@@ -21,6 +21,7 @@ public:
 
         FIRE_ABILITY,
 
+        FALL_COOLDOWN,
 
         SELF_DESTRUCT,
     };

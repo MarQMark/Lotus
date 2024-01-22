@@ -3,6 +3,7 @@
 
 #include <Kikan/ecs/components/IComponent.h>
 #include "Constants.h"
+#include "SColliderComponent.h"
 
 class PlayerStateComponent : public Kikan::IComponent {
 public:
@@ -15,10 +16,16 @@ public:
     bool canMove = true;
     bool canInput = true;
 
+    // Not actually falling but basically pressing S
+    bool isFalling = false;
+
     float movMulti = 1.f;
     float jumpMulti = 1.f;
 
     float ultCharge = 0;
+
+    // A component should not have another component but since is nothing like unique ids I can't come up with something better. Too bad!
+    SColliderComponent* excludeCollider = nullptr;
 
     void destroy() override{
         delete this;

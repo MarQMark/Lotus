@@ -95,5 +95,18 @@ void PlayerMovementSystem::update(double dt) {
             if(collider->hasCollidedB)
                 physics->velocity.y = JUMP_FORCE * player->jumpMulti;
         }
+        if(Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::S)){
+            auto* effect = e->getComponent<EffectComponent>();
+            if(effect && !effect->effects.count(EffectComponent::ID::FALL_COOLDOWN)){
+                effect->effects[EffectComponent::ID::FALL_COOLDOWN] = 200;
+                player->isFalling = true;
+            }
+            else{
+                player->isFalling = false;
+            }
+        }
+        else{
+            player->isFalling = false;
+        }
     }
 }

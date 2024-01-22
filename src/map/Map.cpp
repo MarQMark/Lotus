@@ -171,6 +171,8 @@ void Map::load_default_map() {
 
         auto *collider = new SColliderComponent();
         collider->dimensions = glm::vec2(95, 12);
+        collider->disableSide(1);
+        collider->playerCanFall = true;
         entity->addComponent(collider);
 
 #ifdef DEBUG
@@ -193,6 +195,8 @@ void Map::load_default_map() {
 
         auto *collider = new SColliderComponent();
         collider->dimensions = glm::vec2(130, 12);
+        collider->disableSide(1);
+        collider->playerCanFall = true;
         entity->addComponent(collider);
 
 #ifdef DEBUG
@@ -215,6 +219,8 @@ void Map::load_default_map() {
 
         auto *collider = new SColliderComponent();
         collider->dimensions = glm::vec2(396, 12);
+        collider->disableSide(1);
+        collider->playerCanFall = true;
         entity->addComponent(collider);
 
 #ifdef DEBUG
@@ -237,6 +243,8 @@ void Map::load_default_map() {
 
         auto *collider = new SColliderComponent();
         collider->dimensions = glm::vec2(910, 12);
+        collider->disableSide(1);
+        collider->playerCanFall = true;
         entity->addComponent(collider);
 
 #ifdef DEBUG
@@ -259,6 +267,8 @@ void Map::load_default_map() {
 
         auto *collider = new SColliderComponent();
         collider->dimensions = glm::vec2(142, 12);
+        collider->disableSide(1);
+        collider->playerCanFall = true;
         entity->addComponent(collider);
 
 #ifdef DEBUG

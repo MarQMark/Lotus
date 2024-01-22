@@ -11,6 +11,17 @@ public:
     glm::vec2 offset = glm::vec2(0);
     glm::vec2 dimensions;
 
+    bool playerCanFall = false;
+
+    uint8_t disabledSides = 0;
+
+    void disableSide(uint8_t side){
+        disabledSides |= ((uint8_t)1 << side);
+    }
+    void enableSide(uint8_t side){
+        disabledSides &= ~((uint8_t)1 << side);
+    }
+
     void destroy() override{
         delete this;
     };
