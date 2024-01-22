@@ -25,7 +25,9 @@ Kikan::Entity *Spawner::spawnPlayer(Nation nation) {
 
     add_pe_common(entity, nation);
 
+#ifdef DEBUG
     entity->getComponent<Kikan::LineQuadSprite>()->color = glm::vec4(.4, .5, .8, 1);
+#endif
     entity->getComponent<Kikan::AASprite>()->layer = -0.01;
 
     auto* player = new PlayerComponent();
@@ -42,7 +44,9 @@ Kikan::Entity *Spawner::spawnEnemy(Nation nation) {
 
     add_pe_common(entity, nation);
 
+#ifdef DEBUG
     entity->getComponent<Kikan::LineQuadSprite>()->color = glm::vec4(.8, .5, .4, 1);
+#endif
 
     return entity;
 }
@@ -50,7 +54,9 @@ Kikan::Entity *Spawner::spawnEnemy(Nation nation) {
 Kikan::Entity *Spawner::spawnAttack(glm::vec2 pos, Nation nation, uint8_t dir) {
     auto* entity = new Kikan::Entity;
 
+#ifdef DEBUG
     auto* hitboxSprite = new Kikan::LineQuadSprite();
+#endif
     auto* trigger = new TriggerComponent();
     auto* physics = new Kikan::Physics();
     auto* animComp = new AnimationComponent();
@@ -86,11 +92,14 @@ Kikan::Entity *Spawner::spawnAttack(glm::vec2 pos, Nation nation, uint8_t dir) {
     damage->damage = ATK_DAMAGE[nation];
     physics->velocity.x = ATTACK_VEL[nation];
     width = (float)(height * aspectRatio);
+#ifdef DEBUG
     hitboxSprite->dimensions = glm::vec2(width, height);
     hitboxSprite->thickness = 10;
-    hitboxSprite->color = glm::vec4 (1.f, 0.f, 0.f, 1.f);
+    hitboxSprite->color = glm::vec4 (0);
+#endif
     trigger->dimensions = glm::vec2(width, height);
     sprite->dimensions = glm::vec2(width, height);
+    sprite->color = glm::vec4(0);
 
     if(dir == 1){
         physics->velocity.x *= -1;
@@ -105,7 +114,9 @@ Kikan::Entity *Spawner::spawnAttack(glm::vec2 pos, Nation nation, uint8_t dir) {
 
     animComp->animation = AnimationManager::getAnimation(animationID);
 
+#ifdef DEBUG
     entity->addComponent(hitboxSprite);
+#endif
     entity->addComponent(trigger);
     entity->addComponent(physics);
     entity->addComponent(animComp);
@@ -116,10 +127,12 @@ Kikan::Entity *Spawner::spawnAttack(glm::vec2 pos, Nation nation, uint8_t dir) {
 }
 
 void Spawner::add_pe_common(Kikan::Entity *entity, Nation nation) {
+#ifdef DEBUG
     auto* sprite = new Kikan::LineQuadSprite();
     sprite->dimensions = glm::vec2(PLAYER_WIDTH, PLAYER_HEIGHT);
     sprite->thickness = 3;
     entity->addComponent(sprite);
+#endif
 
     auto* collider = new DColliderComponent();
     collider->dimensions = glm::vec2(PLAYER_WIDTH, PLAYER_HEIGHT);

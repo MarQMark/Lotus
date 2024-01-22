@@ -64,6 +64,7 @@ void PlayerMovementSystem::update(double dt) {
         }
 #endif
 
+#ifdef DEBUG
         // ----------------------- Debug -----------------------
         if(Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::N)){
             auto* effect = e->getComponent<EffectComponent>();
@@ -76,6 +77,7 @@ void PlayerMovementSystem::update(double dt) {
                 effect->effects[42] = 500;
             }
         }
+#endif
 
         // ----------------------- Movement -----------------------
         if(!player->canMove)

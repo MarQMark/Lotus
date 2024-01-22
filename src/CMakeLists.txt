@@ -19,6 +19,8 @@ add_executable(Lotus
         systems/BgSpriteSystem.cpp
         systems/ResourceLoadingSystem.cpp
 
+        map/Map.cpp
+
         util/Spawner.cpp
         util/ResourceManager.cpp
         util/AnimationManager.cpp

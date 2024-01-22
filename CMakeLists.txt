@@ -31,6 +31,7 @@ endif()
 
 add_subdirectory("external/kikan")
 
+add_compile_definitions("DEBUG")
 
 add_subdirectory("include")
 add_subdirectory("src")

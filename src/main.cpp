@@ -29,6 +29,7 @@
 #include "systems/BgSpriteSystem.h"
 #include "components/BgSprite.h"
 #include "systems/ResourceLoadingSystem.h"
+#include "map/Map.h"
 
 #include <Kikan/ui/elements/Label.h>
 
@@ -60,62 +61,6 @@ void addUI() {
     ultimateGray->setTextureLayerOffset(ultimateGray->getTextureLayerOffset() - 0.01f);
     ui->addElement(ultimateGray, node);
 #endif
-}
-
-void addBoundaries(){
-    Kikan::Engine* engine = Kikan::Engine::Kikan();
-    // Ground
-    {
-        auto *entity = new Kikan::Entity();
-        entity->getComponent<Kikan::Transform>()->position = glm::vec3(0, 81, 0);
-
-        auto *sprite = new Kikan::LineQuadSprite();
-        sprite->dimensions = glm::vec2(1000, 81);
-        sprite->color = glm::vec4(.4, .4, .4, 1);
-        sprite->thickness = 50;
-        sprite->layer = -.2;
-        entity->addComponent(sprite);
-
-        auto *collider = new SColliderComponent();
-        collider->dimensions = glm::vec2(1000, 81);
-        entity->addComponent(collider);
-
-        engine->getECS()->getScene()->addEntity(entity);
-    }
-    // Left Wall
-    {
-        auto *entity = new Kikan::Entity();
-        entity->getComponent<Kikan::Transform>()->position = glm::vec3(1000, 1000, 0);
-
-        auto *sprite = new Kikan::LineQuadSprite();
-        sprite->dimensions = glm::vec2(20, 1000);
-        sprite->color = glm::vec4(.4, .4, .4, 1);
-        sprite->thickness = 5;
-        entity->addComponent(sprite);
-
-        auto *collider = new SColliderComponent();
-        collider->dimensions = glm::vec2(20, 1000);
-        entity->addComponent(collider);
-
-        engine->getECS()->getScene()->addEntity(entity);
-    }
-    // Right Wall
-    {
-        auto *entity = new Kikan::Entity();
-        entity->getComponent<Kikan::Transform>()->position = glm::vec3(-20, 1000, 0);
-
-        auto *sprite = new Kikan::LineQuadSprite();
-        sprite->dimensions = glm::vec2(20, 1000);
-        sprite->color = glm::vec4(.4, .4, .4, 1);
-        sprite->thickness = 5;
-        entity->addComponent(sprite);
-
-        auto *collider = new SColliderComponent();
-        collider->dimensions = glm::vec2(20, 1000);
-        entity->addComponent(collider);
-
-        engine->getECS()->getScene()->addEntity(entity);
-    }
 }
 
 int WinMain() {
@@ -161,43 +106,8 @@ int WinMain() {
     engine->getECS()->createThread(10, 100);
     engine->getECS()->addThreadedSystem(serverSystem, 0);
 
-    {
-        auto* entity = new Kikan::Entity;
-        auto* sprite = new Kikan::AASprite;
-        sprite->offset = glm::vec2(0, 562.5f);
-        sprite->dimensions = glm::vec2(3000, 562.5f);
-        sprite->textureID = ResourceManager::get<TextureResource>(Resource::ID::TEX_OUTER_WALL_CLOUDS)->getID();
-        sprite->layer = .2;
-        sprite->color = glm::vec4(.5f);
-        entity->addComponent(sprite);
-        auto* bgSprite = new BgSprite();
-        bgSprite->vel.x = -.01f;
-        bgSprite->id = BgSprite::ID::CLOUDS;
-        entity->addComponent(bgSprite);
-        engine->getECS()->getScene()->addEntity(entity);
-    }
-    {
-        auto* entity = new Kikan::Entity;
-        auto* sprite = new Kikan::AASprite;
-        sprite->offset = glm::vec2(0, 562.5f);
-        sprite->dimensions = glm::vec2(1000, 562.5f);
-        sprite->textureID = ResourceManager::get<TextureResource>(Resource::ID::TEX_OUTER_WALL_BACKGROUND)->getID();
-        sprite->layer = .1;
-        sprite->color = glm::vec4(.5f);
-        entity->addComponent(sprite);
-        engine->getECS()->getScene()->addEntity(entity);
-    }
-    {
-        auto* entity = new Kikan::Entity;
-        auto* sprite = new Kikan::AASprite;
-        sprite->offset = glm::vec2(0, 562.5f);
-        sprite->dimensions = glm::vec2(1000, 562.5f);
-        sprite->textureID = ResourceManager::get<TextureResource>(Resource::ID::TEX_OUTER_WALL_FOREGROUND)->getID();
-        sprite->layer = -.1;
-        sprite->color = glm::vec4(.5f);
-        entity->addComponent(sprite);
-        engine->getECS()->getScene()->addEntity(entity);
-    }
+    MapManager::add("default", new Map());
+    MapManager::get("default")->load(engine->getECS()->getScene());
 
     // Player
     {
@@ -205,8 +115,6 @@ int WinMain() {
         entity->getComponent<Kikan::Transform>()->position = glm::vec3(500, 800, 0);
         engine->getECS()->getScene()->addEntity(entity);
     }
-
-    addBoundaries();
 
     addUI();
 
