@@ -7,6 +7,9 @@
 void loadTextures(){
     Kikan::Timer t("Textures");
 
+    ResourceManager::add<TextureResource>(new TextureResource("res/Assets/MarkIndustries.png"), Resource::ID::TEX_MARK_INDUSTRIES);
+    ResourceManager::add<TextureResource>(new TextureResource("res/Assets/MarkIndustriesInvert.png"), Resource::ID::TEX_MARK_INDUSTRIES_I);
+
     ResourceManager::add<TextureResource>(new TextureResource("res/Maps/OuterWall2/background.png"), Resource::ID::TEX_OUTER_WALL_BACKGROUND);
     ResourceManager::add<TextureResource>(new TextureResource("res/Maps/OuterWall2/foreground.png"), Resource::ID::TEX_OUTER_WALL_FOREGROUND);
     ResourceManager::add<TextureResource>(new TextureResource("res/Maps/OuterWall2/Clouds.png"),     Resource::ID::TEX_OUTER_WALL_CLOUDS);

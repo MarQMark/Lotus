@@ -31,6 +31,8 @@
 #include "systems/ResourceLoadingSystem.h"
 #include "map/Map.h"
 #include "Kikan/ui/elements/Button.h"
+#include "systems/TitleScreenSystem.h"
+#include "Kikan/ecs/components/QuadSprite.h"
 
 #include <Kikan/ui/elements/Label.h>
 
@@ -75,6 +77,7 @@ void addMenuUI(){
     auto* ui = engine->getUI();
 
     auto* node = new Kikan::UINode("MainMenu");
+    node->enabled = false;
     ui->addNode(node);
     auto* startBtn = new Kikan::Button("start_btn", glm::vec2(200, 650), glm::vec2(1200, 400));
     startBtn->registerCallback(onStartBtnPressed, Kikan::IInteractable::State::RELEASED);
@@ -82,8 +85,62 @@ void addMenuUI(){
 
 }
 
+void addTitleScene(){
+    auto* scene = new Kikan::Scene("title");
+
+    auto* cameraSystem = new CameraSystem();
+    scene->addSystem(cameraSystem);
+
+    auto* spriteSystem = new Kikan::SpriteRenderSystem();
+    scene->addSystem(spriteSystem);
+
+    auto* titleScreenSystem = new TitleScreenSystem();
+    scene->addSystem(titleScreenSystem);
+
+    {
+        auto* entity = new Kikan::Entity;
+        entity->getComponent<Kikan::Transform>()->position = glm::vec3(100, 350, 1);
+        auto* sprite = new Kikan::AASprite;
+        sprite->dimensions = glm::vec2(800.f, 800.f * (123.f / 782.f));
+        sprite->textureID = ResourceManager::get<TextureResource>(Resource::ID::TEX_MARK_INDUSTRIES_I)->getID();
+        entity->addComponent(sprite);
+        scene->addEntity(entity);
+    }
+
+    {
+        auto* entity = new Kikan::Entity;
+        float width = 800.f;
+        float height = 400.f;
+        auto* sprite = new Kikan::QuadSprite;
+        sprite->points[0] = glm::vec2(100, 350);
+        sprite->points[1] = glm::vec2(100, 350) + glm::vec2(width,   0);
+        sprite->points[2] = glm::vec2(100, 350) + glm::vec2(width,   -height);
+        sprite->points[3] = glm::vec2(100, 350) + glm::vec2(0,       -height);
+        sprite->color = glm::vec4(0,0,0,1);
+        sprite->layer = -.1;
+        entity->addComponent(sprite);
+        scene->addEntity(entity);
+    }
+
+
+    Kikan::Engine::Kikan()->getECS()->addScene(scene);
+}
+
+
+void onMenuSceneLoad(Kikan::Scene* scene, void* data){
+    auto* ui = Kikan::Engine::Kikan()->getUI();
+    ui->getNode("MainMenu")->enabled = true;
+}
+
+void onMenuSceneUnload(Kikan::Scene* scene, void* data){
+    auto* ui = Kikan::Engine::Kikan()->getUI();
+    ui->getNode("MainMenu")->enabled = false;
+}
+
 void addMenuScene(){
     auto* scene = new Kikan::Scene("menu");
+    scene->setOnLoad(onMenuSceneLoad);
+    scene->setOnUnload(onMenuSceneUnload);
 
     auto* spriteSystem = new Kikan::SpriteRenderSystem();
     scene->addSystem(spriteSystem);
@@ -94,12 +151,17 @@ void addMenuScene(){
 void onGameSceneLoad(Kikan::Scene* scene, void* data){
     auto* ui = Kikan::Engine::Kikan()->getUI();
     ui->getNode("Game")->enabled = true;
-    ui->getNode("MainMenu")->enabled = false;
+}
+
+void onGameSceneUnload(Kikan::Scene* scene, void* data){
+    auto* ui = Kikan::Engine::Kikan()->getUI();
+    ui->getNode("Game")->enabled = false;
 }
 
 void addGameScene(){
     auto* scene = Kikan::Engine::Kikan()->getECS()->getScene("default");//new Kikan::Scene("game");
     scene->setOnLoad(onGameSceneLoad);
+    scene->setOnUnload(onGameSceneUnload);
 
     auto* cameraSystem = new CameraSystem();
     auto* physicsSystem = new PhysicsSystem();
@@ -142,10 +204,9 @@ int WinMain() {
     auto* resLoadingSystem = new ResourceLoadingSystem();
     engine->getECS()->addSystem(resLoadingSystem);
 
+    addTitleScene();
     addMenuScene();
     addGameScene();
-
-    engine->getECS()->loadScene("menu");
 
     auto* serverSystem = new NetworkingServerSystem();
     engine->getECS()->createThread(10, 100);
@@ -164,6 +225,13 @@ int WinMain() {
     engine->getUI()->setDimensions(1600, 900);
     addMenuUI();
     addGameUI();
+
+
+#ifdef DEBUG
+    engine->getECS()->loadScene("menu");
+#else
+    engine->getECS()->loadScene("title");
+#endif
 
     std::string title = "Lotus\n";
     engine->setTitle(title);

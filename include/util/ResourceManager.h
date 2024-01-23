@@ -15,6 +15,9 @@ public:
     enum ID{
         TEX_NULL,
 
+        TEX_MARK_INDUSTRIES,
+        TEX_MARK_INDUSTRIES_I,
+
         TEX_OUTER_WALL_BACKGROUND,
         TEX_OUTER_WALL_FOREGROUND,
         TEX_OUTER_WALL_CLOUDS,

@@ -18,6 +18,7 @@ add_executable(Lotus
         systems/HealthbarSystem.cpp
         systems/BgSpriteSystem.cpp
         systems/ResourceLoadingSystem.cpp
+        systems/TitleScreenSystem.cpp
 
         map/Map.cpp
 

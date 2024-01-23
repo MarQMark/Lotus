@@ -4,7 +4,7 @@ project(Lotus)
 set(CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_CXX_FLAGS_RELEASE  "-O3")
-set(CMAKE_CXX_FLAGS_DEBUG "-g -Wall -Wextra -Wno-unused-parameter")
+set(CMAKE_CXX_FLAGS_DEBUG "-g -Wall -Wextra -Wno-unused-parameter -DDEBUG")
 
 add_compile_definitions(STB_IMAGE_IMPLEMENTATION)
 
@@ -31,7 +31,7 @@ endif()
 
 add_subdirectory("external/kikan")
 
-add_compile_definitions("DEBUG")
+#add_compile_definitions("DEBUG")
 
 add_subdirectory("include")
 add_subdirectory("src")
