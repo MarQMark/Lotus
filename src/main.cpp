@@ -30,15 +30,15 @@
 #include "components/BgSprite.h"
 #include "systems/ResourceLoadingSystem.h"
 #include "map/Map.h"
+#include "Kikan/ui/elements/Button.h"
 
 #include <Kikan/ui/elements/Label.h>
 
-void addUI() {
+void addGameUI() {
     Kikan::Engine* engine = Kikan::Engine::Kikan();
     auto* ui = engine->getUI();
-    ui->setDimensions(1600, 900);
 
-    auto* node = new Kikan::UINode("Arena");
+    auto* node = new Kikan::UINode("Game");
     ui->addNode(node);
     auto* healthbar = new Kikan::Label("Healthbar", glm::vec2(20, 120), glm::vec2(5780 / 960 * 100, 100), nullptr);
     ui->addElement(healthbar, node);
@@ -61,15 +61,46 @@ void addUI() {
     ultimateGray->setTextureLayerOffset(ultimateGray->getTextureLayerOffset() - 0.01f);
     ui->addElement(ultimateGray, node);
 #endif
+
+    node->enabled = false;
 }
 
-int WinMain() {
-    Kikan::Engine::init();
+void onStartBtnPressed(Kikan::IInteractable* btn, Kikan::IInteractable::State state, void* data){
+    //Kikan::Engine::Kikan()->getECS()->loadScene("game");
+    Kikan::Engine::Kikan()->getECS()->loadScene("default");
+}
+
+void addMenuUI(){
     Kikan::Engine* engine = Kikan::Engine::Kikan();
+    auto* ui = engine->getUI();
 
-    Resource::init();
+    auto* node = new Kikan::UINode("MainMenu");
+    ui->addNode(node);
+    auto* startBtn = new Kikan::Button("start_btn", glm::vec2(200, 650), glm::vec2(1200, 400));
+    startBtn->registerCallback(onStartBtnPressed, Kikan::IInteractable::State::RELEASED);
+    ui->addElement(startBtn, node);
 
-    auto* resLoadingSystem = new ResourceLoadingSystem();
+}
+
+void addMenuScene(){
+    auto* scene = new Kikan::Scene("menu");
+
+    auto* spriteSystem = new Kikan::SpriteRenderSystem();
+    scene->addSystem(spriteSystem);
+
+    Kikan::Engine::Kikan()->getECS()->addScene(scene);
+}
+
+void onGameSceneLoad(Kikan::Scene* scene, void* data){
+    auto* ui = Kikan::Engine::Kikan()->getUI();
+    ui->getNode("Game")->enabled = true;
+    ui->getNode("MainMenu")->enabled = false;
+}
+
+void addGameScene(){
+    auto* scene = Kikan::Engine::Kikan()->getECS()->getScene("default");//new Kikan::Scene("game");
+    scene->setOnLoad(onGameSceneLoad);
+
     auto* cameraSystem = new CameraSystem();
     auto* physicsSystem = new PhysicsSystem();
     physicsSystem->gravity = GRAVITY;
@@ -83,31 +114,45 @@ int WinMain() {
     auto* attackAnimationSystem = new AttackAnimationSystem();
     auto* healthbarSystem = new HealthbarSystem();
     auto* bgSpriteSystem = new BgSpriteSystem();
-
-    engine->getECS()->getScene()->addSystem(resLoadingSystem);
-    engine->getECS()->getScene()->addSystem(cameraSystem);
-    engine->getECS()->getScene()->addSystem(physicsSystem);
-    engine->getECS()->getScene()->addSystem(effectSystem);
-    engine->getECS()->getScene()->addSystem(movSystem);
-    engine->getECS()->getScene()->addSystem(clientSystem);
-    engine->getECS()->getScene()->addSystem(triggerSystem);
-    engine->getECS()->getScene()->addSystem(collisionSystem);
-    engine->getECS()->getScene()->addSystem(playerStateSystem);
-    engine->getECS()->getScene()->addSystem(playerAnimationSystem);
-    engine->getECS()->getScene()->addSystem(attackAnimationSystem);
-    engine->getECS()->getScene()->addSystem(healthbarSystem);
-    engine->getECS()->getScene()->addSystem(bgSpriteSystem);
+    scene->addSystem(cameraSystem);
+    scene->addSystem(physicsSystem);
+    scene->addSystem(effectSystem);
+    scene->addSystem(movSystem);
+    scene->addSystem(clientSystem);
+    scene->addSystem(triggerSystem);
+    scene->addSystem(collisionSystem);
+    scene->addSystem(playerStateSystem);
+    scene->addSystem(playerAnimationSystem);
+    scene->addSystem(attackAnimationSystem);
+    scene->addSystem(healthbarSystem);
+    scene->addSystem(bgSpriteSystem);
 
     auto* spriteSystem = new Kikan::SpriteRenderSystem();
+    scene->addSystem(spriteSystem);
 
-    engine->getECS()->getScene()->addSystem(spriteSystem);
+    //Kikan::Engine::Kikan()->getECS()->addScene(scene);
+}
+
+int WinMain() {
+    Kikan::Engine::init();
+    Kikan::Engine* engine = Kikan::Engine::Kikan();
+
+    Resource::init();
+
+    auto* resLoadingSystem = new ResourceLoadingSystem();
+    engine->getECS()->addSystem(resLoadingSystem);
+
+    addMenuScene();
+    addGameScene();
+
+    engine->getECS()->loadScene("menu");
 
     auto* serverSystem = new NetworkingServerSystem();
     engine->getECS()->createThread(10, 100);
     engine->getECS()->addThreadedSystem(serverSystem, 0);
 
     MapManager::add("default", new Map());
-    MapManager::get("default")->load(engine->getECS()->getScene());
+    MapManager::get("default")->load(engine->getECS()->getScene("game"));
 
     // Player
     {
@@ -116,7 +161,9 @@ int WinMain() {
         engine->getECS()->getScene()->addEntity(entity);
     }
 
-    addUI();
+    engine->getUI()->setDimensions(1600, 900);
+    addMenuUI();
+    addGameUI();
 
     std::string title = "Lotus\n";
     engine->setTitle(title);
