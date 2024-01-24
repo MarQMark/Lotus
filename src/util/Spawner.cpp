@@ -26,7 +26,9 @@ Kikan::Entity *Spawner::spawnPlayer(Nation nation, bool isEnemy) {
 
     add_pe_common(entity, nation);
 
+#ifdef DEBUG
     entity->getComponent<Kikan::LineQuadSprite>()->color = glm::vec4(.4, .5, .8, 1);
+#endif
     entity->getComponent<Kikan::AASprite>()->layer = -0.01;
 
     auto* player = new PlayerComponent();
@@ -58,7 +60,9 @@ Kikan::Entity *Spawner::spawnEnemy(Nation nation) {
     entity->addComponent(enemyComponent);
 
 
+#ifdef DEBUG
     entity->getComponent<Kikan::LineQuadSprite>()->color = glm::vec4(.8, .5, .4, 1);
+#endif
 
     return entity;
 }
@@ -66,7 +70,9 @@ Kikan::Entity *Spawner::spawnEnemy(Nation nation) {
 Kikan::Entity *Spawner::spawnAttack(glm::vec2 pos, Nation nation, uint8_t dir) {
     auto* entity = new Kikan::Entity;
 
+#ifdef DEBUG
     auto* hitboxSprite = new Kikan::LineQuadSprite();
+#endif
     auto* trigger = new TriggerComponent();
     auto* physics = new Kikan::Physics();
     auto* animComp = new AnimationComponent();
@@ -83,34 +89,33 @@ Kikan::Entity *Spawner::spawnAttack(glm::vec2 pos, Nation nation, uint8_t dir) {
     switch (nation) {
         case Nation::EARTH:
             aspectRatio = 340. / 180.;
-            height = EARTH_ATK_SPRITE_HEIGHT;
             animationID = Animation::ID::EARTH_ATTACK_R;
-            damage->damage = EARTH_ATK_DAMAGE;
-            physics->velocity.x = EARTH_ATTACK_VEL;
             break;
         case Nation::AIR:
             aspectRatio = 195. / 485.;
-            height = AIR_ATK_SPRITE_HEIGHT;
             animationID = Animation::ID::AIR_ATTACK_R;
-            damage->damage = AIR_ATK_DAMAGE;
-            physics->velocity.x = AIR_ATTACK_VEL;
             break;
+#ifdef ENABLE_WATER
         case Nation::WATER:
+#endif
         case Nation::FIRE:
         default:
             aspectRatio = 300. / 150.;
-            height = FIRE_ATK_SPRITE_HEIGHT;
             animationID = Animation::ID::FIRE_ATTACK_R;
-            damage->damage = FIRE_ATK_DAMAGE;
-            physics->velocity.x = FIRE_ATTACK_VEL;
             break;
     }
+    height = ATK_SPRITE_HEIGHT[nation];
+    damage->damage = ATK_DAMAGE[nation];
+    physics->velocity.x = ATTACK_VEL[nation];
     width = (float)(height * aspectRatio);
+#ifdef DEBUG
     hitboxSprite->dimensions = glm::vec2(width, height);
     hitboxSprite->thickness = 10;
-    hitboxSprite->color = glm::vec4 (1.f, 0.f, 0.f, 1.f);
+    hitboxSprite->color = glm::vec4 (0);
+#endif
     trigger->dimensions = glm::vec2(width, height);
     sprite->dimensions = glm::vec2(width, height);
+    sprite->color = glm::vec4(0);
 
     if(dir == 1){
         physics->velocity.x *= -1;
@@ -125,7 +130,9 @@ Kikan::Entity *Spawner::spawnAttack(glm::vec2 pos, Nation nation, uint8_t dir) {
 
     animComp->animation = AnimationManager::getAnimation(animationID);
 
+#ifdef DEBUG
     entity->addComponent(hitboxSprite);
+#endif
     entity->addComponent(trigger);
     entity->addComponent(physics);
     entity->addComponent(animComp);
@@ -136,10 +143,12 @@ Kikan::Entity *Spawner::spawnAttack(glm::vec2 pos, Nation nation, uint8_t dir) {
 }
 
 void Spawner::add_pe_common(Kikan::Entity *entity, Nation nation) {
+#ifdef DEBUG
     auto* sprite = new Kikan::LineQuadSprite();
     sprite->dimensions = glm::vec2(PLAYER_WIDTH, PLAYER_HEIGHT);
     sprite->thickness = 3;
     entity->addComponent(sprite);
+#endif
 
     auto* collider = new DColliderComponent();
     collider->dimensions = glm::vec2(PLAYER_WIDTH, PLAYER_HEIGHT);
@@ -187,4 +196,58 @@ void Spawner::add_healthbar(Kikan::Entity* player){
 
     entity->addComponent(sprite);
     Kikan::Engine::Kikan()->getECS()->getScene()->addEntity(entity);
+}
+
+Kikan::Entity *Spawner::spawnEarthAbility(glm::vec2 pos, uint8_t dir) {
+    auto* entity = new Kikan::Entity;
+
+    auto* res = ResourceManager::get<TextureResource>(Resource::ID::TEX_EARTH_ABILITY);
+    float w = EARTH_ABL_SPRITE_WIDTH;
+    float h = EARTH_ABL_SPRITE_WIDTH * ((float)res->getHeight() / (float)res->getWidth());
+
+    auto* transform = entity->getComponent<Kikan::Transform>();
+    transform->position.y = pos.y - PLAYER_HEIGHT;
+    if(dir == 1){
+        transform->position.x = pos.x - w - PLAYER_WIDTH / 2.f;
+    }
+    else{
+        transform->position.x = pos.x + PLAYER_WIDTH * 1.5f;
+    }
+
+    auto* texture = new Kikan::AASprite;
+    texture->dimensions = glm::vec2(w, h);
+    texture->layer = -0.1f;
+    texture->textureID = res->getID();
+    texture->color = glm::vec4(1.f);
+    entity->addComponent(texture);
+
+    if(dir == 1){
+        texture->texCoords[0] = glm::vec2 (1, 1);
+        texture->texCoords[1] = glm::vec2 (0, 1);
+        texture->texCoords[2] = glm::vec2 (0, 0);
+        texture->texCoords[3] = glm::vec2 (1, 0);
+    }
+
+    float speed = .1f;
+    auto* effect = new EffectComponent();
+    effect->effects[EffectComponent::ID::SELF_DESTRUCT] = h / speed;
+    entity->addComponent(effect);
+
+    auto* physics = new Kikan::Physics();
+    physics->gravity = false;
+    physics->velocity.y = speed;
+    entity->addComponent(physics);
+
+    auto* trigger = new TriggerComponent();
+    trigger->dimensions.x = w;
+    trigger->dimensions.y = h;
+    trigger->triggerStatic = false;
+    trigger->impulse.y = EARTH_ABL_IMPULSE;
+    entity->addComponent(trigger);
+
+    auto* damage = new DamageComponent();
+    damage->damage = EARTH_ABL_DAMAGE;
+    entity->addComponent(damage);
+
+    return entity;
 }

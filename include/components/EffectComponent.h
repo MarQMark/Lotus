@@ -11,13 +11,19 @@ public:
         ATTACK_COOLDOWN,
         ABILITY_CAST,
         ABILITY_COOLDOWN,
+#ifdef ENABLE_ULT
         ULT_CAST,
         ULT_COOLDOWN,
+#endif
 
         BLOCK_MOV,
         BLOCK_INPUT,
 
         FIRE_ABILITY,
+
+        FALL_COOLDOWN,
+
+        SELF_DESTRUCT,
     };
 
     std::map<uint32_t, double> effects;

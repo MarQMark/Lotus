@@ -28,106 +28,94 @@ void PlayerMovementSystem::update(double dt) {
         auto *collider = e->getComponent<DColliderComponent>();
         auto *player = e->getComponent<PlayerStateComponent>();
 
-        if(!physics || !collider)
+        if (transform->position.y < -100) {
+            transform->position.y = 150;
+            transform->position.x = 500;
+            physics->velocity = glm::vec2(0);
+            physics->acceleration = glm::vec2(0);
+        }
+
+        if (!physics || !collider)
             return;
 
-        if(!player->canInput)
+        if (!player->canInput)
             return;
 
         // ----------------------- Attack -----------------------
-        if(gameState.getPlayerInput(player->playerID) & static_cast<unsigned int>(InputCommand::Attack)){
-            auto* effect = e->getComponent<EffectComponent>();
-            if(effect && !effect->effects.count(EffectComponent::ID::ATTACK_COOLDOWN)){
-                auto* attack = Spawner::spawnAttack(transform->position, player->nation, player->facing);
-
-                // send attack to server
-                {
-                    auto* entity = new Kikan::Entity;
-                    auto* msgComponent = new MessageComponent();
-                    msgComponent->msg.hdr.id = MessageID::Attack;
-                    msgComponent->msg.hdr.len = sizeof(BAttack);
-                    msgComponent->msg.body.attack.nation = 0;
-                    msgComponent->msg.body.attack.direction = player->facing;
-                    msgComponent->msg.body.attack.x = attack->getComponent<Kikan::Transform>()->position.x;
-                    msgComponent->msg.body.attack.y = attack->getComponent<Kikan::Transform>()->position.y;
-                    entity->addComponent(msgComponent);
-                    Kikan::Engine::Kikan()->getECS()->getScene()->addEntity(entity);
-                }
-
-                effect->effects[EffectComponent::ID::ATTACK_CAST] = FIRE_ATTACK_CAST;
-                effect->effects[EffectComponent::ID::ATTACK_COOLDOWN] = FIRE_ATTACK_COOL;
-                Kikan::Engine::Kikan()->getECS()->getScene()->addEntity(attack);
+        if (gameState.getPlayerInput(player->playerID) & static_cast<unsigned int>(InputCommand::Attack)) {
+            auto *effect = e->getComponent<EffectComponent>();
+            if (effect && !effect->effects.count(EffectComponent::ID::ATTACK_COOLDOWN) &&
+                !effect->effects.count(EffectComponent::ID::ATTACK_CAST)) {
+                effect->effects[EffectComponent::ID::ATTACK_CAST] = ATTACK_CAST[player->nation];
             }
         }
 
         // ----------------------- Ability -----------------------
-        if(gameState.getPlayerInput(player->playerID) & static_cast<unsigned int>(InputCommand::Ability)){
-            auto* effect = e->getComponent<EffectComponent>();
-            if(effect && !effect->effects.count(EffectComponent::ID::ABILITY_COOLDOWN)){
-                switch (player->nation) {
-                    case Nation::FIRE:
-                        effect->effects[EffectComponent::ID::FIRE_ABILITY] = 5000;
-                        break;
-                    case Nation::EARTH:
-                        break;
-                    case Nation::AIR:
-                    {
-                        auto* attack = Spawner::spawnAttack(transform->position, player->nation, 0);
-                        Kikan::Engine::Kikan()->getECS()->getScene()->addEntity(attack);
-                        attack = Spawner::spawnAttack(transform->position, player->nation, 1);
-                        Kikan::Engine::Kikan()->getECS()->getScene()->addEntity(attack);
-                    }
-                        break;
-                    case Nation::WATER:
-                        effect->effects[EffectComponent::ID::BLOCK_INPUT] = 2000;
-                        break;
-                }
-
-                effect->effects[EffectComponent::ID::ABILITY_CAST] = FIRE_ATTACK_CAST;
-                effect->effects[EffectComponent::ID::ABILITY_COOLDOWN] = FIRE_ATTACK_COOL;
+        if (gameState.getPlayerInput(player->playerID) & static_cast<unsigned int>(InputCommand::Ability)) {
+            auto *effect = e->getComponent<EffectComponent>();
+            if (effect && !effect->effects.count(EffectComponent::ID::ABILITY_COOLDOWN) &&
+                !effect->effects.count(EffectComponent::ID::ABILITY_CAST)) {
+                effect->effects[EffectComponent::ID::ABILITY_CAST] = ABILITY_CAST[player->nation];
             }
         }
 
 
+#ifdef ENABLE_ULT
         // ----------------------- Ultimate -----------------------
-        // TODO
-
-        // ----------------------- Debug -----------------------
-        if(Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::N)){
+        if(Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::Q)){
             auto* effect = e->getComponent<EffectComponent>();
-            if(effect && !effect->effects.count(42)) {
+            if(player->ultCharge == 100 && effect && !effect->effects.count(EffectComponent::ID::ULT_COOLDOWN) && !effect->effects.count(EffectComponent::ID::ULT_CAST)){
+                effect->effects[EffectComponent::ID::ULT_CAST] = ULT_CAST[player->nation];
+                player->ultCharge = 0;
+            }
+        }
+#endif
+
+#ifdef DEBUG
+        // ----------------------- Debug -----------------------
+        if (Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::N)) {
+            auto *effect = e->getComponent<EffectComponent>();
+            if (effect && !effect->effects.count(42)) {
+#ifdef ENABLE_WATER
                 player->nation = Nation((player->nation + 1) % 4);
+#else
+                player->nation = Nation((player->nation + 1) % 3);
+#endif
                 effect->effects[42] = 500;
             }
         }
+#endif
 
         // ----------------------- Movement -----------------------
-        //kikanPrint(reinterpret_cast<const char *>(gameState.getPlayerInput(player->playerID)));
-        //kikanPrint("\n");
-        //kikanPrint("playerId:");
-        //kikanPrint(reinterpret_cast<const char *>(player->playerID));
-        //kikanPrint("\n");
-       // std::cout << gameState.getPlayerInput(player->playerID) << std::endl;
-
-        if(!player->canMove)
+        if (!player->canMove)
             return;
-        if(!player->isEnemy)
-        {
-            std::cout << gameState.getPlayerInput(player->playerID) << std::endl;
 
-        }
-        if (gameState.getPlayerInput(player->playerID) & static_cast<unsigned int>(InputCommand::Right)){
+
+        if (gameState.getPlayerInput(player->playerID) & static_cast<unsigned int>(InputCommand::Right)) {
             physics->acceleration.x += MOVEMENT_SPEED * player->movMulti;
             player->facing = 0; // faces right
         }
-        if (gameState.getPlayerInput(player->playerID) & static_cast<unsigned int>(InputCommand::Left)){
+        if (gameState.getPlayerInput(player->playerID) & static_cast<unsigned int>(InputCommand::Left)) {
             physics->acceleration.x += -MOVEMENT_SPEED * player->movMulti;
             player->facing = 1; // faces left
         }
-        if(gameState.getPlayerInput(player->playerID) & static_cast<unsigned int>(InputCommand::Jump)){
-            if(collider->hasCollidedB)
+        if (gameState.getPlayerInput(player->playerID) & static_cast<unsigned int>(InputCommand::Jump)) {
+            if (collider->hasCollidedB)
                 physics->velocity.y = JUMP_FORCE * player->jumpMulti;
         }
+        if (gameState.getPlayerInput(player->playerID) & static_cast<unsigned int>(InputCommand::Super)) {
+            auto *effect = e->getComponent<EffectComponent>();
+            if (effect && !effect->effects.count(EffectComponent::ID::FALL_COOLDOWN)) {
+                effect->effects[EffectComponent::ID::FALL_COOLDOWN] = 200;
+                player->isFalling = true;
+            } else {
+                player->isFalling = false;
+            }
+        } else {
+            player->isFalling = false;
+        }
     }
+
     gameState.UpdateGame = false;
+
 }

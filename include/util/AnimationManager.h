@@ -77,6 +77,20 @@ public:
         for(uint32_t i = 0; i < amount; i++)
             _frames[i] = startID + i;
     }
+    Animation(SpriteSheetResource* spriteSheet) : _sprite_sheet(spriteSheet){
+        _is_empty = true;
+    }
+
+    void create(uint32_t row, double speed){
+        _speed = speed;
+        uint32_t amount = _sprite_sheet->getRowAmount(row);
+        uint32_t startID = _sprite_sheet->getSpriteID(row, 0);
+        _frames.resize(amount);
+        for(uint32_t i = 0; i < amount; i++)
+            _frames[i] = startID + i;
+
+        _is_empty = false;
+    }
 
     void getFrame(glm::vec2 texCoords[4], double &currentFrame, std::chrono::high_resolution_clock::time_point &lastTime) {
         double dt = ((std::chrono::duration<double, std::milli>)(std::chrono::high_resolution_clock::now() - lastTime)).count();
@@ -85,7 +99,15 @@ public:
         if(currentFrame > (double)_frames.size())
             currentFrame = 0;
 
-        _sprite_sheet->getTexCoords(texCoords, _frames[(uint32_t)currentFrame]);
+        if(_is_empty){
+            texCoords[0] = glm::vec2(0, 1);
+            texCoords[1] = glm::vec2(1, 1);
+            texCoords[2] = glm::vec2(1, 0);
+            texCoords[3] = glm::vec2(0, 0);
+        }
+        else{
+            _sprite_sheet->getTexCoords(texCoords, _frames[(uint32_t)currentFrame]);
+        }
 
         lastTime = std::chrono::high_resolution_clock::now();
     }
@@ -98,9 +120,10 @@ public:
     Animation::ID id;
 
 private:
+    bool _is_empty = false;
     SpriteSheetResource* _sprite_sheet;
     std::vector<uint32_t> _frames;
-    double _speed;
+    double _speed = 1;
 };
 
 

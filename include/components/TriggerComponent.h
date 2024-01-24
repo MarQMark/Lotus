@@ -8,6 +8,8 @@ public:
     enum TriggerType{
         DUMMY,
         FIRE_A,
+
+        EARTH_ABILITY,
     };
 
     uint32_t type = TriggerType::DUMMY;
@@ -16,6 +18,8 @@ public:
 
     glm::vec2 dimensions;
     glm::vec2 impulse;
+
+    bool triggerStatic = true;
 
     void destroy() override{
         delete this;

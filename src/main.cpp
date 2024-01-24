@@ -22,7 +22,6 @@
 #include "util/ResourceManager.h"
 #include "util/AnimationManager.h"
 #include "systems/PlayerAnimationSystem.h"
-#include "util/Loader.h"
 #include "systems/PlayerStateSystem.h"
 #include "systems/AttackAnimationSystem.h"
 #include "Kikan/core/Timer.h"
@@ -31,67 +30,140 @@
 #include "components/BgSprite.h"
 #include "systems/InputSystem.h"
 #include "systems/NetworkSystem.h"
+#include "systems/ResourceLoadingSystem.h"
+#include "map/Map.h"
+#include "Kikan/ui/elements/Button.h"
+#include "systems/TitleScreenSystem.h"
+#include "Kikan/ecs/components/QuadSprite.h"
 
-void addBoundaries(){
+#include <Kikan/ui/elements/Label.h>
+
+void addGameUI() {
     Kikan::Engine* engine = Kikan::Engine::Kikan();
-    // Ground
-    {
-        auto *entity = new Kikan::Entity();
-        entity->getComponent<Kikan::Transform>()->position = glm::vec3(0, 81, 0);
+    auto* ui = engine->getUI();
 
-        auto *sprite = new Kikan::LineQuadSprite();
-        sprite->dimensions = glm::vec2(1000, 81);
-        sprite->color = glm::vec4(.4, .4, .4, 1);
-        sprite->thickness = 50;
-        sprite->layer = -.2;
-        entity->addComponent(sprite);
+    auto* node = new Kikan::UINode("Game");
+    ui->addNode(node);
+    auto* healthbar = new Kikan::Label("Healthbar", glm::vec2(20, 120), glm::vec2(5780 / 960 * 100, 100), nullptr);
+    ui->addElement(healthbar, node);
+    auto* attack = new Kikan::Label("Attack", glm::vec2(1600 - 140, 120), glm::vec2(100), nullptr);
+    ui->addElement(attack, node);
+    auto* ability = new Kikan::Label("Ability", glm::vec2(1600 - 260, 120), glm::vec2(100), nullptr);
+    ui->addElement(ability, node);
+#ifdef ENABLE_ULT
+    auto* ultimate = new Kikan::Label("Ultimate", glm::vec2(1600 - 380, 120), glm::vec2(100), nullptr);
+    ui->addElement(ultimate, node);
+#endif
+    auto* attackGray = new Kikan::Label("AttackG", glm::vec2(1600 - 140, 120), glm::vec2(100), nullptr);
+    attackGray->setTextureLayerOffset(attackGray->getTextureLayerOffset() - 0.01f);
+    ui->addElement(attackGray, node);
+    auto* abilityGray = new Kikan::Label("AbilityG", glm::vec2(1600 - 260, 120), glm::vec2(100), nullptr);
+    abilityGray->setTextureLayerOffset(abilityGray->getTextureLayerOffset() - 0.01f);
+    ui->addElement(abilityGray, node);
+#ifdef ENABLE_ULT
+    auto* ultimateGray = new Kikan::Label("UltimateG", glm::vec2(1600 - 380, 120), glm::vec2(100), nullptr);
+    ultimateGray->setTextureLayerOffset(ultimateGray->getTextureLayerOffset() - 0.01f);
+    ui->addElement(ultimateGray, node);
+#endif
 
-        auto *collider = new SColliderComponent();
-        collider->dimensions = glm::vec2(1000, 81);
-        entity->addComponent(collider);
-
-        engine->getECS()->getScene()->addEntity(entity);
-    }
-    // Left Wall
-    {
-        auto *entity = new Kikan::Entity();
-        entity->getComponent<Kikan::Transform>()->position = glm::vec3(1000, 1000, 0);
-
-        auto *sprite = new Kikan::LineQuadSprite();
-        sprite->dimensions = glm::vec2(20, 1000);
-        sprite->color = glm::vec4(.4, .4, .4, 1);
-        sprite->thickness = 5;
-        entity->addComponent(sprite);
-
-        auto *collider = new SColliderComponent();
-        collider->dimensions = glm::vec2(20, 1000);
-        entity->addComponent(collider);
-
-        engine->getECS()->getScene()->addEntity(entity);
-    }
-    // Right Wall
-    {
-        auto *entity = new Kikan::Entity();
-        entity->getComponent<Kikan::Transform>()->position = glm::vec3(-20, 1000, 0);
-
-        auto *sprite = new Kikan::LineQuadSprite();
-        sprite->dimensions = glm::vec2(20, 1000);
-        sprite->color = glm::vec4(.4, .4, .4, 1);
-        sprite->thickness = 5;
-        entity->addComponent(sprite);
-
-        auto *collider = new SColliderComponent();
-        collider->dimensions = glm::vec2(20, 1000);
-        entity->addComponent(collider);
-
-        engine->getECS()->getScene()->addEntity(entity);
-    }
+    node->enabled = false;
 }
 
-int WinMain() {
-    Kikan::Engine::init();
+void onStartBtnPressed(Kikan::IInteractable* btn, Kikan::IInteractable::State state, void* data){
+    //Kikan::Engine::Kikan()->getECS()->loadScene("game");
+    Kikan::Engine::Kikan()->getECS()->loadScene("default");
+}
+
+void addMenuUI(){
     Kikan::Engine* engine = Kikan::Engine::Kikan();
-    engine->setTargetFPS(60);
+    auto* ui = engine->getUI();
+
+    auto* node = new Kikan::UINode("MainMenu");
+    node->enabled = false;
+    ui->addNode(node);
+    auto* startBtn = new Kikan::Button("start_btn", glm::vec2(200, 650), glm::vec2(1200, 400));
+    startBtn->registerCallback(onStartBtnPressed, Kikan::IInteractable::State::RELEASED);
+    ui->addElement(startBtn, node);
+
+}
+
+void addTitleScene(){
+    auto* scene = new Kikan::Scene("title");
+
+    auto* cameraSystem = new CameraSystem();
+    scene->addSystem(cameraSystem);
+
+    auto* spriteSystem = new Kikan::SpriteRenderSystem();
+    scene->addSystem(spriteSystem);
+
+    auto* titleScreenSystem = new TitleScreenSystem();
+    scene->addSystem(titleScreenSystem);
+
+    {
+        auto* entity = new Kikan::Entity;
+        entity->getComponent<Kikan::Transform>()->position = glm::vec3(100, 350, 1);
+        auto* sprite = new Kikan::AASprite;
+        sprite->dimensions = glm::vec2(800.f, 800.f * (123.f / 782.f));
+        sprite->textureID = ResourceManager::get<TextureResource>(Resource::ID::TEX_MARK_INDUSTRIES_I)->getID();
+        entity->addComponent(sprite);
+        scene->addEntity(entity);
+    }
+
+    {
+        auto* entity = new Kikan::Entity;
+        float width = 800.f;
+        float height = 400.f;
+        auto* sprite = new Kikan::QuadSprite;
+        sprite->points[0] = glm::vec2(100, 350);
+        sprite->points[1] = glm::vec2(100, 350) + glm::vec2(width,   0);
+        sprite->points[2] = glm::vec2(100, 350) + glm::vec2(width,   -height);
+        sprite->points[3] = glm::vec2(100, 350) + glm::vec2(0,       -height);
+        sprite->color = glm::vec4(0,0,0,1);
+        sprite->layer = -.1;
+        entity->addComponent(sprite);
+        scene->addEntity(entity);
+    }
+
+
+    Kikan::Engine::Kikan()->getECS()->addScene(scene);
+}
+
+
+void onMenuSceneLoad(Kikan::Scene* scene, void* data){
+    auto* ui = Kikan::Engine::Kikan()->getUI();
+    ui->getNode("MainMenu")->enabled = true;
+}
+
+void onMenuSceneUnload(Kikan::Scene* scene, void* data){
+    auto* ui = Kikan::Engine::Kikan()->getUI();
+    ui->getNode("MainMenu")->enabled = false;
+}
+
+void addMenuScene(){
+    auto* scene = new Kikan::Scene("menu");
+    scene->setOnLoad(onMenuSceneLoad);
+    scene->setOnUnload(onMenuSceneUnload);
+
+    auto* spriteSystem = new Kikan::SpriteRenderSystem();
+    scene->addSystem(spriteSystem);
+
+    Kikan::Engine::Kikan()->getECS()->addScene(scene);
+}
+
+void onGameSceneLoad(Kikan::Scene* scene, void* data){
+    auto* ui = Kikan::Engine::Kikan()->getUI();
+    ui->getNode("Game")->enabled = true;
+}
+
+void onGameSceneUnload(Kikan::Scene* scene, void* data){
+    auto* ui = Kikan::Engine::Kikan()->getUI();
+    ui->getNode("Game")->enabled = false;
+}
+
+void addGameScene(){
+    auto* scene = Kikan::Engine::Kikan()->getECS()->getScene("default");//new Kikan::Scene("game");
+    scene->setOnLoad(onGameSceneLoad);
+    scene->setOnUnload(onGameSceneUnload);
 
 
     auto* networkSystem = new NetworkSystem();
@@ -108,85 +180,45 @@ int WinMain() {
     auto* attackAnimationSystem = new AttackAnimationSystem();
     auto* healthbarSystem = new HealthbarSystem();
     auto* bgSpriteSystem = new BgSpriteSystem();
-    auto* inputSystem = new InputSystem();
-
-
-    engine->getECS()->getScene()->addSystem(cameraSystem);
-    engine->getECS()->getScene()->addSystem(networkSystem);
-    engine->getECS()->getScene()->addSystem(physicsSystem);
-    engine->getECS()->getScene()->addSystem(effectSystem);
-    engine->getECS()->getScene()->addSystem(inputSystem);
-    engine->getECS()->getScene()->addSystem(movSystem);
-    //engine->getECS()->getScene()->addSystem(clientSystem);
-    engine->getECS()->getScene()->addSystem(triggerSystem);
-    engine->getECS()->getScene()->addSystem(collisionSystem);
-    engine->getECS()->getScene()->addSystem(playerStateSystem);
-    engine->getECS()->getScene()->addSystem(playerAnimationSystem);
-    engine->getECS()->getScene()->addSystem(attackAnimationSystem);
-    engine->getECS()->getScene()->addSystem(healthbarSystem);
-    engine->getECS()->getScene()->addSystem(bgSpriteSystem);
+    scene->addSystem(cameraSystem);
+    scene->addSystem(networkSystem);
+    scene->addSystem(physicsSystem);
+    scene->addSystem(effectSystem);
+    scene->addSystem(movSystem);
+    //scene->addSystem(clientSystem);
+    scene->addSystem(triggerSystem);
+    scene->addSystem(collisionSystem);
+    scene->addSystem(playerStateSystem);
+    scene->addSystem(playerAnimationSystem);
+    scene->addSystem(attackAnimationSystem);
+    scene->addSystem(healthbarSystem);
+    scene->addSystem(bgSpriteSystem);
 
     auto* spriteSystem = new Kikan::SpriteRenderSystem();
+    scene->addSystem(spriteSystem);
 
-    engine->getECS()->getScene()->addSystem(spriteSystem);
+    //Kikan::Engine::Kikan()->getECS()->addScene(scene);
+}
+
+int WinMain() {
+    Kikan::Engine::init();
+    Kikan::Engine* engine = Kikan::Engine::Kikan();
+
+    Resource::init();
+
+    auto* resLoadingSystem = new ResourceLoadingSystem();
+    engine->getECS()->addSystem(resLoadingSystem);
+
+    addTitleScene();
+    addMenuScene();
+    addGameScene();
 
     //auto* serverSystem = new NetworkingServerSystem();
     //engine->getECS()->createThread(10, 100);
     //engine->getECS()->addThreadedSystem(serverSystem, 0);
 
-    stbi_set_flip_vertically_on_load(1);
-
-    {
-        Kikan::Timer t("Textures");
-        loadTextures();
-    }
-    {
-        Kikan::Timer t("SpriteSheets");
-        loadSpriteSheets();
-    }
-    {
-        Kikan::Timer t("Animations");
-        createAnimations();
-    }
-
-    {
-        auto* entity = new Kikan::Entity;
-        auto* sprite = new Kikan::AASprite;
-        sprite->offset = glm::vec2(0, 562.5f);
-        sprite->dimensions = glm::vec2(3000, 562.5f);
-        sprite->textureID = ResourceManager::get<TextureResource>(Resource::ID::TEX_OUTER_WALL_CLOUDS)->getID();
-        sprite->layer = .2;
-        sprite->color = glm::vec4(.5f);
-        entity->addComponent(sprite);
-        auto* bgSprite = new BgSprite();
-        bgSprite->vel.x = -.01f;
-        bgSprite->id = BgSprite::ID::CLOUDS;
-        entity->addComponent(bgSprite);
-        engine->getECS()->getScene()->addEntity(entity);
-    }
-    {
-        auto* entity = new Kikan::Entity;
-        auto* sprite = new Kikan::AASprite;
-        sprite->offset = glm::vec2(0, 562.5f);
-        sprite->dimensions = glm::vec2(1000, 562.5f);
-        sprite->textureID = ResourceManager::get<TextureResource>(Resource::ID::TEX_OUTER_WALL_BACKGROUND)->getID();
-        sprite->layer = .1;
-        sprite->color = glm::vec4(.5f);
-        entity->addComponent(sprite);
-        engine->getECS()->getScene()->addEntity(entity);
-    }
-    {
-        auto* entity = new Kikan::Entity;
-        auto* sprite = new Kikan::AASprite;
-        sprite->offset = glm::vec2(0, 562.5f);
-        sprite->dimensions = glm::vec2(1000, 562.5f);
-        sprite->textureID = ResourceManager::get<TextureResource>(Resource::ID::TEX_OUTER_WALL_FOREGROUND)->getID();
-        sprite->layer = -.1;
-        sprite->color = glm::vec4(.5f);
-        entity->addComponent(sprite);
-        engine->getECS()->getScene()->addEntity(entity);
-    }
-
+    MapManager::add("default", new Map());
+    MapManager::get("default")->load(engine->getECS()->getScene("game"));
 
     // Player
     {
@@ -195,17 +227,19 @@ int WinMain() {
         engine->getECS()->getScene()->addEntity(entity);
     }
 
-    // Enemy
-    {
-        auto* entity = Spawner::spawnPlayer(Nation::AIR, true);
-        entity->getComponent<Kikan::Transform>()->position = glm::vec3(500, 800, 0);
-        engine->getECS()->getScene()->addEntity(entity);
-    }
+    engine->getUI()->setDimensions(1600, 900);
+    addMenuUI();
+    addGameUI();
 
-    addBoundaries();
+
+#ifdef DEBUG
+    engine->getECS()->loadScene("menu");
+#else
+    engine->getECS()->loadScene("title");
+#endif
 
     std::string title = "Lotus\n";
-    //engine->setTitle(title);
+    engine->setTitle(title);
 
     while (engine->shouldRun()) {
         engine->update();

@@ -1,6 +1,7 @@
 #include "systems/CollisionSystem.h"
 #include "components/DColliderComponent.h"
 #include "components/SColliderComponent.h"
+#include "components/PlayerStateComponent.h"
 
 #include <limits>
 
@@ -172,9 +173,29 @@ void CollisionSystem::update(double dt) {
         for(auto* sEntity : _s_entities){
             auto* sCollider = sEntity->getComponent<SColliderComponent>();
 
+            auto* player = dEntity->getComponent<PlayerStateComponent>();
+
             if(collidedAABB(dCollider->position, dCollider->dimensions, sCollider->position, sCollider->dimensions)){
+                if(player && player->excludeCollider == sCollider)
+                    continue;
+
+                if(player && player->isFalling && sCollider->playerCanFall){
+                    player->excludeCollider = sCollider;
+                    continue;
+                }
+
                 Direction dir = collidesDirectionAABB(dEntity, sEntity);
+                if(sCollider->disabledSides & (1 << dir)){
+                    player = dEntity->getComponent<PlayerStateComponent>();
+                    if(player)
+                        player->excludeCollider = sCollider;
+                    continue;
+                }
+
                 handleCleanCollision(dir, dEntity, sEntity);
+            }
+            else if(player && player->excludeCollider == sCollider){
+                player->excludeCollider = nullptr;
             }
         }
     }
