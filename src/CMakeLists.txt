@@ -3,6 +3,10 @@ project("Lotus")
 add_executable(Lotus
         main.cpp
 
+        scenes/GameScene.cpp
+        scenes/MenuScene.cpp
+        scenes/TitleScene.cpp
+
         systems/PlayerMovementSystem.cpp
         systems/NetworkingClientSystem.cpp
         systems/NetworkingServerSystem.cpp
@@ -19,6 +23,7 @@ add_executable(Lotus
         systems/BgSpriteSystem.cpp
         systems/ResourceLoadingSystem.cpp
         systems/TitleScreenSystem.cpp
+        systems/MenuSystem.cpp
 
         map/Map.cpp
 
