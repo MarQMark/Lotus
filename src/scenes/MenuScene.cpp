@@ -30,12 +30,26 @@ void addMenuUI(){
     node->enabled = false;
     ui->addNode(node);
 
-    auto* nameTxt = new Kikan::Textbox("connect_name", glm::vec2(300, 700), glm::vec2(1200, 100));
+    auto* nameTxt = new Kikan::Textbox("connect_name", glm::vec2(100, 800), glm::vec2(1000, 100));
+    nameTxt->setTooltip("Name");
+    nameTxt->setTooltipColor(glm::vec4(.8));
+    nameTxt->setOutlineThickness(1);
     ui->addElement(nameTxt, node);
 
-    auto* startBtn = new Kikan::Button("start_btn", glm::vec2(1000, 280), glm::vec2(400, 100));
+    auto* ipTxt = new Kikan::Textbox("connect_ip", glm::vec2(100, 600), glm::vec2(1000, 100));
+    ipTxt->setTooltip("IP Address");
+    ipTxt->setTooltipColor(glm::vec4(.8));
+    ipTxt->setOutlineThickness(1);
+    ui->addElement(ipTxt, node);
+
+    auto* startBtn = new Kikan::Button("connect_btn", glm::vec2(1100, 280), glm::vec2(400, 100));
     startBtn->registerCallback(onStartBtnPressed, Kikan::IInteractable::State::RELEASED);
     ui->addElement(startBtn, node);
+
+    auto* connectLbl = new Kikan::Label("connect_lbl", glm::vec2(1100, 255), glm::vec2(400, 50), " Host");
+    connectLbl->setFontLayerOffset(-.2);
+    connectLbl->setBgColor(glm::vec4(0));
+    ui->addElement(connectLbl, node);
 }
 
 void onMenuSceneLoad(Kikan::Scene* scene, void* data){

@@ -1,6 +1,9 @@
 #include "systems/MenuSystem.h"
 #include "Kikan/Engine.h"
 #include "scenes/Scenes.h"
+#include "Kikan/ui/elements/Textbox.h"
+#include "Kikan/ui/elements/Label.h"
+#include "Kikan/ui/elements/Button.h"
 
 MenuSystem::MenuSystem() {
 
@@ -35,6 +38,18 @@ void MenuSystem::update(double dt) {
             .5,
             &ops
             );
+
+    auto* connectLbl = (Kikan::Label*)engine->getUI()->getElement("connect_lbl");
+    if(((Kikan::Textbox*)engine->getUI()->getElement("connect_ip"))->getText().empty())
+        connectLbl->setText(" Host");
+    else
+        connectLbl->setText(" Connect");
+
+    auto* connectBtn = (Kikan::Button*)engine->getUI()->getElement("connect_btn");
+    if(((Kikan::Textbox*)engine->getUI()->getElement("connect_name"))->getText().empty())
+        connectBtn->enabled = false;
+    else
+        connectBtn->enabled = true;
 
     if(engine->getInput()->keyPressed(Kikan::Key::SPACE) ||
        engine->getInput()->mousePressed(Kikan::Mouse::BUTTON_LEFT)){
