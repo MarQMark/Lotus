@@ -1,3 +1,4 @@
+#include <sstream>
 #include "systems/MenuSystem.h"
 #include "Kikan/Engine.h"
 #include "scenes/Scenes.h"
@@ -75,6 +76,17 @@ void MenuSystem::update_lobby(){
     airRes->getTexCoords(texCoords, 0);
     airLbl->setTexture2D(airRes->getTexture2D());
     airLbl->setTextureCoords(texCoords);
+
+    auto* listLbl = (Kikan::Label*)engine->getUI()->getElement("lobby_list_lbl");
+    std::stringstream ss;
+    std::vector<Kikan::Entity*> players;
+    engine->getECS()->getScene(SCENE_GAME)->getEntities(getSig(PlayerStateComponent), &players);
+    for(auto e : players){
+        auto* player = e->getComponent<PlayerStateComponent>();
+        ss << player->name;
+        ss << '\n';
+    }
+    listLbl->setText(ss.str());
 }
 
 void MenuSystem::update_victory(double dt) {
@@ -90,6 +102,41 @@ void MenuSystem::update_victory(double dt) {
                 _victor = player;
         }
     }
+
+    Nation nation = Nation::FIRE;
+    if(_victor){
+        auto* player = _victor->getComponent<PlayerStateComponent>();
+        nation = player->nation;
+
+        auto* victorNameLbl = (Kikan::Label*)engine->getUI()->getElement("victory_name_lbl");
+        victorNameLbl->setText(player->name);
+        auto* victorTextLbl = (Kikan::Label*)engine->getUI()->getElement("victory_text_lbl");
+        victorTextLbl->setText("won the Game");
+    }
+    else{
+        auto* victorNameLbl = (Kikan::Label*)engine->getUI()->getElement("victory_name_lbl");
+        victorNameLbl->setText("It's a");
+        auto* victorTextLbl = (Kikan::Label*)engine->getUI()->getElement("victory_text_lbl");
+        victorTextLbl->setText("Draw!");
+    }
+    glm::vec2 texCoords[4];
+    SpriteSheetResource* res;
+    switch (nation) {
+        case Nation::FIRE:
+            res = ResourceManager::get<SpriteSheetResource>(Resource::SS_FIRE_PLAYER);
+            break;
+        case Nation::EARTH:
+            res = ResourceManager::get<SpriteSheetResource>(Resource::SS_EARTH_PLAYER);
+            break;
+        case Nation::AIR:
+            res = ResourceManager::get<SpriteSheetResource>(Resource::SS_AIR_PLAYER);
+            break;
+    }
+    auto* victorLbl = (Kikan::Label*)engine->getUI()->getElement("victory_nation_lbl");
+    res->getTexCoords(texCoords, 0);
+    victorLbl->setTexture2D(res->getTexture2D());
+    victorLbl->setTextureCoords(texCoords);
+
 
     _victory_duration -= dt;
 

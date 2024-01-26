@@ -12,6 +12,14 @@
 
 void onConnectBtnReleased(Kikan::IInteractable* btn, Kikan::IInteractable::State state, void* data){
     auto* ui = Kikan::Engine::Kikan()->getUI();
+
+    auto* entity = Kikan::Engine::Kikan()->getECS()->getScene()->getEntity(getSig(PlayerComponent));
+    if(entity){
+        auto* player = entity->getComponent<PlayerStateComponent>();
+        if(player)
+            player->name = ((Kikan::Textbox*)ui->getElement("connect_name"))->getText();
+    }
+
     ui->getNode(UI_CONNECT_MENU)->enabled = false;
     ui->getNode(UI_LOBBY_MENU)->enabled = true;
 }
@@ -91,6 +99,10 @@ void addMenuUI(){
     ui->addNode(node);
 
     auto* listLbl = new Kikan::Label("lobby_list_lbl", glm::vec2(100, 800), glm::vec2(500, 700), "");
+    listLbl->setFontSize(50);
+    auto fontOptions = listLbl->getFontOptions();
+    fontOptions.spacing.y = 1;
+    listLbl->setFontOptions(fontOptions);
     ui->addElement(listLbl, node);
 
     auto* fireLbl = new Kikan::Label("lobby_fire_lbl", glm::vec2(775, 750), glm::vec2(200, 369), "");
@@ -128,8 +140,13 @@ void addMenuUI(){
     node->enabled = false;
     ui->addNode(node);
 
-    auto* victorLbl = new Kikan::Label("lobby_victory_lbl", glm::vec2(100, 800), glm::vec2(400, 738), "");
+    auto* victorLbl = new Kikan::Label("victory_nation_lbl", glm::vec2(100, 800), glm::vec2(400, 738), "");
     ui->addElement(victorLbl, node);
+
+    auto* victorNameLbl = new Kikan::Label("victory_name_lbl", glm::vec2(575, 700), glm::vec2(0, 100), "");
+    ui->addElement(victorNameLbl, node);
+    auto* victoryTextLbl = new Kikan::Label("victory_text_lbl", glm::vec2(575, 550), glm::vec2(0, 100), "");
+    ui->addElement(victoryTextLbl, node);
 }
 
 void onMenuSceneUnload(Kikan::Scene* scene, void* data){

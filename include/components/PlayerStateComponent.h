@@ -8,6 +8,8 @@
 class PlayerStateComponent : public Kikan::IComponent {
 public:
 
+    std::string name = "Player";
+
     Nation nation = Nation::FIRE;
 
     uint8_t facing = 0; // 0 = right, 1 = left
