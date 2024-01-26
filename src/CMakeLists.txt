@@ -24,6 +24,7 @@ add_executable(Lotus
         systems/ResourceLoadingSystem.cpp
         systems/TitleScreenSystem.cpp
         systems/MenuSystem.cpp
+        systems/GameLoopSystem.cpp
 
         map/Map.cpp
 

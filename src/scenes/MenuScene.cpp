@@ -50,7 +50,9 @@ void addMenuUI(){
     auto* ui = engine->getUI();
 
     auto* node = new Kikan::UINode(UI_MAIN_MENU);
+#ifndef DEBUG
     node->enabled = false;
+#endif
     ui->addNode(node);
 
 
@@ -120,11 +122,14 @@ void addMenuUI(){
     startGameBtn->setColor(glm::vec4(116./255., 38./255., 51./255., 1));
     startGameBtn->setText(" Start");
     ui->addElement(startGameBtn, node);
-}
 
-void onMenuSceneLoad(Kikan::Scene* scene, void* data){
-    auto* ui = Kikan::Engine::Kikan()->getUI();
-    ui->getNode(UI_MAIN_MENU)->enabled = true;
+
+    node = new Kikan::UINode(UI_VICTORY);
+    node->enabled = false;
+    ui->addNode(node);
+
+    auto* victorLbl = new Kikan::Label("lobby_victory_lbl", glm::vec2(100, 800), glm::vec2(400, 738), "");
+    ui->addElement(victorLbl, node);
 }
 
 void onMenuSceneUnload(Kikan::Scene* scene, void* data){
@@ -134,7 +139,6 @@ void onMenuSceneUnload(Kikan::Scene* scene, void* data){
 
 void addMenuScene(){
     auto* scene = new Kikan::Scene(SCENE_MENU);
-    scene->setOnLoad(onMenuSceneLoad);
     scene->setOnUnload(onMenuSceneUnload);
 
     auto* spriteSystem = new Kikan::SpriteRenderSystem();

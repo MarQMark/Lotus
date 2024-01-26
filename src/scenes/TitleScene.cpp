@@ -7,8 +7,14 @@
 #include "util/ResourceManager.h"
 #include "Kikan/ecs/components/QuadSprite.h"
 
+void onTitleSceneUnload(Kikan::Scene* scene, void* data){
+    auto* ui = Kikan::Engine::Kikan()->getUI();
+    ui->getNode(UI_MAIN_MENU)->enabled = true;
+}
+
 void addTitleScene(){
     auto* scene = new Kikan::Scene(SCENE_TITLE);
+    scene->setOnUnload(onTitleSceneUnload);
 
     auto* cameraSystem = new CameraSystem();
     scene->addSystem(cameraSystem);

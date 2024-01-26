@@ -12,9 +12,13 @@ public:
 private:
     float _text_init_pos = -1;
 
+    Kikan::Entity* _victor{};
+    double _victory_duration = 5000;
+
     void update_main();
     void update_connect();
     void update_lobby();
+    void update_victory(double dt);
 };
 
 

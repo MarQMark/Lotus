@@ -39,6 +39,10 @@ Kikan::Entity *Spawner::spawnPlayer(Nation nation) {
 Kikan::Entity *Spawner::spawnEnemy(Nation nation) {
     auto* entity = new Kikan::Entity;
 
+    auto* physics = new Kikan::Physics();
+    physics->friction.x = PLAYER_FRICTION;
+    entity->addComponent(physics);
+
     auto* enemyComponent = new EnemyComponent();
     entity->addComponent(enemyComponent);
 

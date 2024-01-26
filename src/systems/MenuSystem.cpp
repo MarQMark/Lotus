@@ -5,6 +5,8 @@
 #include "Kikan/ui/elements/Label.h"
 #include "Kikan/ui/elements/Button.h"
 #include "util/ResourceManager.h"
+#include "components/PlayerStateComponent.h"
+#include "components/HealthComponent.h"
 
 MenuSystem::MenuSystem() {
 
@@ -75,6 +77,29 @@ void MenuSystem::update_lobby(){
     airLbl->setTextureCoords(texCoords);
 }
 
+void MenuSystem::update_victory(double dt) {
+    auto* engine = Kikan::Engine::Kikan();
+
+    if(!_victor){
+        std::vector<Kikan::Entity*> players;
+        engine->getECS()->getScene(SCENE_GAME)->getEntities(getSig(PlayerStateComponent), &players);
+
+        for (auto* player : players) {
+            auto* health = player->getComponent<HealthComponent>();
+            if(health && health->health > 0)
+                _victor = player;
+        }
+    }
+
+    _victory_duration -= dt;
+
+    if(_victory_duration < 0){
+        _victory_duration = 5000;
+        engine->getUI()->getNode(UI_VICTORY)->enabled = false;
+        engine->getUI()->getNode(UI_LOBBY_MENU)->enabled = true;
+    }
+}
+
 void MenuSystem::update(double dt) {
     auto* engine = Kikan::Engine::Kikan();
     auto* renderer = (Kikan::StdRenderer*)engine->getRenderer();
@@ -97,5 +122,8 @@ void MenuSystem::update(double dt) {
         update_connect();
     else if(engine->getUI()->getNode(UI_LOBBY_MENU)->enabled)
         update_lobby();
+    else if(engine->getUI()->getNode(UI_VICTORY)->enabled)
+        update_victory(dt);
 
 }
+

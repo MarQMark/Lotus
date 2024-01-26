@@ -19,6 +19,11 @@
 #include "Kikan/ecs/systems/SpriteRenderSystem.h"
 #include "Kikan/ui/elements/Label.h"
 #include "map/Map.h"
+#include "systems/GameLoopSystem.h"
+#include "components/PlayerStateComponent.h"
+#include "util/Spawner.h"
+#include "components/HealthComponent.h"
+#include "components/DamageComponent.h"
 
 void addGameUI() {
     Kikan::Engine* engine = Kikan::Engine::Kikan();
@@ -48,15 +53,50 @@ void addGameUI() {
     ultimateGray->setTextureLayerOffset(ultimateGray->getTextureLayerOffset() - 0.01f);
     ui->addElement(ultimateGray, node);
 #endif
+
+    auto* countdownLbl = new Kikan::Label("Countdown", glm::vec2(450, 600), glm::vec2(0, 250), "Fight");
+    countdownLbl->enabled = false;
+    auto fontOptions = countdownLbl->getFontOptions();
+    fontOptions.color = glm::vec4(0,0,0,1);
+    countdownLbl->setFontOptions(fontOptions);
+    countdownLbl->setFontLayerOffset(-.5f);
+    ui->addElement(countdownLbl, node);
 }
 
 void onGameSceneLoad(Kikan::Scene* scene, void* data){
-    auto* ui = Kikan::Engine::Kikan()->getUI();
+    auto* engine = Kikan::Engine::Kikan();
+    auto* ui = engine->getUI();
+
+
+    std::vector<Kikan::Entity*> players;
+    engine->getECS()->getScene(SCENE_GAME)->getEntities(getSig(PlayerStateComponent), &players);
+
+    if(players.size() <= 1){
+        auto* enemy = Spawner::spawnEnemy();
+        enemy->getComponent<Kikan::Transform>()->position = glm::vec3(100, 800, 0);
+        engine->getECS()->getScene(SCENE_GAME)->addEntity(enemy);
+    }
+
+    for (auto* player : players) {
+        auto* health = player->getComponent<HealthComponent>();
+        health->health = health->maxHealth;
+    }
+
+    GameLoopSystem::Countdown = 4000;
+
+    ui->getElement("Countdown")->enabled = true;
     ui->getNode(UI_GAME)->enabled = true;
 }
 
 void onGameSceneUnload(Kikan::Scene* scene, void* data){
-    auto* ui = Kikan::Engine::Kikan()->getUI();
+    auto* engine = Kikan::Engine::Kikan();
+    auto* ui = engine->getUI();
+
+    std::vector<Kikan::Entity*> attacks;
+    engine->getECS()->getScene()->getEntities(getSig(DamageComponent), &attacks);
+    for(auto* attack : attacks)
+        engine->getECS()->getScene()->deleteEntity(attack);
+
     ui->getNode(UI_GAME)->enabled = false;
 }
 
@@ -78,6 +118,7 @@ void addGameScene(){
     auto* attackAnimationSystem = new AttackAnimationSystem();
     auto* healthbarSystem = new HealthbarSystem();
     auto* bgSpriteSystem = new BgSpriteSystem();
+    auto* gameLoopSystem = new GameLoopSystem();
     scene->addSystem(cameraSystem);
     scene->addSystem(physicsSystem);
     scene->addSystem(effectSystem);
@@ -90,6 +131,7 @@ void addGameScene(){
     scene->addSystem(attackAnimationSystem);
     scene->addSystem(healthbarSystem);
     scene->addSystem(bgSpriteSystem);
+    scene->addSystem(gameLoopSystem);
 
     auto* spriteSystem = new Kikan::SpriteRenderSystem();
     scene->addSystem(spriteSystem);
