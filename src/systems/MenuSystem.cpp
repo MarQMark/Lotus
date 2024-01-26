@@ -141,6 +141,7 @@ void MenuSystem::update_victory(double dt) {
     _victory_duration -= dt;
 
     if(_victory_duration < 0){
+        _victor = nullptr;
         _victory_duration = 5000;
         engine->getUI()->getNode(UI_VICTORY)->enabled = false;
         engine->getUI()->getNode(UI_LOBBY_MENU)->enabled = true;

@@ -71,16 +71,18 @@ void onGameSceneLoad(Kikan::Scene* scene, void* data){
     std::vector<Kikan::Entity*> players;
     engine->getECS()->getScene(SCENE_GAME)->getEntities(getSig(PlayerStateComponent), &players);
 
-    if(players.size() <= 1){
+    if(players.size() <= 4){
         auto* enemy = Spawner::spawnEnemy(Nation::EARTH);
         enemy->getComponent<Kikan::Transform>()->position = glm::vec3(100, 800, 0);
         engine->getECS()->getScene(SCENE_GAME)->addEntity(enemy);
+        players.push_back(enemy);
     }
 
     for (auto* player : players) {
         auto* health = player->getComponent<HealthComponent>();
         health->health = health->maxHealth;
     }
+    MapManager::get("default")->spawnPlayers(players);
 
     GameLoopSystem::Countdown = 4000;
 

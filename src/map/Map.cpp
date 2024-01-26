@@ -304,5 +304,23 @@ void Map::load_default_map() {
 
         _entities.push_back(entity);
     }
+
+    _spawnpoints.push_back(glm::vec2(50, 700));
+    _spawnpoints.push_back(glm::vec2(800, 700));
+    _spawnpoints.push_back(glm::vec2(50, 400));
+    _spawnpoints.push_back(glm::vec2(800, 400));
+}
+
+void Map::spawnPlayers(std::vector<Kikan::Entity *> &players) {
+    std::vector<Kikan::Entity *> entites(players.size());
+
+    // TODO: sort by some metric
+    for(int i = 0; i < players.size(); i ++)
+        entites[i] = players[i];
+
+
+    for(int i = 0; i < entites.size(); i ++){
+        entites[i]->getComponent<Kikan::Transform>()->position = glm::vec3(_spawnpoints[i % _spawnpoints.size()], 0);
+    }
 }
 
