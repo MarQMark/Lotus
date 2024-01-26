@@ -11,6 +11,10 @@ public:
 
 private:
     float _text_init_pos = -1;
+
+    void update_main();
+    void update_connect();
+    void update_lobby();
 };
 
 
