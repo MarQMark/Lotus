@@ -4,6 +4,7 @@
 #include "Kikan/ecs/components/AASprite.h"
 #include "Kikan/ecs/components/LineQuadSprite.h"
 #include "components/SColliderComponent.h"
+#include "Kikan/ecs/components/QuadSprite.h"
 
 std::map<std::string, Map*> MapManager::s_maps;
 
@@ -94,13 +95,23 @@ void Map::load_default_map() {
         collider->dimensions = glm::vec2(1000, 81);
         entity->addComponent(collider);
 
-#ifdef DEBUG
-        auto *sprite = new Kikan::LineQuadSprite();
-        sprite->dimensions = collider->dimensions;
-        sprite->color = glm::vec4(.9, .5, .5, 1);
-        sprite->thickness = 2;
-        sprite->layer = -0.9;
+        auto *sprite = new Kikan::QuadSprite();
+        glm::vec2 pos = entity->getComponent<Kikan::Transform>()->position;
+        sprite->points[0] = pos + glm::vec2(0, 0);
+        sprite->points[1] = pos + glm::vec2(collider->dimensions.x,0);
+        sprite->points[2] = pos + glm::vec2(collider->dimensions.x, -collider->dimensions.y);
+        sprite->points[3] = pos + glm::vec2(0, -collider->dimensions.y);
+        sprite->color = glm::vec4(105./255., 97./255., 84./255., 1);
+        sprite->layer = -0.2;
         entity->addComponent(sprite);
+
+#ifdef DEBUG
+        auto *hitbox = new Kikan::LineQuadSprite();
+        hitbox->dimensions = collider->dimensions;
+        hitbox->color = glm::vec4(.9, .5, .5, 1);
+        hitbox->thickness = 2;
+        hitbox->layer = -0.9;
+        entity->addComponent(hitbox);
 #endif
 
         _entities.push_back(entity);
