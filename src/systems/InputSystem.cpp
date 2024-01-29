@@ -46,8 +46,6 @@ void InputSystem::update(double dt) {
         // ----------------------- Ability -----------------------
         if(Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::LEFT_SHIFT)){
             NetInputBuffer |= static_cast<unsigned int>(InputCommand::Ability);
-
-
         }
         // ----------------------- Ultimate -----------------------
         // TODO
@@ -56,18 +54,15 @@ void InputSystem::update(double dt) {
         // ----------------------- Movement -----------------------
         if (Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::D)){
             NetInputBuffer |= static_cast<unsigned int>(InputCommand::Right);
-
-
         }
         if (Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::A)){
             NetInputBuffer |= static_cast<unsigned int>(InputCommand::Left);
-
-
+        }
+        if (Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::S)){
+            NetInputBuffer |= static_cast<unsigned int>(InputCommand::Down);
         }
         if(Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::SPACE)){
             NetInputBuffer |= static_cast<unsigned int>(InputCommand::Jump);
-
-
         }
         gameState.setPlayerInputHistory(player->playerID, gameState.FrameCount + NET_INPUT_DELAY, NetInputBuffer);
     }

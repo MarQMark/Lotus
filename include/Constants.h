@@ -39,6 +39,7 @@ enum class InputCommand : unsigned int
     Ability = 8,
     Attack = 16,
     Super = 32,
+    Down = 64,
 };
 
 enum class NetworkState

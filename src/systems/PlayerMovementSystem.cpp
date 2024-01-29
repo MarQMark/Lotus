@@ -103,7 +103,7 @@ void PlayerMovementSystem::update(double dt) {
             if (collider->hasCollidedB)
                 physics->velocity.y = JUMP_FORCE * player->jumpMulti;
         }
-        if (gameState.getPlayerInput(player->playerID) & static_cast<unsigned int>(InputCommand::Super)) {
+        if (gameState.getPlayerInput(player->playerID) & static_cast<unsigned int>(InputCommand::Down)) {
             auto *effect = e->getComponent<EffectComponent>();
             if (effect && !effect->effects.count(EffectComponent::ID::FALL_COOLDOWN)) {
                 effect->effects[EffectComponent::ID::FALL_COOLDOWN] = 200;
