@@ -4,6 +4,7 @@
 #include <Kikan/ecs/components/IComponent.h>
 #include "Constants.h"
 #include "SColliderComponent.h"
+#include <string>
 
 class PlayerStateComponent : public Kikan::IComponent {
 public:
@@ -13,6 +14,8 @@ public:
     Nation nation = Nation::FIRE;
 
     int32_t playerID = -1;
+
+    int startPoint = -1;
 
     uint8_t facing = 0; // 0 = right, 1 = left
     bool onGround = false;

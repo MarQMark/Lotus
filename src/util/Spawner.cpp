@@ -1,3 +1,4 @@
+#include <random>
 #include "util/Spawner.h"
 #include "Kikan/ecs/components/Physics.h"
 #include "Kikan/ecs/components/LineQuadSprite.h"

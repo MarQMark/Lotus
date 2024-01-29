@@ -9,16 +9,27 @@
 #include "Kikan/ui/elements/Textbox.h"
 #include "components/PlayerComponent.h"
 #include "components/PlayerStateComponent.h"
+#include "util/GameState.h"
 
 void onConnectBtnReleased(Kikan::IInteractable* btn, Kikan::IInteractable::State state, void* data){
     auto* ui = Kikan::Engine::Kikan()->getUI();
-
+    GameState &gameState = GameState::getInstance();
     auto* entity = Kikan::Engine::Kikan()->getECS()->getScene()->getEntity(getSig(PlayerComponent));
     if(entity){
         auto* player = entity->getComponent<PlayerStateComponent>();
         if(player)
-            player->name = ((Kikan::Textbox*)ui->getElement("connect_name"))->getText();
+            player->name = ((Kikan::Textbox*)ui->getElement("connect_name"))->getText().c_str();
     }
+    if(((Kikan::Textbox*)ui->getElement("connect_ip"))->getText().empty())
+    {
+        gameState.NetState = NetworkState::Hosting;
+    }
+    else
+    {
+        gameState.NetState = NetworkState::Client;
+        strcpy(gameState.host, ((Kikan::Textbox*)ui->getElement("connect_ip"))->getText().c_str());
+    }
+
 
     ui->getNode(UI_CONNECT_MENU)->enabled = false;
     ui->getNode(UI_LOBBY_MENU)->enabled = true;
@@ -50,6 +61,7 @@ void onNationBtnReleased(Kikan::IInteractable* btn, Kikan::IInteractable::State 
 }
 
 void onStartGameBtnReleased(Kikan::IInteractable* btn, Kikan::IInteractable::State state, void* data){
+    GameState::getInstance().isGameStart = true;
     Kikan::Engine::Kikan()->getECS()->loadScene(SCENE_GAME);
 }
 

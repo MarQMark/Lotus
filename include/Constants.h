@@ -2,19 +2,13 @@
 #define LOTUS_CONSTANTS_H
 
 #include <cstdint>
+#include <string>
 
 constexpr int NET_INPUT_DELAY = 1;
 
 constexpr int INPUT_HISTOTY_LENTGH = 3*60*60;
 
 constexpr  unsigned int NET_PACKET_INPUT_HISTORY_SIZE = 10;
-
-struct NetworkInputPackage
-{
-    unsigned int InputHistory[NET_PACKET_INPUT_HISTORY_SIZE];
-    int FrameCount { 0 };
-};
-
 
 enum Nation{
     FIRE = 0,
@@ -24,6 +18,17 @@ enum Nation{
     WATER = 3
 #endif
 };
+
+struct NetworkInputPackage
+{
+    unsigned int InputHistory[NET_PACKET_INPUT_HISTORY_SIZE];
+    int FrameCount { 0 };
+    char Name[20] = "Player";
+    Nation PlayerNation = Nation::FIRE;
+    bool isGameStart = false;
+    int startPoint = -1;
+};
+
 
 enum class InputCommand : unsigned int
 {

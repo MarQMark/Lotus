@@ -1,6 +1,6 @@
 #ifndef LOTUS_RESOURCEMANAGER_H
 #define LOTUS_RESOURCEMANAGER_H
-
+#include <typeinfo>
 #include <map>
 #include <vector>
 #include <string>

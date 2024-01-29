@@ -2,6 +2,7 @@
 #define LOTUS_SCOLLIDERCOMPONENT_H
 
 #include "Kikan/ecs/components/IComponent.h"
+#include "glm/glm.hpp"
 
 class SColliderComponent : public Kikan::IComponent {
 public:

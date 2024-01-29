@@ -7,6 +7,7 @@
 #include "systems/CameraSystem.h"
 #include "systems/PhysicsSystem.h"
 #include "systems/EffectSystem.h"
+#include "systems/NetworkSystem.h"
 #include "systems/PlayerMovementSystem.h"
 #include "systems/NetworkingClientSystem.h"
 #include "systems/TriggerSystem.h"
@@ -24,6 +25,7 @@
 #include "util/Spawner.h"
 #include "components/HealthComponent.h"
 #include "components/DamageComponent.h"
+#include "systems/InputSystem.h"
 
 void addGameUI() {
     Kikan::Engine* engine = Kikan::Engine::Kikan();
@@ -71,12 +73,12 @@ void onGameSceneLoad(Kikan::Scene* scene, void* data){
     std::vector<Kikan::Entity*> players;
     engine->getECS()->getScene(SCENE_GAME)->getEntities(getSig(PlayerStateComponent), &players);
 
-    if(players.size() <= 4){
-        auto* enemy = Spawner::spawnEnemy(Nation::EARTH);
-        enemy->getComponent<Kikan::Transform>()->position = glm::vec3(100, 800, 0);
-        engine->getECS()->getScene(SCENE_GAME)->addEntity(enemy);
-        players.push_back(enemy);
-    }
+    //if(players.size() <= 4){
+    //    auto* enemy = Spawner::spawnPlayer(Nation::EARTH, true);
+    //    enemy->getComponent<Kikan::Transform>()->position = glm::vec3(100, 800, 0);
+    //    engine->getECS()->getScene(SCENE_GAME)->addEntity(enemy);
+    //    players.push_back(enemy);
+    //}
 
     for (auto* player : players) {
         auto* health = player->getComponent<HealthComponent>();
@@ -104,15 +106,18 @@ void onGameSceneUnload(Kikan::Scene* scene, void* data){
 
 void addGameScene(){
     auto* scene = Kikan::Engine::Kikan()->getECS()->getScene(SCENE_GAME);//new Kikan::Scene(SCENE_GAME);
+    auto* sceneMenu = Kikan::Engine::Kikan()->getECS()->getScene(SCENE_MENU); //new Kikan::Scene(SCENE_GAME);
     scene->setOnLoad(onGameSceneLoad);
     scene->setOnUnload(onGameSceneUnload);
 
     auto* cameraSystem = new CameraSystem();
     auto* physicsSystem = new PhysicsSystem();
+    auto* networkSystem = new NetworkSystem();
+    auto* inputSystem = new InputSystem();
     physicsSystem->gravity = GRAVITY;
     auto* effectSystem = new EffectSystem();
     auto* movSystem = new PlayerMovementSystem();
-    auto* clientSystem = new NetworkingClientSystem();
+    //auto* clientSystem = new NetworkingClientSystem();
     auto* triggerSystem = new TriggerSystem();
     auto* collisionSystem = new CollisionSystem();
     auto* playerStateSystem = new PlayerStateSystem();
@@ -123,9 +128,12 @@ void addGameScene(){
     auto* gameLoopSystem = new GameLoopSystem();
     scene->addSystem(cameraSystem);
     scene->addSystem(physicsSystem);
+    scene->addSystem(networkSystem);
+    sceneMenu->addSystem(networkSystem);
+    scene->addSystem(inputSystem);
     scene->addSystem(effectSystem);
     scene->addSystem(movSystem);
-    scene->addSystem(clientSystem);
+    //scene->addSystem(clientSystem);
     scene->addSystem(triggerSystem);
     scene->addSystem(collisionSystem);
     scene->addSystem(playerStateSystem);

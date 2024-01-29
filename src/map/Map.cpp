@@ -5,6 +5,7 @@
 #include "Kikan/ecs/components/LineQuadSprite.h"
 #include "components/SColliderComponent.h"
 #include "Kikan/ecs/components/QuadSprite.h"
+#include "components/PlayerStateComponent.h"
 
 std::map<std::string, Map*> MapManager::s_maps;
 
@@ -326,9 +327,18 @@ void Map::spawnPlayers(std::vector<Kikan::Entity *> &players) {
     std::vector<Kikan::Entity *> entites(players.size());
 
     // TODO: sort by some metric
-    for(int i = 0; i < players.size(); i ++)
+    for(int i = 0; i < players.size(); i ++){
         entites[i] = players[i];
-
+    }
+    for(int i = 0; i < players.size(); i ++){
+        for (int j = 0; j < players.size() - i - 1 ; ++j) {
+            if(players[j]->getComponent<PlayerStateComponent>()->startPoint > players[j+1]->getComponent<PlayerStateComponent>()->startPoint) {
+                auto temp = entites[j];
+                entites[j + 1] = players[j];
+                entites[j] = temp;
+            }
+        }
+    }
 
     for(int i = 0; i < entites.size(); i ++){
         entites[i]->getComponent<Kikan::Transform>()->position = glm::vec3(_spawnpoints[i % _spawnpoints.size()], 0);

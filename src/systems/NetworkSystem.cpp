@@ -25,6 +25,8 @@ enum
 #define NBN_LogWarning(...) kikanPrint( __VA_ARGS__)
 
 #define NBNET_IMPL
+#include <random>
+
 #include "nbnet/nbnet.h"
 #include "nbnet/net_drivers/udp.h"
 #include "components/PlayerStateComponent.h"
@@ -34,12 +36,18 @@ enum
 #include "components/EnemyComponent.h"
 #include "systems/NetworkSystem.h"
 #include "util/GameState.h"
+#include "util/Spawner.h"
+#include "scenes/Scenes.h"
 
 
 int InputHistoryIndex = 0;
 
 int LatestNetworkFrame = -1;
 
+std::random_device rd;
+std::mt19937 gen(rd());
+std::uniform_int_distribution<int> distribution(1000, 9999);
+int startPoint = distribution(gen);
 
 
 static NBN_ConnectionHandle client = 0;
@@ -72,10 +80,10 @@ bool InitializeHost()
     return false;
 }
 
-void InitializeClient()
+void InitializeClient(const char *host)
 {
     NBN_UDP_Register();
-    if (NBN_GameClient_Start(LOTUS_PROTOCOL_NAME, "127.0.0.1", HOST_PORT) < 0)
+    if (NBN_GameClient_Start(LOTUS_PROTOCOL_NAME, host, HOST_PORT) < 0)
     {
         kikanPrint("Failed to start client");
         exit(-1);
@@ -86,8 +94,7 @@ void InitializeClient()
 
 NetworkInputPackage ReadInputMessageCommon(const NBN_MessageInfo& msg_info)
 {
-    // Get info about the received message
-    //NBN_MessageInfo msg_info = NBN_GameClient_GetMessageInfo();
+
 
     assert(msg_info.type == NBN_BYTE_ARRAY_MESSAGE_TYPE);
 
@@ -97,8 +104,6 @@ NetworkInputPackage ReadInputMessageCommon(const NBN_MessageInfo& msg_info)
     NetworkInputPackage InputPackage;
     memcpy(&InputPackage, msg->bytes, sizeof(NetworkInputPackage));
 
-    std::cout << "recevied Frame[" << InputPackage.FrameCount << "]" << std::endl;
-
     // Destroy the received message
     NBN_ByteArrayMessage_Destroy(msg);
 
@@ -107,12 +112,10 @@ NetworkInputPackage ReadInputMessageCommon(const NBN_MessageInfo& msg_info)
 
 NetworkInputPackage ReadInputMessage()
 {
-    //std::cout << "Reading Message" << std::endl;
 
     // Get info about the received message
     NBN_MessageInfo msg_info = NBN_GameServer_GetMessageInfo();
 
-    //assert(msg_info.sender == client);
     return ReadInputMessageCommon(msg_info);
 
 }
@@ -129,7 +132,6 @@ NetworkInputPackage ReadInputMessageClient()
 
 void SendInputMessage(NetworkInputPackage &InputPackage)
 {
-    std::cout << "sending FrameCount[" << InputPackage.FrameCount << "]" << std::endl;
 
     if (NBN_GameClient_SendUnreliableByteArray((uint8_t *)&InputPackage, sizeof (NetworkInputPackage)) < 0)
         exit(-1);
@@ -138,7 +140,6 @@ void SendInputMessage(NetworkInputPackage &InputPackage)
 
 void SendInputMessageHost(NetworkInputPackage &InputPackage)
 {
-    std::cout << "sending FrameCount[" << InputPackage.FrameCount << "]" << std::endl;
     if (NBN_GameServer_SendUnreliableByteArrayTo(client, (uint8_t *)&InputPackage, sizeof (NetworkInputPackage)))
         exit(-1);
 }
@@ -149,12 +150,11 @@ NetworkInputPackage TickNetworkHost(NetworkInputPackage InputPackage, bool& bRec
     bReceivedInput = false;
     if(client)
     {
-        for (int i = 0; i < 5; ++i) {
-            SendInputMessageHost(InputPackage);
-        }
+        std::cout << InputPackage.Name << std::endl;
+        SendInputMessageHost(InputPackage);
     }
 
-    NetworkInputPackage ClientInputPackage { 0, 0 };
+    NetworkInputPackage ClientInputPackage {  };
     int ev;
 
     // Poll for server events
@@ -169,10 +169,19 @@ NetworkInputPackage TickNetworkHost(NetworkInputPackage InputPackage, bool& bRec
         switch (ev) {
             // New connection request...
             case NBN_NEW_CONNECTION:
-                // Echo server work with one single client at a time
                 if (client == 0){
                     NBN_GameServer_AcceptIncomingConnection();
                     client = NBN_GameServer_GetIncomingConnection();
+
+                    std::vector<Kikan::Entity*> players;
+                    Kikan::Engine::Kikan()->getECS()->getScene(SCENE_GAME)->getEntities(getSig(PlayerStateComponent), &players);
+
+                    if(players.size() <= 4){
+                        auto* enemy = Spawner::spawnPlayer(Nation::EARTH, true);
+                        enemy->getComponent<Kikan::Transform>()->position = glm::vec3(100, 800, 0);
+                        Kikan::Engine::Kikan()->getECS()->getScene(SCENE_GAME)->addEntity(enemy);
+                        players.push_back(enemy);
+                    }
                     kikanPrint("Accept client connection \n");
                 }
 
@@ -208,11 +217,11 @@ NetworkInputPackage TickNetworkClient(NetworkInputPackage InputPackage, bool& bR
 {
     bReceivedInput = false;
 
-    NetworkInputPackage HostInputPackage { 0, 0 };
+    NetworkInputPackage HostInputPackage {  };
+    std::cout << InputPackage.Name << std::endl;
 
-    for (int i = 0; i < 5; ++i) {
-        SendInputMessage(InputPackage);
-    }
+    SendInputMessage(InputPackage);
+
     int ev;
 
     // Poll for client events
@@ -227,8 +236,20 @@ NetworkInputPackage TickNetworkClient(NetworkInputPackage InputPackage, bool& bR
         switch (ev) {
             // Client is connected to the server
             case NBN_CONNECTED:
+                {
+                    std::vector<Kikan::Entity*> players;
+                    Kikan::Engine::Kikan()->getECS()->getScene(SCENE_GAME)->getEntities(getSig(PlayerStateComponent), &players);
+
+                    if(players.size() <= 4){
+                        auto* enemy = Spawner::spawnPlayer(Nation::EARTH, true);
+                        enemy->getComponent<Kikan::Transform>()->position = glm::vec3(100, 800, 0);
+                        Kikan::Engine::Kikan()->getECS()->getScene(SCENE_GAME)->addEntity(enemy);
+                        players.push_back(enemy);
+                    }
+                }
                 //OnConnected();
                 kikanPrint("Connected");
+
                 break;
 
                 // Client has disconnected from the server
@@ -263,28 +284,26 @@ NetworkSystem::NetworkSystem() {
 void NetworkSystem::update(double dt) {
     double dt2 = 1.0 / LOTUS_TICK_RATE;
     GameState &gameState = GameState::getInstance();
-    PlayerStateComponent *player;
-    PlayerStateComponent *enemies;
+    PlayerStateComponent *player{};
+    PlayerStateComponent *enemies{};
     for (Kikan::Entity *e: _entities) {
         auto *p = e->getComponent<PlayerStateComponent>();
-        //todo do it for all enemies (make a map or vector out of it)
         if (p->isEnemy)
             enemies = p;
-        else if (!p->isEnemy)
+        else
             player = p;
-        //auto *enemy = e->getComponent<EnemyComponent>();
     }
-    //todo loop durch every enemy to reciev and send input
 
     NetworkInputPackage LatesInputPackage{};
 
     bool bReceivedInput = false;
 
     NetworkInputPackage ToSendNetPackage;
-    // Prepare the network package to send to opponent (maybe just do this if your not an enemy???)
+    // Prepare the network package to send to opponent
     {
         const int InputStartIndex = gameState.FrameCount - NET_PACKET_INPUT_HISTORY_SIZE + 1 + NET_INPUT_DELAY;
         //Fill the network package input history with our local input
+        std::cout << "Network: " <<player->playerID << std::endl;
         for (int i = 0; i < NET_PACKET_INPUT_HISTORY_SIZE; ++i)
         {
             if (InputStartIndex + i >= 0)
@@ -299,8 +318,11 @@ void NetworkSystem::update(double dt) {
             }
         }
         ToSendNetPackage.FrameCount = gameState.FrameCount + NET_INPUT_DELAY;
+        ToSendNetPackage.PlayerNation = player->nation;
+        strcpy(ToSendNetPackage.Name, player->name.c_str());
+        ToSendNetPackage.isGameStart = gameState.isGameStart;
+        ToSendNetPackage.startPoint = startPoint;
     }
-
 
     // Wenn wir Hosten dann setze den Input des Gegners und send unser Input an Client
     if (NetState == NetworkState::Hosting) {
@@ -311,20 +333,11 @@ void NetworkSystem::update(double dt) {
         LatesInputPackage = TickNetworkClient(ToSendNetPackage, bReceivedInput);
     }
 
-
-    //for (const auto& InputPackage: NetworkInputHistory) {
-    //    if (InputPackage.FrameCount == LatesInputPackage.FrameCount) {
-    //        bReceivedInput = true;
-    //        break;
-    //    }
-    //}
-
     if(bReceivedInput)
     {
-        std::cout << "Received Net Input: Frame[" << LatesInputPackage.FrameCount << "]" << std::endl;
+
+
         // Update network input buffer
-        //NetworkInputHistory[InputHistoryIndex] = LatesInputPackage;
-        //InputHistoryIndex = (InputHistoryIndex + 1) % INPUT_HISTORY_SIZE;
         const int StartFrame = LatesInputPackage.FrameCount-NET_PACKET_INPUT_HISTORY_SIZE + 1;
         for (int i = 0; i < NET_PACKET_INPUT_HISTORY_SIZE; ++i)
         {
@@ -334,8 +347,8 @@ void NetworkSystem::update(double dt) {
                 LatestNetworkFrame++;
             }
             //std::cout << "Input: " << LatesInputPackage.InputHistory[i] << " Frame: " << LatesInputPackage.FrameCount-NET_PACKET_INPUT_HISTORY_SIZE + i + 1 << std::endl;
-
-            gameState.setPlayerInputHistory(enemies->playerID, StartFrame+i, LatesInputPackage.InputHistory[i]);
+            if(enemies)
+                gameState.setPlayerInputHistory(enemies->playerID, StartFrame+i, LatesInputPackage.InputHistory[i]);
 
         }
     }
@@ -359,9 +372,16 @@ void NetworkSystem::update(double dt) {
             std::cout << "Game Ticked[" << gameState.FrameCount << "]" << std::endl;
             gameState.setPlayerInput(player->playerID, gameState.getPlayerInputHistory(player->playerID, gameState.FrameCount + NET_INPUT_DELAY));
             gameState.UpdateGame = true;
-            gameState.setPlayerInput(enemies->playerID, gameState.getPlayerInputHistory(enemies->playerID, gameState.FrameCount));
+            if(enemies) {
+                gameState.setPlayerInput(enemies->playerID, gameState.getPlayerInputHistory(enemies->playerID, gameState.FrameCount));
+                enemies->nation = LatesInputPackage.PlayerNation;
+                enemies->name = std::string(LatesInputPackage.Name);
+                enemies->startPoint = LatesInputPackage.startPoint;
+                player->startPoint = startPoint;
+            }
             gameState.NetFrameCount = LatesInputPackage.FrameCount;
             gameState.FrameCount++;
+            gameState.isGameStart = LatesInputPackage.isGameStart;
 
         }
     }
@@ -370,13 +390,14 @@ void NetworkSystem::update(double dt) {
 
     if(NetState == NetworkState::None)
     {
-        if(Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::O))
+        if(gameState.NetState == NetworkState::Hosting)
         {
             InitializeHost();
             NetState = NetworkState::Hosting;
-        }else if(Kikan::Engine::Kikan()->getInput()->keyPressed(Kikan::Key::C))
+        }else if(gameState.NetState == NetworkState::Client)
         {
-            InitializeClient();
+            std::cout << gameState.host << std::endl;
+            InitializeClient(gameState.host);
 
             NetState = NetworkState::Client;
         }

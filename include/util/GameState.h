@@ -38,7 +38,11 @@ public:
 
     unsigned int getPlayerInputHistory(unsigned int playerSignature, int frameCount) const;
 
+    bool isGameStart = false;
 
+    NetworkState NetState = NetworkState::None;
+
+    char host[20] = "127.0.0.1";
 
     bool UpdateGame = false;
 

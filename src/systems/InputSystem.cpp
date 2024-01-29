@@ -69,10 +69,6 @@ void InputSystem::update(double dt) {
 
 
         }
-
         gameState.setPlayerInputHistory(player->playerID, gameState.FrameCount + NET_INPUT_DELAY, NetInputBuffer);
-
-
-
     }
 }
