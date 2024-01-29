@@ -8,6 +8,8 @@
 class PlayerStateComponent : public Kikan::IComponent {
 public:
 
+    std::string name = "Player";
+
     Nation nation = Nation::FIRE;
 
     int32_t playerID = -1;

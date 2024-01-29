@@ -18,11 +18,14 @@ public:
     void load(Kikan::Scene* scene);
     void unload();
 
+    void spawnPlayers(std::vector<Kikan::Entity*>& players);
+
 private:
     void load_default_map();
 
     Kikan::Scene* _loaded_scene = nullptr;
     std::vector<Kikan::Entity*> _entities;
+    std::vector<glm::vec2> _spawnpoints;
 };
 
 class MapManager{

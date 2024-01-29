@@ -49,8 +49,8 @@ static float PLAYER_FRICTION = 0.05f;
 static float MOVEMENT_SPEED = 0.035f;
 static float JUMP_FORCE = 1.1f;
 
-static float PLAYER_WIDTH = 50;
-static float PLAYER_HEIGHT = 80;
+static float PLAYER_WIDTH = 40;
+static float PLAYER_HEIGHT = 70;
 static double PLAYER_HEALTH = 100;
 
 
@@ -117,7 +117,7 @@ static double ATK_ANI_SPEED[4] = {
         100.
 };
 static double ATK_DAMAGE[4] = {
-        10.,
+        70.,
         10.,
         10.,
         10.

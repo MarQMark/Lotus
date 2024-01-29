@@ -1,4 +1,3 @@
-#include <random>
 #include "util/Spawner.h"
 #include "Kikan/ecs/components/Physics.h"
 #include "Kikan/ecs/components/LineQuadSprite.h"
@@ -36,7 +35,6 @@ Kikan::Entity *Spawner::spawnPlayer(Nation nation, bool isEnemy) {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<int> distribution(1000, 9999);
-    //todo make random Id
     entity->getComponent<PlayerStateComponent>()->playerID = distribution(gen);
     entity->getComponent<PlayerStateComponent>()->isEnemy = isEnemy;
 
@@ -86,20 +84,24 @@ Kikan::Entity *Spawner::spawnAttack(glm::vec2 pos, Nation nation, uint8_t dir) {
     uint32_t height;
     float width;
     Animation::ID animationID;
+    float yOff = 0;
     switch (nation) {
         case Nation::EARTH:
             aspectRatio = 340. / 180.;
             animationID = Animation::ID::EARTH_ATTACK_R;
+            yOff = 20;
             break;
         case Nation::AIR:
             aspectRatio = 195. / 485.;
             animationID = Animation::ID::AIR_ATTACK_R;
+            yOff = 10;
             break;
 #ifdef ENABLE_WATER
         case Nation::WATER:
 #endif
         case Nation::FIRE:
         default:
+            yOff = 20;
             aspectRatio = 300. / 150.;
             animationID = Animation::ID::FIRE_ATTACK_R;
             break;
@@ -126,7 +128,7 @@ Kikan::Entity *Spawner::spawnAttack(glm::vec2 pos, Nation nation, uint8_t dir) {
     else{
         entity->getComponent<Kikan::Transform>()->position.x = pos.x + PLAYER_WIDTH + 10;
     }
-    entity->getComponent<Kikan::Transform>()->position.y = pos.y - 20;
+    entity->getComponent<Kikan::Transform>()->position.y = pos.y - yOff;
 
     animComp->animation = AnimationManager::getAnimation(animationID);
 

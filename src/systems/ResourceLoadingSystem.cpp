@@ -140,7 +140,7 @@ void ResourceLoadingSystem::loadResources() {
     };
 #endif
 
-    printf("Thread end\n");
+    printf("Finished Loading Resources\n");
     _finished_loading = true;
 }
 

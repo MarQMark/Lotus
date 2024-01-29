@@ -99,22 +99,14 @@ void TriggerSystem::update(double dt) {
                     glm::vec2(dcTransform->position.x, dcTransform->position.y) + dcCollider->offset - glm::vec2(0, dcCollider->dimensions.y),
                     dcCollider->dimensions
             )){
-                auto* player = Kikan::Engine::Kikan()->getECS()->getScene()->getEntity(getSig(PlayerComponent));
-                if(scEntity == player){
-                    auto* physics = player->getComponent<Kikan::Physics>();
-                    physics->acceleration += trigger->impulse;
-                }
-
-                // Add knockback
-                /*auto* physics = scEntity->getComponent<Kikan::Physics>();
+                auto* physics = scEntity->getComponent<Kikan::Physics>();
                 if(physics)
-                    physics->acceleration += trigger->impulse;*/
+                    physics->acceleration += trigger->impulse;
 
                 // Add damage
                 auto* health = scEntity->getComponent<HealthComponent>();
                 auto* damage = entity->getComponent<DamageComponent>();
                 if(health && damage){
-                    kikanPrint("Auchie \n");
                     health->health -= damage->damage;
                 }
 

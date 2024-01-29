@@ -60,7 +60,9 @@ void endPlayerEffect(Kikan::Entity* e, EffectComponent::ID id){
 }
 
 void EffectSystem::update(double dt) {
-    for (auto* entity : _entities) {
+    // Can't use for each for some reason I don't get. Too bad!
+    for (unsigned int i = 0; i < _entities.size(); i++) {
+        auto* entity = _entities[i];
         auto* effectComponent = entity->getComponent<EffectComponent>();
         for(auto effect = effectComponent->effects.begin(); effect != effectComponent->effects.cend(); ){
 
