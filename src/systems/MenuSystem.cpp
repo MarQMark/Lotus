@@ -18,9 +18,9 @@ void menuShaderPreRender(Kikan::AutoBatch* batch, void* data){
      auto* engine = Kikan::Engine::Kikan();
      auto* renderer = (Kikan::StdRenderer*)engine->getRenderer();
      auto* shader = renderer->shader("MainMenu");
-     //shader->bind();
-     //shader->uniform2fv("u_resolution", glm::vec2(renderer->getWidth(), renderer->getHeight()));
-     //shader->uniform1lf("u_time", engine->time.tt / 1000);
+     shader->bind();
+     shader->uniform2fv("u_resolution", glm::vec2(renderer->getWidth(), renderer->getHeight()));
+     shader->uniform1lf("u_time", engine->time.tt / 1000);
 }
 
 void MenuSystem::update_main(){
