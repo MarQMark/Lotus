@@ -35,3 +35,7 @@ When running the executable make sure the have the res folder in the same direct
 ![image](https://github.com/MarQMark/Lotus/assets/72945679/166d5151-f597-46ae-9ee4-14f40165216b)
 ![image](https://github.com/MarQMark/Lotus/assets/72945679/a2b91e8b-e5c9-4d16-9fee-d1cb05448865)
 ![image](https://github.com/MarQMark/Lotus/assets/72945679/336a74b1-e43c-4a25-97d9-6401dd7376c5)
+
+
+# <p>Credits</p>
+Air Player by Nutellapanzer
